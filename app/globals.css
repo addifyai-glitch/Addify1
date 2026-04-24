@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* ─── Class-based dark mode (required for next-themes) ───────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Light mode tokens ──────────────────────────────────────────────────── */
+:root {
+  --background:        #FAFAF9;
+  --foreground:        #0A1628;
+  --muted:             #F5F5F4;
+  --muted-foreground:  #57534E;
+  --card:              #FFFFFF;
+  --card-border:       #E7E5E4;
+  --primary:           #0A1628;
+  --primary-foreground:#FAFAF9;
+  --accent:            #F59E0B;
+  --accent-foreground: #0A1628;
+  --success:           #10B981;
+  --destructive:       #DC2626;
+  --ring:              #F59E0B;
+
+  /* Legacy aliases — keeps existing components working */
+  --surface:       var(--card);
+  --border:        var(--card-border);
+  --accent-light:  #FEF3C7;
+  --accent-dark:   #D97706;
+}
+
+/* ─── Dark mode tokens ───────────────────────────────────────────────────── */
+.dark {
+  --background:        #0F172A;
+  --foreground:        #F1F5F9;
+  --muted:             #1E293B;
+  --muted-foreground:  #94A3B8;
+  --card:              #1E293B;
+  --card-border:       #334155;
+  --primary:           #F1F5F9;
+  --primary-foreground:#0F172A;
+  --accent:            #FBBF24;
+  --accent-foreground: #0F172A;
+  --success:           #34D399;
+  --destructive:       #EF4444;
+  --ring:              #FBBF24;
+
+  /* Legacy aliases */
+  --surface:       var(--card);
+  --border:        var(--card-border);
+  --accent-light:  #451A03;
+  --accent-dark:   #F59E0B;
+}
+
+/* ─── Tailwind theme tokens ──────────────────────────────────────────────── */
+@theme inline {
+  /* Semantic color scale */
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-card:               var(--card);
+  --color-border:             var(--card-border);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-success:            var(--success);
+  --color-destructive:        var(--destructive);
+  --color-ring:               var(--ring);
+
+  /* Brand aliases — bg-brand-primary, text-brand-accent, etc. */
+  --color-brand-primary:      var(--primary);
+  --color-brand-accent:       var(--accent);
+  --color-brand-muted:        var(--muted);
+  --color-brand-success:      var(--success);
+  --color-brand-destructive:  var(--destructive);
+
+  /* Typography */
+  --font-sans:    var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+
+  /* Custom shadows */
+  --shadow-soft:  0 1px 2px 0 rgb(10 22 40 / 0.04), 0 4px 12px -2px rgb(10 22 40 / 0.06);
+  --shadow-hover: 0 4px 8px -1px rgb(10 22 40 / 0.08), 0 16px 32px -8px rgb(10 22 40 / 0.12);
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Global focus ring — WCAG AA */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Font utility */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Reduced-motion: strip all transitions & animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

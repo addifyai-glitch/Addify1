@@ -1,0 +1,269 @@
+{
+  "_note": "Starter estimates derived from Bayt Salary Report 2024, Robert Half GCC Salary Guide, and Cooper Fitch GCC Salary Survey. All values are monthly gross basic salary. Verify with current market sources before use in production.",
+  "_structure": "Base values are in AED (Dubai baseline). City factors convert AED to local currency, incorporating both exchange rates and market-level adjustments.",
+
+  "cityFactors": {
+    "dubai":       { "name": "Dubai",       "country": "UAE",     "currency": "AED", "factor": 1.000 },
+    "abu-dhabi":   { "name": "Abu Dhabi",   "country": "UAE",     "currency": "AED", "factor": 1.080 },
+    "sharjah":     { "name": "Sharjah",     "country": "UAE",     "currency": "AED", "factor": 0.820 },
+    "riyadh":      { "name": "Riyadh",      "country": "KSA",     "currency": "SAR", "factor": 1.020 },
+    "jeddah":      { "name": "Jeddah",      "country": "KSA",     "currency": "SAR", "factor": 0.950 },
+    "doha":        { "name": "Doha",        "country": "Qatar",   "currency": "QAR", "factor": 1.090 },
+    "kuwait-city": { "name": "Kuwait City", "country": "Kuwait",  "currency": "KWD", "factor": 0.044 },
+    "manama":      { "name": "Manama",      "country": "Bahrain", "currency": "BHD", "factor": 0.047 },
+    "muscat":      { "name": "Muscat",      "country": "Oman",    "currency": "OMR", "factor": 0.053 }
+  },
+
+  "roles": {
+    "software-engineer": {
+      "title": "Software Engineer",
+      "category": "Technology",
+      "base": {
+        "0-2":  { "p25":  8000, "median": 10500, "p75": 14000, "housing": 25, "total": 40 },
+        "3-5":  { "p25": 13000, "median": 17000, "p75": 22000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 20000, "median": 26000, "p75": 33000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 28000, "median": 36000, "p75": 46000, "housing": 20, "total": 32 }
+      }
+    },
+    "senior-software-engineer": {
+      "title": "Senior Software Engineer",
+      "category": "Technology",
+      "base": {
+        "0-2":  { "p25": 15000, "median": 19000, "p75": 24000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 20000, "median": 26000, "p75": 33000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 26000, "median": 33000, "p75": 42000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 35000, "median": 44000, "p75": 56000, "housing": 20, "total": 30 }
+      }
+    },
+    "product-manager": {
+      "title": "Product Manager",
+      "category": "Technology",
+      "base": {
+        "0-2":  { "p25": 12000, "median": 15500, "p75": 20000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 23000, "p75": 30000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 25000, "median": 32000, "p75": 40000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 35000, "median": 44000, "p75": 55000, "housing": 20, "total": 30 }
+      }
+    },
+    "marketing-manager": {
+      "title": "Marketing Manager",
+      "category": "Marketing",
+      "base": {
+        "0-2":  { "p25": 10000, "median": 13000, "p75": 17000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 15000, "median": 19000, "p75": 25000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 20000, "median": 26000, "p75": 33000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 27000, "median": 35000, "p75": 44000, "housing": 20, "total": 30 }
+      }
+    },
+    "digital-marketing-specialist": {
+      "title": "Digital Marketing Specialist",
+      "category": "Marketing",
+      "base": {
+        "0-2":  { "p25":  5500, "median":  7500, "p75": 10000, "housing": 25, "total": 40 },
+        "3-5":  { "p25":  8000, "median": 11000, "p75": 14000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 12000, "median": 16000, "p75": 21000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 17000, "median": 22000, "p75": 28000, "housing": 20, "total": 33 }
+      }
+    },
+    "accountant": {
+      "title": "Accountant",
+      "category": "Finance",
+      "base": {
+        "0-2":  { "p25":  5000, "median":  7000, "p75":  9500, "housing": 25, "total": 40 },
+        "3-5":  { "p25":  7500, "median": 10000, "p75": 13500, "housing": 25, "total": 38 },
+        "6-10": { "p25": 11000, "median": 14500, "p75": 19000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 15000, "median": 20000, "p75": 26000, "housing": 20, "total": 33 }
+      }
+    },
+    "finance-manager": {
+      "title": "Finance Manager",
+      "category": "Finance",
+      "base": {
+        "0-2":  { "p25": 13000, "median": 17000, "p75": 22000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 24000, "p75": 31000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 25000, "median": 32000, "p75": 41000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 33000, "median": 43000, "p75": 55000, "housing": 20, "total": 30 }
+      }
+    },
+    "hr-manager": {
+      "title": "HR Manager",
+      "category": "Human Resources",
+      "base": {
+        "0-2":  { "p25": 10000, "median": 13000, "p75": 17000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 14000, "median": 18000, "p75": 24000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 19000, "median": 25000, "p75": 32000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 26000, "median": 33000, "p75": 42000, "housing": 20, "total": 30 }
+      }
+    },
+    "sales-executive": {
+      "title": "Sales Executive",
+      "category": "Sales",
+      "base": {
+        "0-2":  { "p25":  5000, "median":  7000, "p75": 10000, "housing": 25, "total": 40 },
+        "3-5":  { "p25":  7000, "median": 10000, "p75": 14000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 10000, "median": 14000, "p75": 19000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 14000, "median": 19000, "p75": 26000, "housing": 20, "total": 33 }
+      }
+    },
+    "sales-manager": {
+      "title": "Sales Manager",
+      "category": "Sales",
+      "base": {
+        "0-2":  { "p25": 13000, "median": 17000, "p75": 23000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 23000, "p75": 31000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 24000, "median": 31000, "p75": 40000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 32000, "median": 42000, "p75": 55000, "housing": 20, "total": 30 }
+      }
+    },
+    "customer-service-rep": {
+      "title": "Customer Service Rep",
+      "category": "Customer Service",
+      "base": {
+        "0-2":  { "p25":  4000, "median":  5500, "p75":  7500, "housing": 25, "total": 42 },
+        "3-5":  { "p25":  5500, "median":  7500, "p75": 10000, "housing": 25, "total": 40 },
+        "6-10": { "p25":  7500, "median": 10000, "p75": 13500, "housing": 22, "total": 38 },
+        "10+":  { "p25": 10000, "median": 13500, "p75": 18000, "housing": 20, "total": 35 }
+      }
+    },
+    "graphic-designer": {
+      "title": "Graphic Designer",
+      "category": "Design",
+      "base": {
+        "0-2":  { "p25":  4500, "median":  6500, "p75":  9000, "housing": 25, "total": 40 },
+        "3-5":  { "p25":  7000, "median":  9500, "p75": 13000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 10000, "median": 13500, "p75": 18000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 14000, "median": 19000, "p75": 25000, "housing": 20, "total": 33 }
+      }
+    },
+    "ui-ux-designer": {
+      "title": "UI/UX Designer",
+      "category": "Design",
+      "base": {
+        "0-2":  { "p25":  7000, "median":  9500, "p75": 13000, "housing": 25, "total": 40 },
+        "3-5":  { "p25": 11000, "median": 15000, "p75": 20000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 16000, "median": 21000, "p75": 28000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 22000, "median": 29000, "p75": 38000, "housing": 20, "total": 32 }
+      }
+    },
+    "data-analyst": {
+      "title": "Data Analyst",
+      "category": "Technology",
+      "base": {
+        "0-2":  { "p25":  7000, "median":  9500, "p75": 13000, "housing": 25, "total": 40 },
+        "3-5":  { "p25": 11000, "median": 15000, "p75": 20000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 16000, "median": 21000, "p75": 27000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 22000, "median": 29000, "p75": 37000, "housing": 20, "total": 32 }
+      }
+    },
+    "project-manager": {
+      "title": "Project Manager",
+      "category": "Management",
+      "base": {
+        "0-2":  { "p25": 11000, "median": 14000, "p75": 18000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 16000, "median": 21000, "p75": 27000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 22000, "median": 29000, "p75": 37000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 30000, "median": 39000, "p75": 50000, "housing": 20, "total": 30 }
+      }
+    },
+    "construction-manager": {
+      "title": "Construction Manager",
+      "category": "Engineering",
+      "base": {
+        "0-2":  { "p25": 12000, "median": 16000, "p75": 21000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 24000, "p75": 31000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 25000, "median": 33000, "p75": 43000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 35000, "median": 46000, "p75": 59000, "housing": 20, "total": 30 }
+      }
+    },
+    "civil-engineer": {
+      "title": "Civil Engineer",
+      "category": "Engineering",
+      "base": {
+        "0-2":  { "p25":  7000, "median":  9500, "p75": 13000, "housing": 25, "total": 40 },
+        "3-5":  { "p25": 11000, "median": 15000, "p75": 20000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 16000, "median": 21000, "p75": 28000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 22000, "median": 29000, "p75": 38000, "housing": 20, "total": 32 }
+      }
+    },
+    "mechanical-engineer": {
+      "title": "Mechanical Engineer",
+      "category": "Engineering",
+      "base": {
+        "0-2":  { "p25":  7000, "median":  9500, "p75": 13000, "housing": 25, "total": 40 },
+        "3-5":  { "p25": 11000, "median": 15000, "p75": 20000, "housing": 25, "total": 38 },
+        "6-10": { "p25": 16000, "median": 21000, "p75": 28000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 22000, "median": 29000, "p75": 38000, "housing": 20, "total": 32 }
+      }
+    },
+    "teacher": {
+      "title": "Teacher",
+      "category": "Education",
+      "base": {
+        "0-2":  { "p25":  6000, "median":  8000, "p75": 11000, "housing": 30, "total": 45 },
+        "3-5":  { "p25":  8500, "median": 11500, "p75": 15000, "housing": 28, "total": 42 },
+        "6-10": { "p25": 12000, "median": 16000, "p75": 21000, "housing": 25, "total": 40 },
+        "10+":  { "p25": 16000, "median": 21000, "p75": 27000, "housing": 25, "total": 38 }
+      }
+    },
+    "nurse": {
+      "title": "Nurse",
+      "category": "Healthcare",
+      "base": {
+        "0-2":  { "p25":  5500, "median":  7500, "p75": 10000, "housing": 28, "total": 42 },
+        "3-5":  { "p25":  8000, "median": 11000, "p75": 14500, "housing": 25, "total": 40 },
+        "6-10": { "p25": 11000, "median": 15000, "p75": 20000, "housing": 22, "total": 38 },
+        "10+":  { "p25": 15000, "median": 20000, "p75": 26000, "housing": 20, "total": 35 }
+      }
+    },
+    "doctor": {
+      "title": "Doctor",
+      "category": "Healthcare",
+      "base": {
+        "0-2":  { "p25": 15000, "median": 20000, "p75": 27000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 22000, "median": 30000, "p75": 40000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 32000, "median": 43000, "p75": 57000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 45000, "median": 60000, "p75": 80000, "housing": 20, "total": 30 }
+      }
+    },
+    "lawyer": {
+      "title": "Lawyer",
+      "category": "Legal",
+      "base": {
+        "0-2":  { "p25": 12000, "median": 16000, "p75": 22000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 24000, "p75": 32000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 26000, "median": 35000, "p75": 46000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 36000, "median": 48000, "p75": 63000, "housing": 20, "total": 30 }
+      }
+    },
+    "receptionist": {
+      "title": "Receptionist",
+      "category": "Administration",
+      "base": {
+        "0-2":  { "p25":  3500, "median":  4500, "p75":  6000, "housing": 25, "total": 42 },
+        "3-5":  { "p25":  4500, "median":  6000, "p75":  8000, "housing": 25, "total": 40 },
+        "6-10": { "p25":  6000, "median":  8000, "p75": 10500, "housing": 22, "total": 38 },
+        "10+":  { "p25":  8000, "median": 10500, "p75": 14000, "housing": 20, "total": 35 }
+      }
+    },
+    "executive-assistant": {
+      "title": "Executive Assistant",
+      "category": "Administration",
+      "base": {
+        "0-2":  { "p25":  6000, "median":  8000, "p75": 11000, "housing": 25, "total": 40 },
+        "3-5":  { "p25":  8500, "median": 11500, "p75": 15500, "housing": 25, "total": 38 },
+        "6-10": { "p25": 12000, "median": 16000, "p75": 21000, "housing": 22, "total": 35 },
+        "10+":  { "p25": 16000, "median": 21000, "p75": 28000, "housing": 20, "total": 33 }
+      }
+    },
+    "operations-manager": {
+      "title": "Operations Manager",
+      "category": "Management",
+      "base": {
+        "0-2":  { "p25": 13000, "median": 17000, "p75": 22000, "housing": 25, "total": 38 },
+        "3-5":  { "p25": 18000, "median": 24000, "p75": 31000, "housing": 22, "total": 35 },
+        "6-10": { "p25": 25000, "median": 33000, "p75": 42000, "housing": 20, "total": 33 },
+        "10+":  { "p25": 34000, "median": 44000, "p75": 57000, "housing": 20, "total": 30 }
+      }
+    }
+  }
+}
