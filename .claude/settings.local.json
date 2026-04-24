@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm -v)"
+      "Bash(npm -v)",
+      "Bash(node -e \"const l = require\\('/Users/imac/Documents/Addify-gulffit/node_modules/lucide-react'\\); console.log\\(Object.keys\\(l\\).filter\\(k => /twitter|linkedin|instagram|x$/i.test\\(k\\)\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/salary)",
+      "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/salary/software-engineer/dubai)",
+      "Bash(node -e \"const p=require\\('/Users/imac/Documents/Addify-gulffit/node_modules/lucide-react'\\); console.log\\(['Star','X','Copy','Link','MessageCircle','Share2','Link2','CheckCheck'].filter\\(k=>p[k]\\).join\\(', '\\)\\)\")"
+    ],
+    "additionalDirectories": [
+      "/tmp"
     ]
   }
 }

@@ -18,6 +18,12 @@
   --success:           #10B981;
   --destructive:       #DC2626;
   --ring:              #F59E0B;
+  --radius:            0.75rem;
+
+  /* Mesh gradient blob colors */
+  --gradient-navy:   rgba(10, 22, 40, 0.10);
+  --gradient-amber:  rgba(245, 158, 11, 0.09);
+  --gradient-emerald:rgba(16, 185, 129, 0.08);
 
   /* Legacy aliases — keeps existing components working */
   --surface:       var(--card);
@@ -41,6 +47,11 @@
   --success:           #34D399;
   --destructive:       #EF4444;
   --ring:              #FBBF24;
+
+  /* Mesh gradient blob colors (lighter for dark bg) */
+  --gradient-navy:   rgba(148, 163, 184, 0.10);
+  --gradient-amber:  rgba(251, 191, 36, 0.12);
+  --gradient-emerald:rgba(52, 211, 153, 0.10);
 
   /* Legacy aliases */
   --surface:       var(--card);
@@ -78,8 +89,52 @@
   --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
 
   /* Custom shadows */
-  --shadow-soft:  0 1px 2px 0 rgb(10 22 40 / 0.04), 0 4px 12px -2px rgb(10 22 40 / 0.06);
-  --shadow-hover: 0 4px 8px -1px rgb(10 22 40 / 0.08), 0 16px 32px -8px rgb(10 22 40 / 0.12);
+  --shadow-soft:         0 1px 2px 0 rgb(10 22 40 / 0.04), 0 4px 12px -2px rgb(10 22 40 / 0.06);
+  --shadow-hover:        0 4px 8px -1px rgb(10 22 40 / 0.08), 0 20px 40px -10px rgb(10 22 40 / 0.15);
+  --shadow-glow-accent:  0 0 0 1px rgb(245 158 11 / 0.3), 0 8px 24px -4px rgb(245 158 11 / 0.2);
+
+  /* Custom animations */
+  --animate-gradient-drift: gradient-drift 25s ease infinite;
+  --animate-count-up:       count-up 1.2s ease-out;
+  --animate-fade-up:        fade-up 600ms ease-out;
+}
+
+@keyframes gradient-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drift-1 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33%       { transform: translate3d(40px, -30px, 0); }
+  66%       { transform: translate3d(-25px, 40px, 0); }
+}
+
+@keyframes drift-2 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  40%       { transform: translate3d(-50px, 25px, 0); }
+  70%       { transform: translate3d(30px, -40px, 0); }
+}
+
+@keyframes drift-3 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25%       { transform: translate3d(25px, 45px, 0); }
+  75%       { transform: translate3d(-40px, -25px, 0); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 /* ─── Base styles ────────────────────────────────────────────────────────── */

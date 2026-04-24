@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import {
-  ROLES,
   CITY_CONFIGS,
-  ROLE_SLUGS,
   CITY_SLUGS,
   EXPERIENCE_BANDS,
   EXPERIENCE_LABELS_LONG,
@@ -13,18 +11,36 @@ import {
   type ExperienceBandLegacy,
   type SalaryResult,
 } from "@/lib/salary";
+import { JOB_CATEGORIES, getJobTitleBySlug } from "@/data/jobTitles";
+import { CITY_GROUPS, CITIES_WITH_DATA } from "@/data/cities";
+
+// Map city name → slug in CITY_CONFIGS
+const cityNameToSlug = new Map<string, string>(
+  CITY_SLUGS.map((slug) => [CITY_CONFIGS[slug].name, slug])
+);
 
 export default function SalaryForm() {
-  const [roleSlug, setRoleSlug] = useState("");
-  const [citySlug, setCitySlug] = useState("");
+  const [titleSlug, setTitleSlug] = useState("");
+  // cityValue stores the city name (e.g. "Dubai") — works for all 34 cities
+  const [cityValue, setCityValue] = useState("");
   const [experience, setExperience] = useState<ExperienceBandLegacy | "">("");
 
+  const jobTitle = titleSlug ? getJobTitleBySlug(titleSlug) : undefined;
+  const salarySlug = jobTitle?.salarySlug ?? null;
+  const noTitleData = !!titleSlug && salarySlug === null;
+
+  // Resolve city name → salary slug (null for cities without data)
+  const resolvedCitySlug = cityValue ? (cityNameToSlug.get(cityValue) ?? null) : null;
+  const noCityData = !!cityValue && !CITIES_WITH_DATA.has(cityValue);
+
+  const noData = noTitleData || noCityData;
+
   const result: SalaryResult | null =
-    roleSlug && citySlug && experience
-      ? computeSalary(roleSlug, citySlug, experience as ExperienceBandLegacy)
+    salarySlug && resolvedCitySlug && experience && !noData
+      ? computeSalary(salarySlug, resolvedCitySlug, experience as ExperienceBandLegacy)
       : null;
 
-  const ready = roleSlug && citySlug && experience;
+  const ready = titleSlug && cityValue && experience;
 
   return (
     <div>
@@ -37,15 +53,19 @@ export default function SalaryForm() {
               Job Title
             </label>
             <select
-              value={roleSlug}
-              onChange={(e) => setRoleSlug(e.target.value)}
+              value={titleSlug}
+              onChange={(e) => setTitleSlug(e.target.value)}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 appearance-none cursor-pointer"
             >
               <option value="">Select a role…</option>
-              {ROLE_SLUGS.map((slug) => (
-                <option key={slug} value={slug}>
-                  {ROLES[slug].title}
-                </option>
+              {JOB_CATEGORIES.map((cat) => (
+                <optgroup key={cat.name} label={cat.name}>
+                  {cat.titles.map((t) => (
+                    <option key={t.slug} value={t.slug}>
+                      {t.title}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </div>
@@ -56,15 +76,19 @@ export default function SalaryForm() {
               City
             </label>
             <select
-              value={citySlug}
-              onChange={(e) => setCitySlug(e.target.value)}
+              value={cityValue}
+              onChange={(e) => setCityValue(e.target.value)}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 appearance-none cursor-pointer"
             >
               <option value="">Select a city…</option>
-              {CITY_SLUGS.map((slug) => (
-                <option key={slug} value={slug}>
-                  {CITY_CONFIGS[slug].name}, {CITY_CONFIGS[slug].country}
-                </option>
+              {CITY_GROUPS.map((group) => (
+                <optgroup key={group.country} label={`${group.country} (${group.currency})`}>
+                  {group.cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </div>
@@ -89,7 +113,16 @@ export default function SalaryForm() {
           </div>
         </div>
 
-        {!ready && (
+        {noData && (
+          <p className="mt-4 text-sm text-[var(--muted)] text-center">
+            We don&apos;t have data for this combination yet —{" "}
+            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
+              help us by contributing your salary
+            </a>
+            .
+          </p>
+        )}
+        {!ready && !noData && (
           <p className="mt-4 text-sm text-[var(--muted)] text-center">
             Select all three fields to see your salary estimate.
           </p>
