@@ -71,9 +71,9 @@ export function Header() {
           {/* Right: theme toggle + CTA */}
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Button asChild size="sm" variant="primary">
-              <Link href="/salary">Get Started</Link>
-            </Button>
+            <Link href="/salary">
+              <Button size="sm" variant="primary">Get Started</Button>
+            </Link>
           </div>
 
           {/* Mobile: theme toggle + hamburger */}
@@ -116,11 +116,11 @@ export function Header() {
             </nav>
 
             <div className="mt-auto flex flex-col gap-3">
-              <Button asChild size="lg" variant="primary" className="w-full justify-center">
-                <Link href="/salary" onClick={() => setMenuOpen(false)}>
+              <Link href="/salary" onClick={() => setMenuOpen(false)}>
+                <Button size="lg" variant="primary" className="w-full justify-center">
                   Get Started — it&apos;s free
-                </Link>
-              </Button>
+                </Button>
+              </Link>
               <p className="text-center text-xs text-muted-foreground">
                 No signup required · No credit card ever
               </p>

@@ -33,9 +33,8 @@ const columns = [
     links: [
       { label: "Salary Check", href: "/salary" },
       { label: "Fit Score", href: "/fit" },
-      { label: "Cover Letter", href: "/fit" },
       { label: "Jobs", href: "/jobs" },
-      { label: "Pricing", href: "/pricing" },
+      { label: "Post a Job", href: "/submit-job" },
     ],
   },
   {
@@ -43,7 +42,6 @@ const columns = [
     links: [
       { label: "Blog", href: "/blog" },
       { label: "Salary Guides", href: "/blog" },
-      { label: "City Guides", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ],
   },

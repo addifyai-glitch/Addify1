@@ -194,18 +194,18 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: prefersReduced ? 0 : 1.9, duration: 0.5 }}
         >
-          <Button asChild size="lg" variant="primary">
-            <Link href="/salary" className="group">
+          <Link href="/salary" className="group">
+            <Button size="lg" variant="primary" className="group">
               Check Your Salary
               <ArrowRight
                 size={18}
                 className="transition-transform duration-200 group-hover:translate-x-1"
               />
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="secondary">
-            <Link href="/fit">Analyze a Job Offer</Link>
-          </Button>
+            </Button>
+          </Link>
+          <Link href="/fit">
+            <Button size="lg" variant="secondary">Analyze a Job Offer</Button>
+          </Link>
         </motion.div>
 
         {/* Live demo card */}

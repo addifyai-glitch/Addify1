@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { Mail, Clock, MapPin } from "lucide-react";
+import { Mail, Clock } from "lucide-react";
 
 const SUBJECTS = ["General", "Feedback", "Press", "Business", "Privacy", "Other"];
 
@@ -90,7 +90,6 @@ export default function ContactPage() {
                 {[
                   { Icon: Mail, label: "Email", value: "hello@addify.ae" },
                   { Icon: Clock, label: "Response time", value: "Within 48 hours" },
-                  { Icon: MapPin, label: "Location", value: "Dubai, UAE" },
                 ].map(({ Icon, label, value }) => (
                   <div key={label} className="bg-card border border-border rounded-xl p-5 shadow-soft">
                     <div className="flex items-center gap-3 mb-1">

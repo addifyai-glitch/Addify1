@@ -26,9 +26,9 @@ export function FinalCTA() {
           </h2>
 
           <div className="mt-10">
-            <Button asChild size="lg" variant="primary">
-              <Link href="/salary">Get Started</Link>
-            </Button>
+            <Link href="/salary">
+              <Button size="lg" variant="primary">Get Started</Button>
+            </Link>
           </div>
 
           <p className="mt-5 text-sm text-muted-foreground">

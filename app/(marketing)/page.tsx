@@ -5,6 +5,7 @@ import { HowItWorks } from "@/components/sections/how-it-works";
 import { Features } from "@/components/sections/features";
 import { Stats } from "@/components/sections/stats";
 import { WhyAddify } from "@/components/sections/why-addify";
+import { Testimonials } from "@/components/sections/testimonials";
 import { FinalCTA } from "@/components/sections/final-cta";
 
 export default function HomePage() {
@@ -17,6 +18,7 @@ export default function HomePage() {
         <Features />
         <Stats />
         <WhyAddify />
+        <Testimonials />
         <FinalCTA />
       </main>
       <Footer />

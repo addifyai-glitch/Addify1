@@ -8,11 +8,16 @@ const SUPABASE_OK =
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const title = searchParams.get("title") ?? "";
-  const city = searchParams.get("city") ?? "";
-  const limit = Math.min(parseInt(searchParams.get("limit") ?? "6", 10), 12);
+  const title    = searchParams.get("title") ?? "";
+  const city     = searchParams.get("city") ?? "";
+  const country  = searchParams.get("country") ?? "";
+  const category = searchParams.get("category") ?? "";
+  const experience = searchParams.get("experience") ?? "";
+  const search   = searchParams.get("search") ?? "";
+  const limit    = Math.min(parseInt(searchParams.get("limit") ?? "12", 10), 50);
+  const offset   = parseInt(searchParams.get("offset") ?? "0", 10);
 
-  // ── Try Supabase ──────────────────────────────────────────────────────────
+  // ── Try Supabase ────────────────────────────────────────────────────────────
   if (SUPABASE_OK) {
     try {
       const { createServerClient } = await import("@supabase/ssr");
@@ -22,70 +27,67 @@ export async function GET(req: NextRequest) {
       const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll: () => cookieStore.getAll(),
-            setAll: () => {},
-          },
-        }
+        { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
       );
 
       const now = new Date().toISOString();
-
-      // Exact city match first
-      let { data, error } = await supabase
+      let query = supabase
         .from("jobs")
-        .select("*")
+        .select("*", { count: "exact" })
         .eq("approved", true)
-        .gt("expires_at", now)
-        .ilike("city", city || "%")
+        .gt("expires_at", now);
+
+      if (city) query = query.ilike("city", city);
+      if (country) query = query.ilike("country", country);
+      if (category) query = query.ilike("category", category);
+      if (experience) query = query.ilike("experience_level", experience);
+      if (search) query = query.or(`title.ilike.%${search}%,company.ilike.%${search}%,description.ilike.%${search}%`);
+      if (title) query = query.ilike("title", `%${title}%`);
+
+      query = query
         .order("featured", { ascending: false })
         .order("posted_at", { ascending: false })
-        .limit(limit);
+        .range(offset, offset + limit - 1);
 
+      const { data, error, count } = await query;
       if (error) throw error;
-
-      // If no city matches, widen the search
-      if (!data || data.length === 0) {
-        ({ data, error } = await supabase
-          .from("jobs")
-          .select("*")
-          .eq("approved", true)
-          .gt("expires_at", now)
-          .order("featured", { ascending: false })
-          .order("posted_at", { ascending: false })
-          .limit(limit));
-        if (error) throw error;
-      }
-
-      return NextResponse.json({ jobs: data ?? [], source: "live" });
+      return NextResponse.json({ jobs: data ?? [], total: count ?? 0, source: "live" });
     } catch {
       // Fall through to mock
     }
   }
 
-  // ── Mock fallback ─────────────────────────────────────────────────────────
-  const cityLower = city.toLowerCase();
-  const titleLower = title.toLowerCase();
+  // ── Mock fallback ───────────────────────────────────────────────────────────
+  let matched: Job[] = MOCK_JOBS;
 
-  let matched = MOCK_JOBS.filter(
-    (j) =>
-      j.city.toLowerCase() === cityLower ||
-      j.title.toLowerCase().includes(titleLower.split(" ").slice(-1)[0] ?? "")
-  );
-
-  if (matched.length === 0) {
-    matched = MOCK_JOBS;
+  if (city) matched = matched.filter((j) => j.city.toLowerCase() === city.toLowerCase());
+  if (country) matched = matched.filter((j) => j.country.toLowerCase() === country.toLowerCase());
+  if (experience) matched = matched.filter((j) => j.experience_level?.toLowerCase() === experience.toLowerCase());
+  if (search) {
+    const q = search.toLowerCase();
+    matched = matched.filter(
+      (j) =>
+        j.title.toLowerCase().includes(q) ||
+        j.company.toLowerCase().includes(q) ||
+        j.description?.toLowerCase().includes(q)
+    );
+  }
+  if (title) {
+    const q = title.toLowerCase();
+    matched = matched.filter((j) => j.title.toLowerCase().includes(q));
   }
 
-  // Sort: featured first, then most recent
+  // If no city/country/search match, return all (for live-jobs section)
+  if ((city || country) && matched.length === 0) matched = MOCK_JOBS;
+
   const sorted = [...matched].sort((a, b) => {
     if (a.featured !== b.featured) return b.featured ? 1 : -1;
     return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
   });
 
   return NextResponse.json({
-    jobs: sorted.slice(0, limit) as Job[],
+    jobs: sorted.slice(offset, offset + limit) as Job[],
+    total: sorted.length,
     source: "mock",
   });
 }

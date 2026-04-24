@@ -13,6 +13,8 @@ import {
 } from "@/lib/salary";
 import { JOB_CATEGORIES, getJobTitleBySlug } from "@/data/jobTitles";
 import { CITY_GROUPS, CITIES_WITH_DATA } from "@/data/cities";
+import { LiveJobs } from "@/components/sections/live-jobs";
+import { AdSlot } from "@/components/ui/ad-slot";
 
 // Map city name → slug in CITY_CONFIGS
 const cityNameToSlug = new Map<string, string>(
@@ -131,6 +133,14 @@ export default function SalaryForm() {
 
       {/* Result card */}
       {result && <ResultCard result={result} />}
+
+      {/* Ad + live jobs (always shown once city is selected) */}
+      {cityValue && (
+        <>
+          <AdSlot slot="in-content" className="mt-10" />
+          <LiveJobs jobTitle={jobTitle?.title ?? ""} city={cityValue} />
+        </>
+      )}
     </div>
   );
 }
