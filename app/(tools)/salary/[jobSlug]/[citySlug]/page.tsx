@@ -145,7 +145,7 @@ export default async function SalaryStaticPage({
         <div className="bg-[var(--foreground)] text-white rounded-2xl p-8 mb-8 flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="flex-1">
             <p className="text-white/60 text-sm mb-1">
-              Median salary · 3–5 years experience
+              Median salary, 3 to 5 years experience
             </p>
             <p className="text-4xl md:text-5xl font-bold text-[var(--accent)] tabular-nums">
               {formatCurrency(representative.median, city.currency)}
@@ -156,7 +156,7 @@ export default async function SalaryStaticPage({
             <p>
               Range:{" "}
               <span className="text-white font-medium">
-                {formatCurrency(representative.p25, city.currency)} –{" "}
+                {formatCurrency(representative.p25, city.currency)} to{" "}
                 {formatCurrency(representative.p75, city.currency)}
               </span>
             </p>
@@ -248,7 +248,7 @@ export default async function SalaryStaticPage({
           <div className="px-6 py-3 border-t border-[var(--border)] bg-[var(--background)]">
             <p className="text-xs text-[var(--muted)]">
               Sources: Bayt Salary Report 2024 · Robert Half GCC Salary Guide ·
-              Cooper Fitch GCC Salary Survey. Estimates only — actual pay varies
+              Cooper Fitch GCC Salary Survey. Estimates only. Actual pay varies
               by employer, skills, and negotiation.
             </p>
           </div>

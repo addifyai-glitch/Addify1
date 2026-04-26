@@ -24,7 +24,7 @@ const steps = [
     Icon: FileCheck2,
     title: "Know your fit",
     description:
-      "Upload your resume, paste any job description, and we score your fit from 0–100 with reasons.",
+      "Upload your resume, paste any job description, and we score your fit from 0 to 100 with reasons.",
   },
 ];
 

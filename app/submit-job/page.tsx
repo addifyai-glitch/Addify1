@@ -126,7 +126,7 @@ export default function SubmitJobPage() {
               </div>
 
               <div>
-                <label className={labelCls}>Job Description * (200–2000 characters)</label>
+                <label className={labelCls}>Job Description * (200 to 2000 characters)</label>
                 <textarea
                   className={inputCls}
                   rows={5}

@@ -42,14 +42,14 @@ function StatNumber({
 
   if (isZero) {
     return (
-      <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground">
+      <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground transition-all duration-300 group-hover:text-accent group-hover:[text-shadow:_0_0_30px_rgb(245_158_11_/_0.3)]">
         Free
       </span>
     );
   }
 
   return (
-    <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground tabular-nums">
+    <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground tabular-nums transition-all duration-300 group-hover:text-accent group-hover:[text-shadow:_0_0_30px_rgb(245_158_11_/_0.3)]">
       {inView ? display : 0}
       {suffix}
     </span>
@@ -64,7 +64,7 @@ export function Stats() {
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
-              className="flex flex-col items-center text-center gap-2"
+              className="flex flex-col items-center text-center gap-2 group relative"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}

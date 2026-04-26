@@ -7,13 +7,17 @@ import { TESTIMONIALS } from "@/data/testimonials";
 import { Container } from "@/components/ui/container";
 
 const SHARE_URL = "https://addify.ae";
-const SHARE_TEXT = "Check what you should earn in the Gulf, free — Addify: Gulf Careers, Clarified.";
+const SHARE_TEXT = "Check what you should earn in the Gulf, free. Addify: Gulf Careers, Clarified.";
 
 function StarRow({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} size={13} className="text-accent fill-accent" />
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          size={13}
+          className={i < count ? "text-accent fill-accent" : "text-border fill-transparent"}
+        />
       ))}
     </div>
   );
@@ -129,8 +133,10 @@ export function Testimonials() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3 flex items-center justify-center gap-2">
+            <span className="inline-block h-1 w-1 rounded-full bg-accent" />
             Loved by Gulf professionals
+            <span className="inline-block h-1 w-1 rounded-full bg-accent" />
           </p>
           <h2 className="font-display text-3xl md:text-4xl text-foreground">
             Real stories, real clarity.

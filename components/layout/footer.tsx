@@ -33,6 +33,7 @@ const columns = [
     links: [
       { label: "Salary Check", href: "/salary" },
       { label: "Fit Score", href: "/fit" },
+      { label: "Cover Letter", href: "/cover-letter" },
       { label: "Jobs", href: "/jobs" },
       { label: "Post a Job", href: "/submit-job" },
     ],

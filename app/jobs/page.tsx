@@ -34,7 +34,7 @@ function fmtSalary(job: Job) {
   if (!job.salary_min && !job.salary_max) return null;
   const cur = job.currency ?? "";
   const fmt = (n: number) => n.toLocaleString("en-US");
-  if (job.salary_min && job.salary_max) return `${cur} ${fmt(job.salary_min)}–${fmt(job.salary_max)}`;
+  if (job.salary_min && job.salary_max) return `${cur} ${fmt(job.salary_min)} to ${fmt(job.salary_max)}`;
   if (job.salary_min) return `${cur} ${fmt(job.salary_min)}+`;
   return null;
 }

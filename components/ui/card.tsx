@@ -7,7 +7,15 @@ const cardVariants = cva(
   {
     variants: {
       interactive: {
-        true: "hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 cursor-pointer",
+        true: [
+          "transition-all duration-300 cursor-pointer",
+          "hover:shadow-hover hover:-translate-y-1.5",
+          "hover:border-accent/50",
+          "relative overflow-hidden",
+          "after:absolute after:inset-0 after:rounded-xl after:opacity-0 after:transition-opacity after:duration-300",
+          "after:bg-gradient-to-br after:from-accent/5 after:to-transparent after:pointer-events-none",
+          "hover:after:opacity-100",
+        ].join(" "),
       },
       padding: {
         none: "",

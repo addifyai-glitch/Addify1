@@ -5,10 +5,10 @@ import { Check } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
 const values = [
-  "Built for Gulf realities — housing allowance, visa status, nationality nuances",
-  "Your data stays private — never shared with employers or recruiters",
+  "Built for Gulf realities: housing allowance, visa status, and nationality nuances",
+  "Your data stays private. Never shared with employers or recruiters",
   "Real submissions, not scraped LinkedIn averages",
-  "From first job to C-suite — one platform for every career stage",
+  "One platform for every career stage, from first job to C-suite",
 ];
 
 function AbstractOrbs() {
@@ -81,8 +81,10 @@ export function WhyAddify() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3 flex items-center gap-2">
+              <span className="inline-block h-1 w-1 rounded-full bg-accent" />
               Why Addify
+              <span className="inline-block h-1 w-1 rounded-full bg-accent" />
             </p>
             <h2 className="font-display text-3xl md:text-4xl text-foreground mb-8">
               Built different, for the Gulf.

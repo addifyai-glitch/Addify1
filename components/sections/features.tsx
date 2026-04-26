@@ -11,7 +11,7 @@ const tools = [
     name: "Salary Check",
     href: "/salary",
     description:
-      "See real compensation ranges for your exact role, seniority, and city across the UAE and GCC — before you negotiate or accept any offer.",
+      "See real compensation ranges for your exact role, seniority, and city across the UAE and the wider GCC. Know the number before you negotiate.",
     bullets: [
       "34 cities across 6 GCC countries + Egypt",
       "120+ job titles from intern to C-suite",
@@ -23,7 +23,7 @@ const tools = [
     name: "Fit Score",
     href: "/fit",
     description:
-      "Paste a job description and your experience. Get an honest fit score from 0–100 with clear reasons so you apply where you'll actually land.",
+      "Paste a job description and your experience. Get an honest fit score from 0 to 100 with clear reasons so you apply where you'll actually land.",
     bullets: [
       "AI-powered skill gap analysis",
       "Tailored to Gulf hiring standards",
@@ -33,9 +33,9 @@ const tools = [
   {
     Icon: FileText,
     name: "Cover Letter",
-    href: "/fit",
+    href: "/cover-letter",
     description:
-      "Generate a sharp, tailored cover letter for any Gulf role — in Arabic or English — that sounds like you, not a template.",
+      "Generate a tailored cover letter for any Gulf role in Arabic or English. It reads like you wrote it, not a template.",
     bullets: [
       "Arabic & English language support",
       "Customized per job description",
@@ -55,8 +55,10 @@ export function Features() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3 flex items-center justify-center gap-2">
+            <span className="inline-block h-1 w-1 rounded-full bg-accent" />
             The tools
+            <span className="inline-block h-1 w-1 rounded-full bg-accent" />
           </p>
           <h2 className="font-display text-3xl md:text-4xl text-foreground">
             Three tools. One clear edge.

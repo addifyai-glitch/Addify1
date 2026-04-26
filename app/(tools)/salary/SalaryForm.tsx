@@ -12,9 +12,10 @@ import {
   type SalaryResult,
 } from "@/lib/salary";
 import { JOB_CATEGORIES, getJobTitleBySlug } from "@/data/jobTitles";
-import { CITY_GROUPS, CITIES_WITH_DATA } from "@/data/cities";
+import { CITY_GROUPS, CITIES_WITH_DATA, CITIES } from "@/data/cities";
 import { LiveJobs } from "@/components/sections/live-jobs";
 import { AdSlot } from "@/components/ui/ad-slot";
+import { SourceAttribution } from "@/components/salary/source-attribution";
 
 // Map city name → slug in CITY_CONFIGS
 const cityNameToSlug = new Map<string, string>(
@@ -43,6 +44,9 @@ export default function SalaryForm() {
 
   const ready = !!(titleSlug && cityValue && experience);
   const jobCategory = jobTitle?.category ?? "";
+  const selectedCountry = cityValue
+    ? (CITIES.find((c) => c.name === cityValue)?.country ?? "UAE")
+    : "UAE";
 
   return (
     <div>
@@ -129,7 +133,8 @@ export default function SalaryForm() {
             type="button"
             onClick={() => setSubmitted(true)}
             disabled={!ready}
-            className="w-full md:w-auto rounded-full bg-accent px-8 py-3 text-accent-foreground font-semibold shadow-soft hover:shadow-glow-accent hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
+            aria-disabled={!ready}
+            className={`w-full md:w-auto rounded-full px-8 py-3 font-semibold shadow-soft transition-all duration-200 ${ready ? "bg-accent text-accent-foreground hover:shadow-glow-accent hover:-translate-y-0.5" : "bg-accent/50 text-accent-foreground/60 cursor-not-allowed"}`}
           >
             Check Salary
           </button>
@@ -137,7 +142,12 @@ export default function SalaryForm() {
       </div>
 
       {/* Result card */}
-      {submitted && result && <ResultCard result={result} />}
+      {submitted && result && (
+        <>
+          <ResultCard result={result} />
+          <SourceAttribution country={selectedCountry} />
+        </>
+      )}
       {submitted && ready && !result && !noData && (
         <p className="mt-6 text-sm text-center text-[var(--muted)]">
           Select all three fields to see your salary estimate.

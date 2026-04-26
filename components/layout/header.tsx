@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Salary Check", href: "/salary" },
   { label: "Fit Score", href: "/fit" },
+  { label: "Cover Letter", href: "/cover-letter" },
   { label: "Jobs", href: "/jobs" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
@@ -118,7 +119,7 @@ export function Header() {
             <div className="mt-auto flex flex-col gap-3">
               <Link href="/salary" onClick={() => setMenuOpen(false)}>
                 <Button size="lg" variant="primary" className="w-full justify-center">
-                  Get Started — it&apos;s free
+                  Get Started, it&apos;s free
                 </Button>
               </Link>
               <p className="text-center text-xs text-muted-foreground">

@@ -19,7 +19,7 @@ export default function SalaryPage() {
         <h1 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] leading-tight">
           What does this role pay in the Gulf?
         </h1>
-        <p className="mt-3 text-base text-[var(--muted)] max-w-xl mx-auto">
+        <p className="mt-3 text-base text-foreground/75 max-w-xl mx-auto">
           Select your job title, city, and experience level. We&apos;ll show you
           the median salary, percentile range, and a typical total package
           breakdown, all in local currency.

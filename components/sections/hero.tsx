@@ -9,16 +9,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import {
-  ArrowRight,
-  Building2,
-  Briefcase,
-  GraduationCap,
-  Stethoscope,
-  HardHat,
-  Landmark,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { Grain } from "@/components/ui/grain";
 import { Container } from "@/components/ui/container";
@@ -29,15 +20,13 @@ import { Button } from "@/components/ui/button";
 const countries = ["UAE", "KSA", "QATAR", "OMAN", "BAHRAIN", "KUWAIT", "EGYPT"];
 
 const demoRoles = [
-  { title: "Chief Financial Officer", city: "Dubai", flag: "🇦🇪", salary: "AED 85,000–120,000", period: "per month" },
-  { title: "Senior Software Engineer", city: "Riyadh", flag: "🇸🇦", salary: "SAR 22,000–35,000", period: "per month" },
-  { title: "Marketing Manager", city: "Doha", flag: "🇶🇦", salary: "QAR 22,000–35,000", period: "per month" },
-  { title: "Registered Nurse", city: "Abu Dhabi", flag: "🇦🇪", salary: "AED 12,000–18,000", period: "per month" },
-  { title: "Managing Director", city: "Kuwait City", flag: "🇰🇼", salary: "KWD 4,500–7,000", period: "per month" },
-  { title: "Data Scientist", city: "Cairo", flag: "🇪🇬", salary: "EGP 45,000–80,000", period: "per month" },
+  { title: "Chief Financial Officer", city: "Dubai", flag: "🇦🇪", salary: "AED 85,000 to 120,000", period: "per month" },
+  { title: "Senior Software Engineer", city: "Riyadh", flag: "🇸🇦", salary: "SAR 22,000 to 35,000", period: "per month" },
+  { title: "Marketing Manager", city: "Doha", flag: "🇶🇦", salary: "QAR 22,000 to 35,000", period: "per month" },
+  { title: "Registered Nurse", city: "Abu Dhabi", flag: "🇦🇪", salary: "AED 12,000 to 18,000", period: "per month" },
+  { title: "Managing Director", city: "Kuwait City", flag: "🇰🇼", salary: "KWD 4,500 to 7,000", period: "per month" },
+  { title: "Data Scientist", city: "Cairo", flag: "🇪🇬", salary: "EGP 45,000 to 80,000", period: "per month" },
 ];
-
-const industryIcons = [Building2, Briefcase, GraduationCap, Stethoscope, HardHat, Landmark];
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
@@ -224,7 +213,7 @@ export function Hero() {
                 ? {}
                 : { perspective: 1000, rotateX, rotateY, transformStyle: "preserve-3d" }
             }
-            className="backdrop-blur-xl bg-card/70 border border-border/50 rounded-2xl shadow-hover p-6 md:p-8 relative overflow-hidden"
+            className="backdrop-blur-xl bg-card/70 border border-border/50 rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-[0_2px_8px_-1px_rgba(10,22,40,0.08),0_16px_40px_-8px_rgba(10,22,40,0.12),0_32px_80px_-16px_rgba(10,22,40,0.08)]"
           >
             {/* Rotating sparkle */}
             <motion.div
@@ -302,42 +291,36 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Social proof strip */}
+        {/* Country coverage strip */}
         <motion.div
-          className="mt-14 text-center"
+          className="mt-12 flex flex-col items-center gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: prefersReduced ? 0 : 2.5, duration: 0.6 }}
         >
-          <p className="text-sm text-muted-foreground mb-6">
-            Trusted by professionals across the Gulf
-          </p>
-
-          {/* Desktop: static row */}
-          <div className="hidden md:flex justify-center gap-10 items-center">
-            {industryIcons.map((Icon, i) => (
-              <Icon
-                key={i}
-                size={24}
-                className="text-muted-foreground opacity-40"
-              />
-            ))}
-          </div>
-
-          {/* Mobile: marquee */}
-          <div className="md:hidden overflow-hidden">
-            <div
-              className="flex gap-10 items-center w-max"
-              style={{ animation: "marquee 12s linear infinite" }}
-            >
-              {[...industryIcons, ...industryIcons].map((Icon, i) => (
-                <Icon
-                  key={i}
-                  size={22}
-                  className="text-muted-foreground opacity-40 shrink-0"
-                />
-              ))}
-            </div>
+          <p className="text-sm text-foreground/60">Salary data across 7 countries</p>
+          <div className="flex items-center gap-6 md:gap-8 flex-wrap justify-center">
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇦🇪</span> UAE
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇸🇦</span> Saudi Arabia
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇶🇦</span> Qatar
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇰🇼</span> Kuwait
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇧🇭</span> Bahrain
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇴🇲</span> Oman
+            </span>
+            <span className="flex items-center gap-2 text-foreground/70 text-sm">
+              <span className="text-2xl">🇪🇬</span> Egypt
+            </span>
           </div>
         </motion.div>
       </Container>
