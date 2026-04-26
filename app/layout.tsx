@@ -17,9 +17,9 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "GulfFit — Know Your Worth Before You Apply",
+  title: "Addify. Gulf Careers, Clarified.",
   description:
-    "Salary benchmarks and job-fit scores for UAE and GCC job seekers. Find out what you're worth and whether a role is right for you.",
+    "Salary benchmarks and job fit scores for UAE and GCC job seekers. Find out what your role pays and whether a job is right for you.",
 };
 
 export default function RootLayout({

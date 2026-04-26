@@ -40,7 +40,7 @@ export default async function BlogPostPage({ params }: Props) {
   const related = getRelatedPosts(slug, 2);
   const shareUrl = `https://addify.ae/blog/${slug}`;
   const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedText = encodeURIComponent(`${post.title} — via Addify`);
+  const encodedText = encodeURIComponent(`${post.title} via Addify`);
 
   return (
     <div className="flex flex-col min-h-screen">

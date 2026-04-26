@@ -50,7 +50,7 @@ export default function SubmitJobPage() {
         <Container className="max-w-2xl">
           <div className="mb-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">Post a Job</p>
-            <h1 className="font-display text-4xl text-foreground mb-3">Hire Gulf talent — free</h1>
+            <h1 className="font-display text-4xl text-foreground mb-3">Hire Gulf talent. Free.</h1>
             <p className="text-muted-foreground">
               Submit a job listing. We&apos;ll review it within 24 hours and publish it across Addify.
             </p>
@@ -59,7 +59,7 @@ export default function SubmitJobPage() {
           {status === "success" ? (
             <div className="p-8 bg-success/10 border border-success/30 rounded-2xl text-center">
               <p className="text-xl font-semibold text-foreground mb-2">
-                Thanks — we&apos;ll review and publish within 24 hours.
+                Submitted. We will review and publish within 24 hours.
               </p>
               <p className="text-sm text-muted-foreground">
                 We&apos;ll notify you at {form.submitter_email} once it goes live.

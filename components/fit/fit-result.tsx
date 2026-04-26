@@ -3,29 +3,34 @@
 import { useEffect, useRef } from "react";
 import { Check, AlertTriangle } from "lucide-react";
 
+export type FitInputContext = {
+  resumeLabel: string;
+  jdLabel: string;
+};
+
 const MOCK_RESULT = {
   score: 78,
-  summary: "Strong match — worth applying with targeted tweaks.",
+  summary: "Strong match. Worth applying with a few targeted tweaks.",
   categories: [
     { label: "Skill Match", score: 85 },
     { label: "Experience Fit", score: 72 },
     { label: "Salary Alignment", score: 80 },
-    { label: "Location / Visa Fit", score: 90 },
+    { label: "Location and Visa Fit", score: 90 },
     { label: "Career Trajectory", score: 65 },
   ],
   strengths: [
-    "5+ years experience in the required domain",
+    "5 or more years of experience in the required domain",
     "Matches 8 of 10 required skills",
-    "Your salary expectation aligns with market",
+    "Salary expectation aligns with the posted range",
   ],
   gaps: [
-    "Missing AWS certification mentioned in job description",
-    "2 years less than preferred tenure",
+    "AWS certification mentioned in the job description is not on your resume",
+    "2 years below the preferred tenure",
   ],
   nextSteps: [
-    "Highlight your domain experience more prominently on your resume",
-    "Add quantified results (revenue, users, time saved) to your most recent role",
-    "Consider mentioning relevant certifications you're currently pursuing",
+    "Highlight your domain experience more prominently in your CV summary",
+    "Add quantified results to your most recent role (revenue, users, time saved)",
+    "Mention any certifications you are currently pursuing",
   ],
 };
 
@@ -87,16 +92,21 @@ function CategoryBar({ label, score }: { label: string; score: number }) {
   );
 }
 
-export function FitResult() {
+export function FitResult({ context }: { context: FitInputContext }) {
   const r = MOCK_RESULT;
 
   return (
     <div className="mt-10 space-y-6">
       {/* Demo badge */}
-      <div className="flex justify-center">
-        <span className="inline-block text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full border border-border">
-          Demo result — live AI analysis coming soon
-        </span>
+      <div className="bg-accent/10 border border-accent/20 rounded-xl p-4">
+        <p className="text-sm font-semibold text-foreground mb-1">Demo result. Live AI analysis is coming soon.</p>
+        <p className="text-xs text-muted-foreground">This score is illustrative. Connect your resume and the job description above to see a real analysis when the feature launches.</p>
+      </div>
+
+      {/* What was matched */}
+      <div className="bg-muted/40 border border-border rounded-xl p-4 text-sm text-muted-foreground space-y-1">
+        <p><span className="font-medium text-foreground">Resume:</span> {context.resumeLabel}</p>
+        <p><span className="font-medium text-foreground">Job description:</span> {context.jdLabel}</p>
       </div>
 
       {/* Score card */}
@@ -105,7 +115,7 @@ export function FitResult() {
           <ScoreRing score={r.score} />
           <div className="flex-1">
             <p className="text-xl font-semibold text-foreground mb-1">{r.summary}</p>
-            <p className="text-sm text-muted-foreground mb-6">Based on your resume and the job description provided.</p>
+            <p className="text-sm text-muted-foreground mb-6">Based on what you provided above.</p>
             <div className="space-y-3">
               {r.categories.map((c) => (
                 <CategoryBar key={c.label} label={c.label} score={c.score} />
@@ -164,9 +174,8 @@ export function FitResult() {
 
       {/* CTA */}
       <div id="cover-letter" className="text-center py-8 border border-dashed border-border rounded-xl">
-        <p className="text-sm text-muted-foreground">
-          Cover letter generator — coming in the next update.
-        </p>
+        <p className="text-sm font-semibold text-foreground mb-1">Want a cover letter for this role?</p>
+        <p className="text-sm text-muted-foreground">Cover letter generator is coming in the next update.</p>
       </div>
     </div>
   );

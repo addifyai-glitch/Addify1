@@ -22,7 +22,7 @@ export default function SalaryPage() {
         <p className="mt-3 text-base text-[var(--muted)] max-w-xl mx-auto">
           Select your job title, city, and experience level. We&apos;ll show you
           the median salary, percentile range, and a typical total package
-          breakdown — all in local currency.
+          breakdown, all in local currency.
         </p>
       </div>
 

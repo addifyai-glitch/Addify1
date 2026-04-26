@@ -26,7 +26,7 @@ function fmtSalary(job: Job): string | null {
   const cur = job.currency ?? "";
   const fmt = (n: number) => n.toLocaleString("en-US");
   if (job.salary_min && job.salary_max)
-    return `${cur} ${fmt(job.salary_min)}–${fmt(job.salary_max)}`;
+    return `${cur} ${fmt(job.salary_min)} to ${fmt(job.salary_max)}`;
   if (job.salary_min) return `${cur} ${fmt(job.salary_min)}+`;
   return null;
 }
@@ -43,7 +43,6 @@ function JobCard({ job }: { job: Job }) {
         </Badge>
       )}
 
-      {/* Company row */}
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
           <Briefcase size={16} className="text-muted-foreground" />
@@ -51,12 +50,10 @@ function JobCard({ job }: { job: Job }) {
         <p className="text-sm font-semibold text-foreground truncate">{job.company}</p>
       </div>
 
-      {/* Title */}
       <h3 className="text-base font-semibold text-foreground leading-snug">
         {job.title}
       </h3>
 
-      {/* Meta */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <MapPin size={11} />
@@ -75,7 +72,6 @@ function JobCard({ job }: { job: Job }) {
         <p className="text-sm font-semibold text-accent tabular-nums">{salary} / mo</p>
       )}
 
-      {/* Apply button */}
       <a
         href={job.apply_url}
         target="_blank"
@@ -97,13 +93,13 @@ function EmptyState() {
         No open roles here yet
       </p>
       <p className="text-sm text-muted-foreground mb-4">
-        Be the first to list a position in this category.
+        Be the first to list a position in this area.
       </p>
       <Link
         href="/submit-job"
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
       >
-        Post a job →
+        Post a job for free
       </Link>
     </div>
   );
@@ -112,26 +108,54 @@ function EmptyState() {
 export function LiveJobs({
   jobTitle,
   city,
+  category,
 }: {
   jobTitle: string;
   city: string;
+  category?: string;
 }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!jobTitle || !city) return;
+    if (!city) { setLoading(false); return; }
     setLoading(true);
 
-    const params = new URLSearchParams({ title: jobTitle, city, limit: "6" });
-    fetch(`/api/jobs?${params}`)
-      .then((r) => r.json())
-      .then(({ jobs }) => setJobs(jobs ?? []))
-      .catch(() => setJobs([]))
-      .finally(() => setLoading(false));
-  }, [jobTitle, city]);
+    async function fetchJobs() {
+      let results: Job[] = [];
 
-  if (!jobTitle || !city) return null;
+      if (category) {
+        // 1. Try category + city first
+        const p1 = new URLSearchParams({ category, city, limit: "6" });
+        const d1 = await fetch(`/api/jobs?${p1}`).then(r => r.json()).catch(() => ({ jobs: [] }));
+        results = d1.jobs ?? [];
+
+        // 2. If fewer than 6, fill with same category from anywhere
+        if (results.length < 6) {
+          const p2 = new URLSearchParams({ category, limit: "12" });
+          const d2 = await fetch(`/api/jobs?${p2}`).then(r => r.json()).catch(() => ({ jobs: [] }));
+          const extra = (d2.jobs ?? []).filter((j: Job) => !results.some(r => r.id === j.id));
+          results = [...results, ...extra].slice(0, 6);
+        }
+      }
+
+      // 3. Fallback: just by city
+      if (results.length === 0) {
+        const p3 = new URLSearchParams({ city, limit: "6" });
+        const d3 = await fetch(`/api/jobs?${p3}`).then(r => r.json()).catch(() => ({ jobs: [] }));
+        results = d3.jobs ?? [];
+      }
+
+      setJobs(results);
+      setLoading(false);
+    }
+
+    fetchJobs();
+  }, [jobTitle, city, category]);
+
+  if (!city) return null;
+
+  const cityLabel = city || "the Gulf";
 
   return (
     <section className="mt-12">
@@ -140,17 +164,14 @@ export function LiveJobs({
           Latest Openings
         </p>
         <h2 className="text-xl font-semibold text-foreground">
-          Open roles that match
+          {category ? `${category} roles in ${cityLabel}` : `Open roles in ${cityLabel}`}
         </h2>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-44 rounded-xl bg-muted animate-pulse"
-            />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-44 rounded-xl bg-muted animate-pulse" />
           ))}
         </div>
       ) : (
@@ -163,10 +184,17 @@ export function LiveJobs({
 
       <p className="mt-4 text-right">
         <Link
+          href="/jobs"
+          className="text-xs text-muted-foreground hover:text-accent transition-colors"
+        >
+          See all jobs
+        </Link>
+        <span className="mx-2 text-muted-foreground/40">·</span>
+        <Link
           href="/submit-job"
           className="text-xs text-muted-foreground hover:text-accent transition-colors"
         >
-          Hiring? Post a job for free →
+          Hiring? Post a job for free
         </Link>
       </p>
     </section>

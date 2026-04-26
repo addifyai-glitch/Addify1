@@ -44,7 +44,7 @@ export default function ContactPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">Contact</p>
             <h1 className="font-display text-4xl text-foreground mb-3">Get in touch</h1>
             <p className="text-muted-foreground mb-12">
-              Questions, feedback, press inquiries — we read every message.
+              Questions, feedback, partnership ideas. We read every message.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

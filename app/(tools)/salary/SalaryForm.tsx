@@ -23,15 +23,14 @@ const cityNameToSlug = new Map<string, string>(
 
 export default function SalaryForm() {
   const [titleSlug, setTitleSlug] = useState("");
-  // cityValue stores the city name (e.g. "Dubai") — works for all 34 cities
   const [cityValue, setCityValue] = useState("");
   const [experience, setExperience] = useState<ExperienceBandLegacy | "">("");
+  const [submitted, setSubmitted] = useState(false);
 
   const jobTitle = titleSlug ? getJobTitleBySlug(titleSlug) : undefined;
   const salarySlug = jobTitle?.salarySlug ?? null;
   const noTitleData = !!titleSlug && salarySlug === null;
 
-  // Resolve city name → salary slug (null for cities without data)
   const resolvedCitySlug = cityValue ? (cityNameToSlug.get(cityValue) ?? null) : null;
   const noCityData = !!cityValue && !CITIES_WITH_DATA.has(cityValue);
 
@@ -42,7 +41,8 @@ export default function SalaryForm() {
       ? computeSalary(salarySlug, resolvedCitySlug, experience as ExperienceBandLegacy)
       : null;
 
-  const ready = titleSlug && cityValue && experience;
+  const ready = !!(titleSlug && cityValue && experience);
+  const jobCategory = jobTitle?.category ?? "";
 
   return (
     <div>
@@ -117,28 +117,38 @@ export default function SalaryForm() {
 
         {noData && (
           <p className="mt-4 text-sm text-[var(--muted)] text-center">
-            We don&apos;t have data for this combination yet —{" "}
+            We don&apos;t have data for this combination yet.{" "}
             <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
-              help us by contributing your salary
+              Help us by contributing your salary.
             </a>
-            .
           </p>
         )}
-        {!ready && !noData && (
-          <p className="mt-4 text-sm text-[var(--muted)] text-center">
-            Select all three fields to see your salary estimate.
-          </p>
-        )}
+
+        <div className="mt-5 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setSubmitted(true)}
+            disabled={!ready}
+            className="w-full md:w-auto rounded-full bg-accent px-8 py-3 text-accent-foreground font-semibold shadow-soft hover:shadow-glow-accent hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
+          >
+            Check Salary
+          </button>
+        </div>
       </div>
 
       {/* Result card */}
-      {result && <ResultCard result={result} />}
+      {submitted && result && <ResultCard result={result} />}
+      {submitted && ready && !result && !noData && (
+        <p className="mt-6 text-sm text-center text-[var(--muted)]">
+          Select all three fields to see your salary estimate.
+        </p>
+      )}
 
       {/* Ad + live jobs (always shown once city is selected) */}
       {cityValue && (
         <>
           <AdSlot slot="in-content" className="mt-10" />
-          <LiveJobs jobTitle={jobTitle?.title ?? ""} city={cityValue} />
+          <LiveJobs jobTitle={jobTitle?.title ?? ""} city={cityValue} category={jobCategory} />
         </>
       )}
     </div>
@@ -177,7 +187,7 @@ function ResultCard({ result }: { result: SalaryResult }) {
           {/* Range bar */}
           <div className="mt-6">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)] mb-2">
-              25th – 75th Percentile Range
+              25th to 75th Percentile Range
             </p>
             <div className="flex items-center gap-3">
               <span className="text-sm font-medium text-[var(--foreground)] tabular-nums">

@@ -4,6 +4,7 @@ export type Job = {
   company: string;
   city: string;
   country: string;
+  category?: string;
   salary_min?: number;
   salary_max?: number;
   currency?: string;
@@ -11,7 +12,7 @@ export type Job = {
   apply_url: string;
   description?: string;
   featured: boolean;
-  posted_at: string; // ISO date
+  posted_at: string;
   expires_at: string;
   source: "admin" | "user_submission";
 };

@@ -76,7 +76,7 @@ export default function PrivacyPage() {
               <li><strong>Supabase:</strong> database and authentication. Data is stored in EU-West region servers.</li>
               <li><strong>Vercel:</strong> hosting and serverless functions. See Vercel&apos;s <a href="https://vercel.com/legal/privacy-policy" className="text-accent underline">privacy policy</a>.</li>
               <li><strong>Google Analytics:</strong> aggregate traffic analytics (IP anonymization enabled).</li>
-              <li><strong>Google AdSense:</strong> advertising (when activated — see Section 4).</li>
+              <li><strong>Google AdSense:</strong> advertising (when activated, see Section 4).</li>
             </ul>
           </Section>
 
