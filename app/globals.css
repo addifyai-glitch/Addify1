@@ -6,19 +6,19 @@
 
 /* ─── Light mode tokens ──────────────────────────────────────────────────── */
 :root {
-  --background:        #FAFAF9;
-  --foreground:        #0A1628;
-  --muted:             #F5F5F4;
-  --muted-foreground:  #57534E;
-  --card:              #FFFFFF;
-  --card-border:       #E7E5E4;
-  --primary:           #0A1628;
-  --primary-foreground:#FAFAF9;
-  --accent:            #F59E0B;
-  --accent-foreground: #0A1628;
-  --success:           #10B981;
-  --destructive:       #DC2626;
-  --ring:              #F59E0B;
+  --background:        hsl(40 33% 98%);
+  --foreground:        hsl(215 60% 10%);
+  --muted:             hsl(30 20% 95%);
+  --muted-foreground:  hsl(215 15% 40%);
+  --card:              hsl(0 0% 100%);
+  --card-border:       hsl(30 15% 90%);
+  --primary:           hsl(215 60% 10%);
+  --primary-foreground:hsl(40 33% 98%);
+  --accent:            hsl(38 92% 50%);
+  --accent-foreground: hsl(215 60% 10%);
+  --success:           hsl(158 64% 42%);
+  --destructive:       hsl(0 72% 50%);
+  --ring:              hsl(38 92% 50%);
   --radius:            0.75rem;
 
   /* Mesh gradient blob colors */
@@ -35,19 +35,19 @@
 
 /* ─── Dark mode tokens ───────────────────────────────────────────────────── */
 .dark {
-  --background:        #0F172A;
-  --foreground:        #F1F5F9;
-  --muted:             #1E293B;
-  --muted-foreground:  hsl(215 15% 72%);
-  --card:              #1E293B;
-  --card-border:       #334155;
-  --primary:           #F1F5F9;
-  --primary-foreground:#0F172A;
-  --accent:            #FBBF24;
-  --accent-foreground: #0F172A;
-  --success:           #34D399;
-  --destructive:       #EF4444;
-  --ring:              #FBBF24;
+  --background:        hsl(215 40% 10%);
+  --foreground:        hsl(210 20% 95%);
+  --muted:             hsl(215 30% 18%);
+  --muted-foreground:  hsl(215 15% 65%);
+  --card:              hsl(215 35% 14%);
+  --card-border:       hsl(215 25% 22%);
+  --primary:           hsl(210 20% 95%);
+  --primary-foreground:hsl(215 40% 10%);
+  --accent:            hsl(38 95% 55%);
+  --accent-foreground: hsl(215 40% 10%);
+  --success:           hsl(158 60% 50%);
+  --destructive:       hsl(0 70% 55%);
+  --ring:              hsl(38 95% 55%);
 
   /* Mesh gradient blob colors (lighter for dark bg) */
   --gradient-navy:   rgba(148, 163, 184, 0.10);

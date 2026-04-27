@@ -6,6 +6,7 @@ import { CookieConsent } from "@/components/legal/cookie-consent";
 import "./globals.css";
 
 const inter = Inter({
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
