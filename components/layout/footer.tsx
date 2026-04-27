@@ -109,7 +109,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-foreground/75 hover:text-foreground transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -125,9 +125,6 @@ export function Footer() {
           <p>© {new Date().getFullYear()} Addify. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <CookieSettingsLink />
-            <span className="opacity-50 cursor-default select-none">
-              EN&nbsp;|&nbsp;<span title="Coming soon">عربي</span>
-            </span>
           </div>
         </div>
       </Container>

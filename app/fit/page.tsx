@@ -101,7 +101,7 @@ export default function FitPage() {
             <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4">
               Does this job actually fit you?
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-lg text-foreground/80 max-w-xl mx-auto">
               Upload your resume and paste any Gulf job description. We score your fit from 0 to 100 with specific reasons.
             </p>
           </div>
@@ -110,7 +110,7 @@ export default function FitPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Resume column */}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Your Resume</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-foreground/75 mb-2">Your Resume</p>
                 <div className="flex gap-2 mb-3">
                   <button type="button" className={tabBtn(resumeTab === "upload")} onClick={() => setResumeTab("upload")}>
                     <span className="flex items-center gap-1.5"><Upload size={12} /> Upload File</span>
@@ -151,7 +151,7 @@ export default function FitPage() {
 
               {/* Job description column */}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Job Description</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-foreground/75 mb-2">Job Description</p>
                 <div className="flex gap-2 mb-3 flex-wrap">
                   <button type="button" className={tabBtn(jdTab === "paste")} onClick={() => setJdTab("paste")}>
                     <span className="flex items-center gap-1.5"><FileText size={12} /> Paste Text</span>

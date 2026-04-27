@@ -4,6 +4,16 @@
 /* ─── Class-based dark mode (required for next-themes) ───────────────────── */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Contrast rules (enforced across all components):
+ * - Primary readable text:          text-foreground
+ * - Secondary readable text:        text-foreground/85
+ * - De-emphasised but readable:     text-foreground/75
+ * - Decorative / hint text only:    text-foreground/60
+ * - NEVER use text-muted-foreground for content the user must read
+ * - text-muted-foreground is reserved for timestamps, copyright, and similar non-essential text
+ */
+
 /* ─── Light mode tokens ──────────────────────────────────────────────────── */
 :root {
   --background:        hsl(40 33% 98%);

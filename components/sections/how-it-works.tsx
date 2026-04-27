@@ -72,7 +72,7 @@ export function HowItWorks() {
               <h3 className="relative z-10 text-lg font-semibold text-foreground mb-2">
                 {step.title}
               </h3>
-              <p className="relative z-10 text-sm text-muted-foreground leading-relaxed">
+              <p className="relative z-10 text-sm text-foreground/80 leading-relaxed">
                 {step.description}
               </p>
 

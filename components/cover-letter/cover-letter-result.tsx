@@ -68,17 +68,27 @@ export function CoverLetterResult({ output, context, onRegenerate, regenerating 
 
       {/* Letter body */}
       <div className="p-6 md:p-10 print-letter">
+        {isArabic && (
+          <p className="text-xs text-muted-foreground mb-4 text-right">
+            نسخة تجريبية. التكامل المباشر مع الذكاء الاصطناعي قريباً.
+          </p>
+        )}
         <div
           ref={bodyRef}
           contentEditable={editing}
           suppressContentEditableWarning
           dir={isArabic ? "rtl" : "ltr"}
+          lang={isArabic ? "ar" : "en"}
           className={`prose prose-sm md:prose-base max-w-none focus:outline-none ${
             editing
               ? "border border-accent/40 rounded-xl p-4 bg-background focus:ring-2 focus:ring-accent/20"
               : ""
           }`}
-          style={{ whiteSpace: "pre-wrap", fontFamily: "inherit" }}
+          style={{
+            whiteSpace: "pre-wrap",
+            fontFamily: isArabic ? "'Noto Sans Arabic', 'Inter', sans-serif" : "inherit",
+            lineHeight: isArabic ? "2" : undefined,
+          }}
         >
           {output.body}
         </div>

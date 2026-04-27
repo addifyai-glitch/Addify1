@@ -65,6 +65,7 @@ export async function GET(req: NextRequest) {
 
   if (city) matched = matched.filter((j) => j.city.toLowerCase() === city.toLowerCase());
   if (country) matched = matched.filter((j) => j.country.toLowerCase() === country.toLowerCase());
+  if (category) matched = matched.filter((j) => j.category?.toLowerCase() === category.toLowerCase());
   if (experience) matched = matched.filter((j) => j.experience_level?.toLowerCase() === experience.toLowerCase());
   if (search) {
     const q = search.toLowerCase();

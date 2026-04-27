@@ -220,7 +220,7 @@ export default function CoverLetterPage() {
           <form onSubmit={handleGenerate} className="space-y-8">
             {/* Step 1: Resume */}
             <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/75 mb-4">
                 Step 1 — Your resume
               </p>
               <div className="flex gap-2 mb-4">
@@ -298,7 +298,7 @@ export default function CoverLetterPage() {
 
             {/* Step 2: Job */}
             <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/75 mb-4">
                 Step 2 — The job
               </p>
               <div className="flex gap-2 mb-4 flex-wrap">
@@ -444,7 +444,7 @@ export default function CoverLetterPage() {
 
             {/* Step 3: Preferences */}
             <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/75 mb-5">
                 Step 3 — Preferences
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -469,7 +469,7 @@ export default function CoverLetterPage() {
                   </div>
                   {language === "arabic" && (
                     <p className="text-xs text-muted-foreground mt-2">
-                      Arabic output requires live AI integration. Available in Day 3.
+                      Arabic letter generated as a structured demo. Live AI integration coming soon.
                     </p>
                   )}
                 </div>

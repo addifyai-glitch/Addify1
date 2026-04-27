@@ -60,7 +60,7 @@ export default function SalaryForm() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Job Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/75">
               Job Title
             </label>
             <select
@@ -83,7 +83,7 @@ export default function SalaryForm() {
 
           {/* City */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/75">
               City
             </label>
             <select
@@ -106,7 +106,7 @@ export default function SalaryForm() {
 
           {/* Experience */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/75">
               Experience
             </label>
             <select
@@ -138,6 +138,7 @@ export default function SalaryForm() {
             type="submit"
             disabled={!ready}
             aria-disabled={!ready}
+            aria-label="Check salary for selected role, city, and experience"
             className={`w-full md:w-auto rounded-full px-8 py-3 font-semibold shadow-soft transition-all duration-200 ${ready ? "bg-accent text-accent-foreground hover:shadow-glow-accent hover:-translate-y-0.5" : "bg-accent/50 text-accent-foreground/60 cursor-not-allowed"}`}
           >
             Check Salary
@@ -152,10 +153,19 @@ export default function SalaryForm() {
           <SourceAttribution country={selectedCountry} />
         </>
       )}
-      {submitted && ready && !result && !noData && (
-        <p className="mt-6 text-sm text-center text-[var(--muted)]">
-          Select all three fields to see your salary estimate.
-        </p>
+      {submitted && ready && !result && (
+        <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center">
+          <p className="text-base font-semibold text-[var(--foreground)] mb-1">
+            No salary data for this combination yet.
+          </p>
+          <p className="text-sm text-[var(--muted)]">
+            Try a different role or city. You can also{" "}
+            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
+              contribute your own salary
+            </a>{" "}
+            to help us expand coverage.
+          </p>
+        </div>
       )}
 
       {/* Ad + live jobs (always shown once city is selected) */}

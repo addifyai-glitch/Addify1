@@ -45,7 +45,7 @@ export function WhyAddify() {
                   <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-success/15 flex items-center justify-center">
                     <Check size={12} className="text-success" strokeWidth={2.5} />
                   </div>
-                  <p className="text-sm md:text-base text-foreground/80 leading-relaxed">
+                  <p className="text-sm md:text-base text-foreground/85 leading-relaxed">
                     {v}
                   </p>
                 </motion.li>

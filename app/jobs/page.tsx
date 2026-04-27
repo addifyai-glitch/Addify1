@@ -196,7 +196,7 @@ export default function JobsPage() {
 
           {/* Count */}
           {!loading && (
-            <p className="text-sm text-muted-foreground mb-5">
+            <p className="text-sm text-foreground/75 mb-5">
               Showing {jobs.length} of {total} jobs
             </p>
           )}

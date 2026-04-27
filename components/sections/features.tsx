@@ -102,7 +102,7 @@ export function Features() {
                       className="text-success shrink-0 mt-0.5"
                       strokeWidth={2.5}
                     />
-                    <span className="text-muted-foreground">{b}</span>
+                    <span className="text-foreground/80">{b}</span>
                   </li>
                 ))}
               </ul>

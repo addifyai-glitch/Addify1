@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Check, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { Check, AlertTriangle, ArrowRight, MapPin, Briefcase } from "lucide-react";
+import { MOCK_JOBS } from "@/data/mockJobs";
+import type { Job } from "@/types/job";
 
 export type FitInputContext = {
   resumeLabel: string;
@@ -172,11 +175,74 @@ export function FitResult({ context }: { context: FitInputContext }) {
         </ol>
       </div>
 
-      {/* CTA */}
-      <div id="cover-letter" className="text-center py-8 border border-dashed border-border rounded-xl">
-        <p className="text-sm font-semibold text-foreground mb-1">Want a cover letter for this role?</p>
-        <p className="text-sm text-muted-foreground">Cover letter generator is coming in the next update.</p>
+      {/* Job recommendations */}
+      <section className="mt-2">
+        <h3 className="text-xl font-display text-foreground mb-1">Jobs that might match your profile</h3>
+        <p className="text-sm text-foreground/70 mb-5">Based on your resume and the role you analyzed.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {MOCK_JOBS.slice(0, 6).map((job: Job) => (
+            <JobCardMini key={job.id} job={job} />
+          ))}
+        </div>
+        <div className="mt-5 text-center">
+          <Link href="/jobs" className="text-sm font-semibold text-accent hover:underline">
+            See all open roles →
+          </Link>
+        </div>
+      </section>
+
+      {/* Cover letter CTA */}
+      <div id="cover-letter" className="rounded-xl border border-border bg-card p-6 md:p-8 text-center shadow-soft">
+        <div className="flex justify-center mb-3">
+          <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
+            <ArrowRight className="h-5 w-5 text-accent" />
+          </div>
+        </div>
+        <h3 className="text-xl font-semibold text-foreground mb-2">Want a cover letter for this role?</h3>
+        <p className="text-sm text-foreground/70 mb-4">
+          Generate a tailored cover letter using the same resume and job description in under 60 seconds.
+        </p>
+        <Link
+          href="/cover-letter"
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-accent-foreground font-semibold text-sm shadow-soft hover:shadow-glow-accent hover:-translate-y-0.5 transition-all duration-200"
+        >
+          Generate Cover Letter
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
+    </div>
+  );
+}
+
+function JobCardMini({ job }: { job: Job }) {
+  const cur = job.currency ?? "";
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const salary =
+    job.salary_min && job.salary_max
+      ? `${cur} ${fmt(job.salary_min)} to ${fmt(job.salary_max)}`
+      : null;
+
+  return (
+    <div className="group bg-card border border-border rounded-xl p-4 hover:border-accent/40 hover:-translate-y-0.5 hover:shadow-hover transition-all duration-200 flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
+          <Briefcase size={13} className="text-muted-foreground" />
+        </div>
+        <p className="text-xs text-muted-foreground truncate">{job.company}</p>
+      </div>
+      <p className="text-sm font-semibold text-foreground leading-snug">{job.title}</p>
+      <p className="text-xs text-muted-foreground flex items-center gap-1">
+        <MapPin size={10} /> {job.city}, {job.country}
+      </p>
+      {salary && <p className="text-xs font-semibold text-accent tabular-nums">{salary}/mo</p>}
+      <a
+        href={job.apply_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-auto text-xs font-semibold text-muted-foreground group-hover:text-accent transition-colors"
+      >
+        Apply →
+      </a>
     </div>
   );
 }

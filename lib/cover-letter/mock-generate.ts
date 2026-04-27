@@ -178,21 +178,46 @@ I would welcome the chance to talk through how my background maps to what you ne
 ${closing}`;
 }
 
-const ARABIC_PLACEHOLDER = `عزيزي مسؤول التوظيف،
+function generateArabicLetter(inputs: CoverLetterInputs): CoverLetterOutput {
+  const { hiringManager, tone, length } = inputs;
 
-تتطلب الكتابة باللغة العربية الاتصال بـ Claude API. سيتم تفعيل ذلك قريباً.
+  const jobTitle = extractJobTitle(inputs.jdText) || "الوظيفة المعلن عنها";
+  const company = extractCompany(inputs.jdText) || "شركتكم الموقرة";
 
-Arabic generation activates with the live AI integration in our next update.
+  const greeting = hiringManager?.trim()
+    ? `السيد/السيدة ${hiringManager.trim()} المحترم/ة،`
+    : "إلى من يهمه الأمر،";
 
-مع التقدير`;
+  const openings: Record<string, string> = {
+    professional: `أتقدم إليكم بطلبي للانضمام إلى فريقكم في مسمى ${jobTitle} لدى ${company}.`,
+    friendly: `يسعدني التقدم لشغل وظيفة ${jobTitle} في ${company}، إذ أرى في هذه الفرصة توافقاً حقيقياً مع مسيرتي المهنية.`,
+    confident: `بعد اطلاعي على متطلبات دور ${jobTitle} في ${company}، أؤمن بأن خبرتي وكفاءاتي تتطابق تماماً مع ما تبحثون عنه.`,
+    concise: `أتقدم بطلبي لشغل وظيفة ${jobTitle} في ${company}.`,
+  };
+  const opening = openings[tone] ?? openings.professional;
+
+  const body = `أمتلك خبرة عملية موثقة في مجال ذي صلة بهذا الدور، وقد أسهمت في تحقيق نتائج ملموسة في بيئات عمل مشابهة لبيئة ${company}. أتميز بالقدرة على العمل ضمن فرق متعددة الثقافات، وأدرك جيداً متطلبات السوق الخليجي وما يستلزمه من مرونة واحترافية.
+
+أجد في ${company} بيئة عمل تتيح لي تطبيق مهاراتي وتنميتها بما يخدم أهداف المؤسسة. أسعى دائماً إلى تقديم قيمة مضافة، وأحرص على الالتزام بأعلى معايير الجودة في كل ما أقوم به.`;
+
+  const closing = `أتطلع إلى فرصة مناقشة كيف يمكنني الإسهام في نجاح ${company}. وأنا رهن إشارتكم في أي وقت يناسبكم.
+
+مع فائق الاحترام والتقدير،
+[الاسم]`;
+
+  const shortBody = `${greeting}\n\n${opening} ${body.split("\n\n")[0]}\n\n${closing}`;
+  const fullBody = `${greeting}\n\n${opening}\n\n${body}\n\n${closing}`;
+
+  return {
+    greeting,
+    body: length === "short" ? shortBody : fullBody,
+    closing,
+  };
+}
 
 export function generateCoverLetter(inputs: CoverLetterInputs): CoverLetterOutput {
   if (inputs.language === "arabic") {
-    return {
-      greeting: "عزيزي مسؤول التوظيف،",
-      body: ARABIC_PLACEHOLDER,
-      closing: "مع التقدير",
-    };
+    return generateArabicLetter(inputs);
   }
 
   const jobTitle = extractJobTitle(inputs.jdText) || "the role";
