@@ -63,6 +63,7 @@ export default function FitPage() {
       const data = await res.json();
       if (!res.ok) {
         setJdFetchError(data.error ?? "Failed to fetch. Try pasting instead.");
+        setJdTab("paste");
       } else {
         setJdText(data.text ?? "");
         setJdFetchedDomain(data.domain ?? "");

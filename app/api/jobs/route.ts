@@ -81,9 +81,6 @@ export async function GET(req: NextRequest) {
     matched = matched.filter((j) => j.title.toLowerCase().includes(q));
   }
 
-  // If no city/country/search match, return all (for live-jobs section)
-  if ((city || country) && matched.length === 0) matched = MOCK_JOBS;
-
   const sorted = [...matched].sort((a, b) => {
     if (a.featured !== b.featured) return b.featured ? 1 : -1;
     return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
