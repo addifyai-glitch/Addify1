@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { CaptchaNotice } from "@/components/ui/captcha-notice";
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -11,6 +13,7 @@ import { Mail, Clock } from "lucide-react";
 const SUBJECTS = ["General", "Feedback", "Press", "Business", "Privacy", "Other"];
 
 export default function ContactPage() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [form, setForm] = useState({ name: "", email: "", subject: "General", message: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -20,10 +23,11 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus("loading");
     try {
+      const captchaToken = executeRecaptcha ? await executeRecaptcha("contact_form") : "";
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, captchaToken }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
@@ -57,6 +61,7 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 shadow-soft flex flex-col gap-5">
+                    <CaptchaNotice />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
                         <label className={labelCls}>Name *</label>

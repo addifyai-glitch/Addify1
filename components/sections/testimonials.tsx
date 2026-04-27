@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Star, MessageCircle, Share2, X, Link2, CheckCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Star, MessageCircle, Share2, X, Link2, CheckCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { Container } from "@/components/ui/container";
 
@@ -23,15 +23,9 @@ function StarRow({ count }: { count: number }) {
   );
 }
 
-function TestimonialCard({ t, i }: { t: (typeof TESTIMONIALS)[0]; i: number }) {
+function TestimonialCard({ t }: { t: (typeof TESTIMONIALS)[0] }) {
   return (
-    <motion.div
-      className="bg-card border border-border rounded-xl shadow-soft p-6 flex flex-col gap-4"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ delay: i * 0.08, duration: 0.5 }}
-    >
+    <div className="bg-card border border-border rounded-xl shadow-soft p-6 flex flex-col gap-4 h-full">
       <StarRow count={t.stars} />
       <p className="text-sm md:text-base text-foreground leading-relaxed flex-1">
         &ldquo;{t.quote}&rdquo;
@@ -49,8 +43,25 @@ function TestimonialCard({ t, i }: { t: (typeof TESTIMONIALS)[0]; i: number }) {
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
+}
+
+function useVisibleCount() {
+  const [count, setCount] = useState(3);
+
+  useEffect(() => {
+    function update() {
+      if (window.innerWidth < 640) setCount(1);
+      else if (window.innerWidth < 1024) setCount(2);
+      else setCount(3);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return count;
 }
 
 function ShareButtons() {
@@ -59,21 +70,9 @@ function ShareButtons() {
   const encodedUrl = encodeURIComponent(SHARE_URL);
 
   const shareLinks = [
-    {
-      label: "WhatsApp",
-      Icon: MessageCircle,
-      href: `https://wa.me/?text=${encodedText}`,
-    },
-    {
-      label: "LinkedIn",
-      Icon: Share2,
-      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-    },
-    {
-      label: "X",
-      Icon: X,
-      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodedUrl}`,
-    },
+    { label: "WhatsApp", Icon: MessageCircle, href: `https://wa.me/?text=${encodedText}` },
+    { label: "LinkedIn", Icon: Share2, href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` },
+    { label: "X", Icon: X, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodedUrl}` },
   ];
 
   function handleCopy() {
@@ -106,15 +105,9 @@ function ShareButtons() {
           className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full border border-border text-muted-foreground hover:border-accent hover:text-accent transition-colors duration-200"
         >
           {copied ? (
-            <>
-              <CheckCheck size={14} className="text-success" />
-              <span className="text-success">Copied!</span>
-            </>
+            <><CheckCheck size={14} className="text-success" /><span className="text-success">Copied!</span></>
           ) : (
-            <>
-              <Link2 size={14} />
-              Copy Link
-            </>
+            <><Link2 size={14} />Copy Link</>
           )}
         </button>
       </div>
@@ -123,6 +116,51 @@ function ShareButtons() {
 }
 
 export function Testimonials() {
+  const visibleCount = useVisibleCount();
+  const totalSlides = Math.ceil(TESTIMONIALS.length / visibleCount);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const goTo = useCallback(
+    (idx: number, dir: number) => {
+      setDirection(dir);
+      setCurrentIndex((idx + totalSlides) % totalSlides);
+    },
+    [totalSlides]
+  );
+
+  const goNext = useCallback(() => goTo(currentIndex + 1, 1), [currentIndex, goTo]);
+  const goPrev = useCallback(() => goTo(currentIndex - 1, -1), [currentIndex, goTo]);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(goNext, 6000);
+    return () => clearInterval(timer);
+  }, [isPaused, goNext]);
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (document.activeElement !== sliderRef.current) return;
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [goNext, goPrev]);
+
+  const visibleTestimonials = TESTIMONIALS.slice(
+    currentIndex * visibleCount,
+    currentIndex * visibleCount + visibleCount
+  );
+
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
+  };
+
   return (
     <section className="py-20 md:py-28 bg-muted/30">
       <Container>
@@ -143,10 +181,72 @@ export function Testimonials() {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {TESTIMONIALS.map((t, i) => (
-            <TestimonialCard key={t.id} t={t} i={i} />
-          ))}
+        {/* Slider */}
+        <div
+          ref={sliderRef}
+          tabIndex={0}
+          className="relative focus:outline-none"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          aria-label="Testimonials slider"
+        >
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className={`grid gap-5 ${
+                  visibleCount === 1
+                    ? "grid-cols-1"
+                    : visibleCount === 2
+                    ? "grid-cols-2"
+                    : "grid-cols-3"
+                }`}
+              >
+                {visibleTestimonials.map((t) => (
+                  <TestimonialCard key={t.id} t={t} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Nav buttons */}
+          <div className="flex items-center justify-between mt-8">
+            <button
+              onClick={goPrev}
+              className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent transition-colors"
+              aria-label="Previous"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            {/* Dots */}
+            <div className="flex gap-2">
+              {Array.from({ length: totalSlides }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i, i > currentIndex ? 1 : -1)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === currentIndex ? "w-6 bg-accent" : "w-1.5 bg-border"
+                  }`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={goNext}
+              className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent transition-colors"
+              aria-label="Next"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         </div>
 
         <ShareButtons />

@@ -51,12 +51,13 @@ export default function PrivacyPage() {
           </Section>
 
           <Section title="3. Cookies">
-            <p>We use two categories of cookies:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li><strong>Essential cookies:</strong> required for the site to function (authentication session for admin users).</li>
-              <li><strong>Analytics cookies:</strong> used to understand aggregate traffic patterns. No personal data is tied to these cookies.</li>
+            <p>We use cookies to make Addify work. Three categories:</p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>Essential cookies.</strong> These keep the site functional, remember your theme preference, and prevent abuse. They are always on. The site does not work without them.</li>
+              <li><strong>Analytics cookies.</strong> If you accept these, we use them to understand which pages get used and where users have trouble. We use Google Analytics for this. You can decline these and the site still works.</li>
+              <li><strong>Advertising cookies.</strong> If you accept these and we have ads enabled, partners like Google AdSense use cookies to show ads relevant to your interests. You can decline these and you will see generic ads instead.</li>
             </ul>
-            <p>You can disable non-essential cookies in your browser settings at any time.</p>
+            <p>Change your choice anytime by clicking &ldquo;Cookie settings&rdquo; in the footer.</p>
           </Section>
 
           <Section title="4. Google AdSense (advertising)">
@@ -70,6 +71,16 @@ export default function PrivacyPage() {
             </p>
           </Section>
 
+          <Section title="4b. Google reCAPTCHA">
+            <p>
+              We use Google reCAPTCHA v3 to protect our forms from spam and abuse. reCAPTCHA collects information about your interaction with our site for the sole purpose of providing the reCAPTCHA service. Your use of reCAPTCHA is subject to Google&apos;s Privacy Policy and Terms of Service.
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li><a href="https://policies.google.com/privacy" className="text-accent underline" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
+              <li><a href="https://policies.google.com/terms" className="text-accent underline" target="_blank" rel="noopener noreferrer">Google Terms of Service</a></li>
+            </ul>
+          </Section>
+
           <Section title="5. Third-party services">
             <p>We use the following third-party services:</p>
             <ul className="list-disc pl-5 space-y-1">
@@ -78,6 +89,18 @@ export default function PrivacyPage() {
               <li><strong>Google Analytics:</strong> aggregate traffic analytics (IP anonymization enabled).</li>
               <li><strong>Google AdSense:</strong> advertising (when activated, see Section 4).</li>
             </ul>
+          </Section>
+
+          <Section title="5b. Data deletion requests">
+            <p>
+              You can request deletion of any data we hold on you by emailing{" "}
+              <a href="mailto:privacy@addify.ae" className="text-accent underline">privacy@addify.ae</a>{" "}
+              or by submitting our deletion form at{" "}
+              <a href="/data-deletion" className="text-accent underline">/data-deletion</a>. We respond within 30 days.
+            </p>
+            <p>
+              For anonymous salary submissions, deletion is not possible because we do not store identifiers linking submissions to you. The data is anonymous by design.
+            </p>
           </Section>
 
           <Section title="6. Your rights (GDPR &amp; UAE PDPL)">

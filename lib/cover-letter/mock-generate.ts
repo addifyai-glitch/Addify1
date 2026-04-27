@@ -180,9 +180,9 @@ ${closing}`;
 
 const ARABIC_PLACEHOLDER = `عزيزي مسؤول التوظيف،
 
-إن ميزة إنشاء خطابات التقديم باللغة العربية تتطلب تفعيل الذكاء الاصطناعي. يرجى ربط مفتاح API في اليوم الثالث لتمكين هذه الميزة.
+تتطلب الكتابة باللغة العربية الاتصال بـ Claude API. سيتم تفعيل ذلك قريباً.
 
-في انتظار التواصل معكم.
+Arabic generation activates with the live AI integration in our next update.
 
 مع التقدير`;
 

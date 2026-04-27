@@ -38,7 +38,7 @@
   --background:        #0F172A;
   --foreground:        #F1F5F9;
   --muted:             #1E293B;
-  --muted-foreground:  #94A3B8;
+  --muted-foreground:  hsl(215 15% 72%);
   --card:              #1E293B;
   --card-border:       #334155;
   --primary:           #F1F5F9;
@@ -164,7 +164,26 @@ body {
   font-family: var(--font-display);
 }
 
-/* Reduced-motion: strip all transitions & animations */
+/* ─── Print styles (for cover letter PDF download) ───────────────────────── */
+@media print {
+  body * { visibility: hidden; }
+  .print-letter, .print-letter * { visibility: visible; }
+  .print-letter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 2cm;
+    background: white;
+    color: black;
+    font-family: Georgia, serif;
+    line-height: 1.7;
+  }
+  .print-letter h1, .print-letter h2, .print-letter h3 { color: black; }
+  .no-print { display: none !important; }
+  @page { margin: 0; size: A4; }
+}
+
+/* ─── Reduced-motion: strip all transitions & animations ──────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

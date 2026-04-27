@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
+import { CookieSettingsLink } from "@/components/legal/cookie-consent";
 
 function XIcon({ size = 14 }: { size?: number }) {
   return (
@@ -121,10 +122,13 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Addify. Built in the UAE.</p>
-          <span className="opacity-50 cursor-default select-none">
-            EN&nbsp;|&nbsp;<span title="Coming soon">عربي</span>
-          </span>
+          <p>© {new Date().getFullYear()} Addify. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <CookieSettingsLink />
+            <span className="opacity-50 cursor-default select-none">
+              EN&nbsp;|&nbsp;<span title="Coming soon">عربي</span>
+            </span>
+          </div>
         </div>
       </Container>
     </footer>

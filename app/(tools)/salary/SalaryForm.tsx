@@ -48,14 +48,19 @@ export default function SalaryForm() {
     ? (CITIES.find((c) => c.name === cityValue)?.country ?? "UAE")
     : "UAE";
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (ready) setSubmitted(true);
+  }
+
   return (
     <div>
       {/* Form */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 md:p-8">
+      <form onSubmit={handleSubmit} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Job Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
               Job Title
             </label>
             <select
@@ -78,7 +83,7 @@ export default function SalaryForm() {
 
           {/* City */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
               City
             </label>
             <select
@@ -101,7 +106,7 @@ export default function SalaryForm() {
 
           {/* Experience */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+            <label className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
               Experience
             </label>
             <select
@@ -130,8 +135,7 @@ export default function SalaryForm() {
 
         <div className="mt-5 flex justify-center">
           <button
-            type="button"
-            onClick={() => setSubmitted(true)}
+            type="submit"
             disabled={!ready}
             aria-disabled={!ready}
             className={`w-full md:w-auto rounded-full px-8 py-3 font-semibold shadow-soft transition-all duration-200 ${ready ? "bg-accent text-accent-foreground hover:shadow-glow-accent hover:-translate-y-0.5" : "bg-accent/50 text-accent-foreground/60 cursor-not-allowed"}`}
@@ -139,7 +143,7 @@ export default function SalaryForm() {
             Check Salary
           </button>
         </div>
-      </div>
+      </form>
 
       {/* Result card */}
       {submitted && result && (

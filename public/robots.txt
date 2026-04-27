@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
+Sitemap: https://addify.ae/sitemap.xml

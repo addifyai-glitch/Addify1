@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/lib/blog";
 
@@ -59,20 +60,33 @@ export function PostsGrid({ posts }: { posts: Post[] }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((post) => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-              <div className="bg-card border border-border rounded-xl p-6 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 h-full flex flex-col">
-                <Badge variant="default" className="mb-3 self-start">
-                  {post.category}
-                </Badge>
-                <h3 className="font-semibold text-foreground text-base leading-snug mb-2 group-hover:text-accent transition-colors flex-1">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
-                  {post.description}
-                </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-auto pt-3 border-t border-border">
-                  <span>{formatDate(post.date)}</span>
-                  <span>·</span>
-                  <span>{post.readTime}</span>
+              <div className="bg-card border border-border rounded-xl shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 h-full flex flex-col overflow-hidden">
+                {post.image && (
+                  <div className="relative aspect-video w-full overflow-hidden">
+                    <Image
+                      src={post.image}
+                      alt={post.imageAlt ?? post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div className="p-6 flex flex-col flex-1">
+                  <Badge variant="default" className="mb-3 self-start">
+                    {post.category}
+                  </Badge>
+                  <h3 className="font-semibold text-foreground text-base leading-snug mb-2 group-hover:text-accent transition-colors flex-1">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                    {post.description}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-auto pt-3 border-t border-border">
+                    <span>{formatDate(post.date)}</span>
+                    <span>·</span>
+                    <span>{post.readTime}</span>
+                  </div>
                 </div>
               </div>
             </Link>

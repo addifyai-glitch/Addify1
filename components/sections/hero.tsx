@@ -166,7 +166,7 @@ export function Hero() {
 
         {/* Subheadline */}
         <motion.p
-          className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-center leading-relaxed"
+          className="mt-6 text-lg md:text-xl text-foreground/85 max-w-2xl mx-auto text-center leading-relaxed"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: prefersReduced ? 0 : 1.6, duration: 0.6 }}

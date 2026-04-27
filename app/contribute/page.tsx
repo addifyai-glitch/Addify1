@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { CaptchaNotice } from "@/components/ui/captcha-notice";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
@@ -18,6 +20,7 @@ const SHARE_URL = "https://addify.ae/contribute";
 const SHARE_TEXT = "I just contributed my salary to Addify. Help make Gulf salaries more transparent for everyone.";
 
 export default function ContributePage() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [copied, setCopied] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -44,10 +47,11 @@ export default function ContributePage() {
     if (form.website) { setStatus("success"); return; }
     setStatus("loading");
     try {
+      const captchaToken = executeRecaptcha ? await executeRecaptcha("submit_salary") : "";
       const res = await fetch("/api/salaries/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form }),
+        body: JSON.stringify({ ...form, captchaToken }),
       });
       const data = await res.json();
       if (!res.ok && data.error) throw new Error(data.error);
@@ -118,6 +122,7 @@ export default function ContributePage() {
           ) : (
             <>
               <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 shadow-soft flex flex-col gap-5">
+                <CaptchaNotice />
                 {/* Honeypot */}
                 <input name="website" value={form.website} onChange={e => set("website", e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" />
 

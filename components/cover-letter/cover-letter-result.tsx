@@ -23,7 +23,6 @@ type Props = {
 export function CoverLetterResult({ output, context, onRegenerate, regenerating }: Props) {
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [downloadToast, setDownloadToast] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   function handleCopy() {
@@ -35,8 +34,7 @@ export function CoverLetterResult({ output, context, onRegenerate, regenerating 
   }
 
   function handleDownload() {
-    setDownloadToast(true);
-    setTimeout(() => setDownloadToast(false), 2500);
+    window.print();
   }
 
   const isArabic = context.language === "arabic";
@@ -69,7 +67,7 @@ export function CoverLetterResult({ output, context, onRegenerate, regenerating 
       </div>
 
       {/* Letter body */}
-      <div className="p-6 md:p-10">
+      <div className="p-6 md:p-10 print-letter">
         <div
           ref={bodyRef}
           contentEditable={editing}
@@ -84,6 +82,9 @@ export function CoverLetterResult({ output, context, onRegenerate, regenerating 
         >
           {output.body}
         </div>
+        <p className="mt-8 text-xs text-muted-foreground border-t border-border pt-4">
+          Generated with Addify · addify.ae
+        </p>
       </div>
 
       {/* Action row */}
@@ -108,20 +109,14 @@ export function CoverLetterResult({ output, context, onRegenerate, regenerating 
           Regenerate
         </button>
 
-        <div className="relative">
-          <button
-            onClick={handleDownload}
-            className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg border border-border hover:border-accent hover:text-accent transition-colors duration-200"
-          >
-            <Download size={14} />
-            Download PDF
-          </button>
-          {downloadToast && (
-            <div className="absolute bottom-full left-0 mb-2 whitespace-nowrap text-xs bg-foreground text-background px-3 py-1.5 rounded-lg shadow-hover">
-              PDF download coming soon
-            </div>
-          )}
-        </div>
+        <button
+          onClick={handleDownload}
+          title="Opens print dialog. Choose 'Save as PDF' as destination."
+          className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg border border-border hover:border-accent hover:text-accent transition-colors duration-200 no-print"
+        >
+          <Download size={14} />
+          Download as PDF
+        </button>
 
         <button
           onClick={() => setEditing((e) => !e)}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -24,7 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} | Addify`,
     description: post.description,
     alternates: { canonical: `/blog/${slug}` },
-    openGraph: { title: post.title, description: post.description, type: "article" },
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: "article",
+      ...(post.image ? { images: [{ url: post.image, width: 1200, height: 630, alt: post.imageAlt ?? post.title }] } : {}),
+    },
   };
 }
 
@@ -69,6 +75,20 @@ export default async function BlogPostPage({ params }: Props) {
             <span>{post.readTime}</span>
           </div>
           <hr className="border-border mb-8" />
+
+          {/* Hero image */}
+          {post.image && (
+            <div className="relative aspect-[16/8] w-full overflow-hidden rounded-xl mb-8">
+              <Image
+                src={post.image}
+                alt={post.imageAlt ?? post.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 1200px"
+              />
+            </div>
+          )}
 
           {/* In-content ad */}
           <AdSlot slot="in-content" className="mb-8" />

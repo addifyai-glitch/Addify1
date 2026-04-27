@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import { CaptchaNotice } from "@/components/ui/captcha-notice";
 import { CITY_GROUPS } from "@/data/cities";
 
 const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
 
 export default function SubmitJobPage() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
@@ -25,11 +28,12 @@ export default function SubmitJobPage() {
     e.preventDefault();
     setStatus("loading");
     try {
+      const captchaToken = executeRecaptcha ? await executeRecaptcha("submit_job") : "";
       const country = CITY_GROUPS.find(g => g.cities.some(c => c.name === form.city))?.country ?? form.city;
       const res = await fetch("/api/jobs/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, country }),
+        body: JSON.stringify({ ...form, country, captchaToken }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -67,6 +71,7 @@ export default function SubmitJobPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 shadow-soft flex flex-col gap-5">
+              <CaptchaNotice />
               {/* Honeypot */}
               <input name="website" value={form.website} onChange={e => set("website", e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" />
 

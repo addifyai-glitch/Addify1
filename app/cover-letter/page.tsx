@@ -185,9 +185,29 @@ export default function CoverLetterPage() {
         <Container className="max-w-4xl">
           {/* Hero */}
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
-              Cover Letter
-            </p>
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                Cover Letter
+              </p>
+              <span className="text-accent/40">·</span>
+              <div className="flex items-center gap-1 text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setLanguage("english")}
+                  className={`px-2 py-0.5 rounded transition-colors ${language === "english" ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  EN
+                </button>
+                <span className="text-border">|</span>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("arabic")}
+                  className={`px-2 py-0.5 rounded transition-colors ${language === "arabic" ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  عربي
+                </button>
+              </div>
+            </div>
             <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4">
               A cover letter that sounds like you.
             </h1>

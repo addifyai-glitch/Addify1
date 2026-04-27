@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { RecaptchaProvider } from "@/components/RecaptchaProvider";
+import { CookieConsent } from "@/components/legal/cookie-consent";
 import "./globals.css";
 
 const inter = Inter({
@@ -38,7 +40,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {children}
+          <RecaptchaProvider>
+            {children}
+            <CookieConsent />
+          </RecaptchaProvider>
         </ThemeProvider>
       </body>
     </html>

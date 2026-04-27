@@ -63,7 +63,7 @@ export function Features() {
           <h2 className="font-display text-3xl md:text-4xl text-foreground">
             Three tools. One clear edge.
           </h2>
-          <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="mt-3 text-base md:text-lg text-foreground/80 max-w-xl mx-auto">
             Everything you need to walk into your Gulf job search with clarity and confidence.
           </p>
         </motion.div>
@@ -89,7 +89,7 @@ export function Features() {
               </h3>
 
               {/* Description */}
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              <p className="text-sm text-foreground/80 leading-relaxed mb-6">
                 {tool.description}
               </p>
 

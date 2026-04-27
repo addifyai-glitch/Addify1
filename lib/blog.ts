@@ -12,6 +12,8 @@ export type PostFrontmatter = {
   readTime: string;
   category: string;
   draft?: boolean;
+  image?: string;
+  imageAlt?: string;
 };
 
 export type Post = PostFrontmatter & {

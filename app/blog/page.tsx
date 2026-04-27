@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
@@ -62,22 +63,36 @@ export default function BlogPage() {
               {/* Featured post */}
               {featured && (
                 <Link href={`/blog/${featured.slug}`} className="block mb-12 group">
-                  <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-soft hover:shadow-hover hover:-translate-y-0.5 hover:border-accent/40 transition-all duration-300">
-                    <Badge variant="accent" className="mb-4">
-                      {featured.category}
-                    </Badge>
-                    <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 group-hover:text-accent transition-colors">
-                      {featured.title}
-                    </h2>
-                    <p className="text-muted-foreground text-base leading-relaxed mb-5 max-w-2xl">
-                      {featured.description}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>{featured.author}</span>
-                      <span>·</span>
-                      <span>{formatDate(featured.date)}</span>
-                      <span>·</span>
-                      <span>{featured.readTime}</span>
+                  <div className="bg-card border border-border rounded-2xl shadow-soft hover:shadow-hover hover:-translate-y-0.5 hover:border-accent/40 transition-all duration-300 overflow-hidden">
+                    {featured.image && (
+                      <div className="relative aspect-[21/8] w-full overflow-hidden">
+                        <Image
+                          src={featured.image}
+                          alt={featured.imageAlt ?? featured.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 1200px"
+                          priority
+                        />
+                      </div>
+                    )}
+                    <div className="p-8 md:p-10">
+                      <Badge variant="accent" className="mb-4">
+                        {featured.category}
+                      </Badge>
+                      <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 group-hover:text-accent transition-colors">
+                        {featured.title}
+                      </h2>
+                      <p className="text-muted-foreground text-base leading-relaxed mb-5 max-w-2xl">
+                        {featured.description}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>{featured.author}</span>
+                        <span>·</span>
+                        <span>{formatDate(featured.date)}</span>
+                        <span>·</span>
+                        <span>{featured.readTime}</span>
+                      </div>
                     </div>
                   </div>
                 </Link>
