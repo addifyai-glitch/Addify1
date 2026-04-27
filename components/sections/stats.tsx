@@ -8,7 +8,7 @@ const stats = [
   { value: 34, suffix: "", label: "Gulf cities covered" },
   { value: 120, suffix: "+", label: "Global job titles" },
   { value: 60, suffix: "s", label: "Avg. time to result" },
-  { value: 0, suffix: "", label: "Cost. Core tools, always free.", isZero: true },
+  { value: 0, suffix: "", label: "Core tools, always", isZero: true },
 ];
 
 function StatNumber({
@@ -21,7 +21,7 @@ function StatNumber({
   isZero?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {

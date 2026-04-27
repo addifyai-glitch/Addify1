@@ -20,6 +20,8 @@ const ADSENSE_ENABLED =
   process.env.NEXT_PUBLIC_ADSENSE_ENABLED === "true" &&
   !!process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
 
+const IS_DEV = process.env.NODE_ENV === "development";
+
 interface AdSlotProps {
   slot: AdSlotType;
   slotId?: string;
@@ -46,7 +48,17 @@ export function AdSlot({ slot, slotId, className }: AdSlotProps) {
     return null;
   }
 
-  // ── Placeholder (development / pre-AdSense) ────────────────────────────
+  // ── Production without ads: empty reserved space, no visible text ─────
+  if (!IS_DEV) {
+    return (
+      <div
+        aria-hidden="true"
+        className={cn("w-full", SLOT_CLASSES[slot], className)}
+      />
+    );
+  }
+
+  // ── Dev placeholder: visible so we know where slots are ───────────────
   const sizes = SLOT_SIZES[slot];
 
   return (

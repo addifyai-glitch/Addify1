@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   motion,
@@ -130,9 +130,9 @@ export function Hero() {
             const isWorth = word === "worth.";
             const isFit = word === "fit.";
             return (
+              <Fragment key={i}>
               <motion.span
-                key={i}
-                className={`inline-block mr-[0.25em] ${isWorth ? "text-accent" : ""} ${isFit ? "relative" : ""}`}
+                className={`inline-block ${isWorth ? "text-accent" : ""} ${isFit ? "relative" : ""}`}
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: prefersReduced ? 0 : 0.4 + i * 0.12, duration: 0.5 }}
@@ -160,6 +160,8 @@ export function Hero() {
                   </svg>
                 )}
               </motion.span>
+              {" "}
+              </Fragment>
             );
           })}
         </h1>

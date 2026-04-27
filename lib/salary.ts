@@ -214,7 +214,7 @@ export function formatCurrency(value: number, currency: string): string {
 // ─── SEO helpers ──────────────────────────────────────────────────────────────
 
 export function buildMetaTitle(roleTitle: string, cityName: string): string {
-  return `${roleTitle} Salary in ${cityName} 2025 | GulfFit`;
+  return `${roleTitle} Salary in ${cityName} 2025 | Addify`;
 }
 
 export function buildMetaDescription(

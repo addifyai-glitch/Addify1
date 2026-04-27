@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import SalaryForm from "./SalaryForm";
 
 export const metadata: Metadata = {
-  title: "GCC Salary Check | Know What You're Worth | GulfFit",
+  title: "GCC Salary Check | Know What You're Worth | Addify",
   description:
-    "Look up monthly salary ranges for 25 roles across Dubai, Abu Dhabi, Riyadh, Doha, and 5 more GCC cities. Based on 2025 market benchmarks.",
+    "Free salary benchmarks for 120+ roles across 34 cities in the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. Know what your role pays.",
   alternates: { canonical: "/salary" },
 };
 
