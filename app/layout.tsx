@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { RecaptchaProvider } from "@/components/RecaptchaProvider";
 import { CookieConsent } from "@/components/legal/cookie-consent";
@@ -34,6 +35,14 @@ export default function RootLayout({
       className={`${inter.variable} ${instrumentSerif.variable} h-full`}
       suppressHydrationWarning
     >
+      {process.env.NEXT_PUBLIC_ADSENSE_ENABLED === "true" && (
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      )}
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
