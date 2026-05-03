@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       description,
       submitter_email,
       submitter_ip_hash: ipHash,
-      featured: false,
+      is_featured: false,
       approved: false,
       source: "user_submission",
     });

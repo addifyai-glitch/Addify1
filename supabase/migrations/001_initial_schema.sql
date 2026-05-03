@@ -27,13 +27,14 @@ create index if not exists jobs_active_idx  on jobs(approved, expires_at) where 
 -- RLS
 alter table jobs enable row level security;
 
-create policy "Public read approved jobs"
-  on jobs for select
-  using (approved = true and expires_at > now());
-
-create policy "Service role full access"
-  on jobs for all
-  using (auth.role() = 'service_role');
+do $$ begin
+  if not exists (select 1 from pg_policies where tablename = 'jobs' and policyname = 'Public read approved jobs') then
+    create policy "Public read approved jobs" on jobs for select using (approved = true and expires_at > now());
+  end if;
+  if not exists (select 1 from pg_policies where tablename = 'jobs' and policyname = 'Service role full access') then
+    create policy "Service role full access" on jobs for all using (auth.role() = 'service_role');
+  end if;
+end $$;
 
 
 -- ─── Testimonials ─────────────────────────────────────────────────────────────
@@ -50,13 +51,14 @@ create table if not exists testimonials (
 
 alter table testimonials enable row level security;
 
-create policy "Public read approved testimonials"
-  on testimonials for select
-  using (approved = true);
-
-create policy "Service role full access on testimonials"
-  on testimonials for all
-  using (auth.role() = 'service_role');
+do $$ begin
+  if not exists (select 1 from pg_policies where tablename = 'testimonials' and policyname = 'Public read approved testimonials') then
+    create policy "Public read approved testimonials" on testimonials for select using (approved = true);
+  end if;
+  if not exists (select 1 from pg_policies where tablename = 'testimonials' and policyname = 'Service role full access on testimonials') then
+    create policy "Service role full access on testimonials" on testimonials for all using (auth.role() = 'service_role');
+  end if;
+end $$;
 
 
 -- ─── Contact messages ─────────────────────────────────────────────────────────
@@ -72,9 +74,11 @@ create table if not exists contact_messages (
 
 alter table contact_messages enable row level security;
 
-create policy "Service role full access on contact"
-  on contact_messages for all
-  using (auth.role() = 'service_role');
+do $$ begin
+  if not exists (select 1 from pg_policies where tablename = 'contact_messages' and policyname = 'Service role full access on contact') then
+    create policy "Service role full access on contact" on contact_messages for all using (auth.role() = 'service_role');
+  end if;
+end $$;
 
 
 -- ─── Salary submissions ───────────────────────────────────────────────────────
@@ -93,9 +97,11 @@ create table if not exists salary_submissions (
 
 alter table salary_submissions enable row level security;
 
-create policy "Service role full access on salary_submissions"
-  on salary_submissions for all
-  using (auth.role() = 'service_role');
+do $$ begin
+  if not exists (select 1 from pg_policies where tablename = 'salary_submissions' and policyname = 'Service role full access on salary_submissions') then
+    create policy "Service role full access on salary_submissions" on salary_submissions for all using (auth.role() = 'service_role');
+  end if;
+end $$;
 
 
 -- ─── Data deletion requests ───────────────────────────────────────────────────
@@ -111,6 +117,8 @@ create table if not exists data_deletion_requests (
 
 alter table data_deletion_requests enable row level security;
 
-create policy "Service role full access on deletion_requests"
-  on data_deletion_requests for all
-  using (auth.role() = 'service_role');
+do $$ begin
+  if not exists (select 1 from pg_policies where tablename = 'data_deletion_requests' and policyname = 'Service role full access on deletion_requests') then
+    create policy "Service role full access on deletion_requests" on data_deletion_requests for all using (auth.role() = 'service_role');
+  end if;
+end $$;

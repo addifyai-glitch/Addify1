@@ -1,7 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /wp-content/uploads/jobsearch-resumes/
+Disallow: /admin/
+Disallow: /api/
 
 User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Googlebot
 Allow: /
 
 Sitemap: https://addify.ae/sitemap.xml

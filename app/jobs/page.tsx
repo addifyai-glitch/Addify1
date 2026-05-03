@@ -44,7 +44,7 @@ function JobCard({ job }: { job: Job }) {
   const flag = COUNTRY_FLAGS[job.country] ?? "🌍";
   return (
     <div className="group relative bg-card border border-border rounded-xl p-5 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 flex flex-col gap-3">
-      {job.featured && (
+      {(job.is_featured) && (
         <Badge variant="accent" className="absolute top-3 right-3 text-xs">Featured</Badge>
       )}
       <div className="flex items-center gap-3">

@@ -3,7 +3,8 @@ import { MOCK_JOBS } from "@/data/mockJobs";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Job } from "@/types/job";
 
-function formatDate(iso: string) {
+function formatDate(iso: string | null | undefined) {
+  if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
@@ -80,11 +81,11 @@ export default async function AdminJobsPage() {
                   </td>
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                      job.featured
+                      job.is_featured
                         ? "bg-accent/15 text-accent"
                         : "bg-muted text-muted-foreground"
                     }`}>
-                      {job.featured ? "Yes" : "No"}
+                      {job.is_featured ? "Yes" : "No"}
                     </span>
                   </td>
                   <td className="px-5 py-3.5 text-right">

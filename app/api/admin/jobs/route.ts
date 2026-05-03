@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       experience_level, apply_url, description,
-      featured: !!featured,
+      is_featured: !!featured,
       approved: true,
       source: "admin",
       expires_at: expiresAt,
