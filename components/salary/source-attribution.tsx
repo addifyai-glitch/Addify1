@@ -138,10 +138,10 @@ export function SourceAttribution({ country }: { country: string }) {
               href={src.authorityUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-accent text-xs hover:underline mb-2"
+              className="inline-flex items-center gap-1.5 text-accent text-xs underline underline-offset-2 hover:no-underline cursor-pointer py-1 mb-1"
             >
               Visit official site
-              <ExternalLink size={11} />
+              <ExternalLink size={11} className="shrink-0" />
             </a>
             <p className="text-xs text-foreground/70 mb-1 font-medium">{src.lawReference}</p>
             <p className="text-xs text-muted-foreground">{src.notes}</p>

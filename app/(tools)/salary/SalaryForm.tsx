@@ -157,7 +157,7 @@ export default function SalaryForm() {
           <p className="text-base font-semibold text-[var(--foreground)] mb-1">
             We couldn&apos;t generate an estimate for this combination.
           </p>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted-foreground">
             Try a different role or city, or{" "}
             <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
               contribute your salary
@@ -204,17 +204,17 @@ function ResultCard({ result }: { result: SalaryResult }) {
       <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left: median */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)] mb-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
             Median Monthly Salary
           </p>
           <p className="text-4xl font-bold text-[var(--accent)] tabular-nums leading-none">
             {fmt(result.median)}
           </p>
-          <p className="mt-1 text-sm text-[var(--muted)]">per month (basic)</p>
+          <p className="mt-1 text-sm text-muted-foreground">per month (basic)</p>
 
           {/* Range bar */}
           <div className="mt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)] mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
               25th to 75th Percentile Range
             </p>
             <div className="flex items-center gap-3">
@@ -234,31 +234,31 @@ function ResultCard({ result }: { result: SalaryResult }) {
         {/* Right: allowances */}
         <div className="flex flex-col gap-5">
           <div className="rounded-xl bg-[var(--background)] border border-[var(--border)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)] mb-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
               Typical Housing Allowance
             </p>
             <p className="text-xl font-bold text-[var(--foreground)] tabular-nums">
               {fmt(result.housingMonthly)}
-              <span className="text-sm font-normal text-[var(--muted)]">
+              <span className="text-sm font-normal text-muted-foreground">
                 /mo
               </span>
             </p>
-            <p className="text-xs text-[var(--muted)] mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               ~{result.housingPct}% of basic salary
             </p>
           </div>
 
           <div className="rounded-xl bg-[var(--background)] border border-[var(--border)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)] mb-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
               Estimated Total Package
             </p>
             <p className="text-xl font-bold text-[var(--foreground)] tabular-nums">
               {fmt(result.totalPackage)}
-              <span className="text-sm font-normal text-[var(--muted)]">
+              <span className="text-sm font-normal text-muted-foreground">
                 /mo
               </span>
             </p>
-            <p className="text-xs text-[var(--muted)] mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Basic + housing + transport + allowances (~+{result.totalPct}%)
             </p>
           </div>
@@ -268,7 +268,7 @@ function ResultCard({ result }: { result: SalaryResult }) {
       {/* Disclaimer */}
       <div className="px-6 pb-5">
         {result.isEstimate ? (
-          <p className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
+          <p className="text-xs text-muted-foreground border-t border-[var(--border)] pt-4">
             These figures are regional estimates based on GCC market benchmarks and category averages.
             We are working on collecting verified data for this role and city.{" "}
             <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
@@ -277,7 +277,7 @@ function ResultCard({ result }: { result: SalaryResult }) {
             to help us improve accuracy. Actual compensation varies by company, nationality, and negotiation.
           </p>
         ) : (
-          <p className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
+          <p className="text-xs text-muted-foreground border-t border-[var(--border)] pt-4">
             Estimates based on Bayt Salary Report 2024, Robert Half GCC, and
             Cooper Fitch Salary Survey. Actual compensation varies by company,
             nationality, and negotiation.
