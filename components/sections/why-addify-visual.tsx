@@ -75,7 +75,7 @@ export function WhyAddifyVisual() {
             <div className="h-1 w-3/5 rounded-full bg-accent/60" />
           </div>
           {/* Pulsing "updated" dot */}
-          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-foreground/50">
+          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-foreground/60">
             <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
             Updated just now
           </div>

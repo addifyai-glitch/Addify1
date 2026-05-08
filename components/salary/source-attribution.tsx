@@ -153,7 +153,7 @@ export function SourceAttribution({ country }: { country: string }) {
         <ConfidenceLine />
       </p>
 
-      <p className="mt-3 text-xs text-foreground/50">
+      <p className="mt-3 text-xs text-foreground/75">
         Salary ranges are indicative, not guaranteed. Actual compensation depends on company size,
         candidate experience, and negotiation. This is not financial or legal advice.
       </p>

@@ -2,24 +2,24 @@
 
 import { useState } from "react";
 import {
-  CITY_CONFIGS,
-  CITY_SLUGS,
+  ALL_CITY_CONFIGS,
   EXPERIENCE_BANDS,
   EXPERIENCE_LABELS_LONG,
   computeSalary,
+  computeSalaryFallback,
   formatCurrency,
   type ExperienceBandLegacy,
   type SalaryResult,
 } from "@/lib/salary";
 import { JOB_CATEGORIES, getJobTitleBySlug } from "@/data/jobTitles";
-import { CITY_GROUPS, CITIES_WITH_DATA, CITIES } from "@/data/cities";
+import { CITY_GROUPS, CITIES } from "@/data/cities";
 import { LiveJobs } from "@/components/sections/live-jobs";
 import { AdSlot } from "@/components/ui/ad-slot";
 import { SourceAttribution } from "@/components/salary/source-attribution";
 
-// Map city name → slug in CITY_CONFIGS
+// Map city name → slug across all city configs (primary + extended)
 const cityNameToSlug = new Map<string, string>(
-  CITY_SLUGS.map((slug) => [CITY_CONFIGS[slug].name, slug])
+  Object.entries(ALL_CITY_CONFIGS).map(([slug, city]) => [city.name, slug])
 );
 
 export default function SalaryForm() {
@@ -30,17 +30,25 @@ export default function SalaryForm() {
 
   const jobTitle = titleSlug ? getJobTitleBySlug(titleSlug) : undefined;
   const salarySlug = jobTitle?.salarySlug ?? null;
-  const noTitleData = !!titleSlug && salarySlug === null;
-
   const resolvedCitySlug = cityValue ? (cityNameToSlug.get(cityValue) ?? null) : null;
-  const noCityData = !!cityValue && !CITIES_WITH_DATA.has(cityValue);
 
-  const noData = noTitleData || noCityData;
-
-  const result: SalaryResult | null =
-    salarySlug && resolvedCitySlug && experience && !noData
+  const primaryResult: SalaryResult | null =
+    salarySlug && resolvedCitySlug && experience
       ? computeSalary(salarySlug, resolvedCitySlug, experience as ExperienceBandLegacy)
       : null;
+
+  const result: SalaryResult | null =
+    primaryResult ??
+    (titleSlug && resolvedCitySlug && experience
+      ? computeSalaryFallback(
+          jobTitle?.category ?? "",
+          resolvedCitySlug,
+          experience as ExperienceBandLegacy,
+          "individual-contributor",
+          jobTitle?.title ?? titleSlug,
+          titleSlug,
+        )
+      : null);
 
   const ready = !!(titleSlug && cityValue && experience);
   const jobCategory = jobTitle?.category ?? "";
@@ -124,15 +132,6 @@ export default function SalaryForm() {
           </div>
         </div>
 
-        {noData && (
-          <p className="mt-4 text-sm text-[var(--muted)] text-center">
-            We don&apos;t have data for this combination yet.{" "}
-            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
-              Help us by contributing your salary.
-            </a>
-          </p>
-        )}
-
         <div className="mt-5 flex justify-center">
           <button
             type="submit"
@@ -156,12 +155,12 @@ export default function SalaryForm() {
       {submitted && ready && !result && (
         <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center">
           <p className="text-base font-semibold text-[var(--foreground)] mb-1">
-            No salary data for this combination yet.
+            We couldn&apos;t generate an estimate for this combination.
           </p>
           <p className="text-sm text-[var(--muted)]">
-            Try a different role or city. You can also{" "}
+            Try a different role or city, or{" "}
             <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
-              contribute your own salary
+              contribute your salary
             </a>{" "}
             to help us expand coverage.
           </p>
@@ -195,6 +194,11 @@ function ResultCard({ result }: { result: SalaryResult }) {
         <span className="text-white/70 text-sm">
           {EXPERIENCE_LABELS_LONG[result.experience]}
         </span>
+        {result.isEstimate && (
+          <span className="ml-auto text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-white/70 px-2 py-0.5 rounded-full">
+            Estimated
+          </span>
+        )}
       </div>
 
       <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -263,11 +267,22 @@ function ResultCard({ result }: { result: SalaryResult }) {
 
       {/* Disclaimer */}
       <div className="px-6 pb-5">
-        <p className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
-          Estimates based on Bayt Salary Report 2024, Robert Half GCC, and
-          Cooper Fitch Salary Survey. Actual compensation varies by company,
-          nationality, and negotiation.
-        </p>
+        {result.isEstimate ? (
+          <p className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
+            These figures are regional estimates based on GCC market benchmarks and category averages.
+            We are working on collecting verified data for this role and city.{" "}
+            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
+              Contribute your salary
+            </a>{" "}
+            to help us improve accuracy. Actual compensation varies by company, nationality, and negotiation.
+          </p>
+        ) : (
+          <p className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
+            Estimates based on Bayt Salary Report 2024, Robert Half GCC, and
+            Cooper Fitch Salary Survey. Actual compensation varies by company,
+            nationality, and negotiation.
+          </p>
+        )}
       </div>
     </div>
   );

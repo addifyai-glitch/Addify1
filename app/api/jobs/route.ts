@@ -67,8 +67,7 @@ export async function GET(req: NextRequest) {
       const { data, error, count } = await query;
       if (error) throw error;
 
-      const noFilters = !city && !country && !category && !experience && !search && !title;
-      if ((count ?? 0) === 0 && noFilters) throw new Error("empty");
+      if ((count ?? 0) === 0) throw new Error("empty");
 
       return NextResponse.json({ jobs: data ?? [], total: count ?? 0, source: "supabase" });
     } catch {
