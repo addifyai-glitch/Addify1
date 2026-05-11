@@ -4,6 +4,7 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { RecaptchaProvider } from "@/components/RecaptchaProvider";
 import { CookieConsent } from "@/components/legal/cookie-consent";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import "./globals.css";
 
 const inter = Inter({
@@ -53,6 +54,7 @@ export default function RootLayout({
           <RecaptchaProvider>
             {children}
             <CookieConsent />
+            <GoogleAnalytics />
           </RecaptchaProvider>
         </ThemeProvider>
       </body>
