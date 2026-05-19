@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 const SUPABASE_OK =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -7,6 +8,16 @@ const SUPABASE_OK =
 
 function hashIP(ip: string): string {
   return createHash("sha256").update(ip + "addify-salt").digest("hex").slice(0, 16);
+}
+
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .substring(0, 80);
 }
 
 export async function POST(req: NextRequest) {
@@ -18,16 +29,33 @@ export async function POST(req: NextRequest) {
   }
 
   const {
-    title, company, city, country, salary_min, salary_max, currency,
+    title, company, city, country, category,
+    salary_min, salary_max, currency,
     experience_level, apply_url, description, submitter_email,
+    captchaToken,
   } = body;
 
   // Basic validation
-  if (!title || !company || !city || !apply_url || !submitter_email) {
+  if (!title || !company || !city || !category || !apply_url || !submitter_email) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
   try { new URL(apply_url); } catch {
     return NextResponse.json({ error: "Invalid apply URL" }, { status: 400 });
+  }
+  if (!description || description.length < 200 || description.length > 2000) {
+    return NextResponse.json(
+      { error: "Description must be between 200 and 2000 characters" },
+      { status: 400 }
+    );
+  }
+
+  // reCAPTCHA verification
+  const captcha = await verifyRecaptcha(captchaToken ?? "");
+  if (!captcha.success) {
+    return NextResponse.json(
+      { error: "Spam check failed. Please refresh and try again." },
+      { status: 403 }
+    );
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -64,15 +92,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Generate a unique slug
+    const baseSlug = generateSlug(title);
+    let slug = baseSlug;
+    let attempt = 0;
+    while (attempt < 20) {
+      const { data: existing } = await supabase
+        .from("jobs")
+        .select("slug")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (!existing) break;
+      attempt++;
+      slug = `${baseSlug}-${attempt}`;
+    }
+    if (attempt >= 20) slug = `${baseSlug}-${Date.now()}`;
+
     const { error } = await supabase.from("jobs").insert({
+      slug,
       title,
       company,
       city,
       country: country ?? city,
+      category,
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       currency,
-      experience_level,
+      experience_level: experience_level || null,
       apply_url,
       description,
       submitter_email,

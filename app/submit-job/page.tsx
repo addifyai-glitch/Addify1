@@ -8,8 +8,14 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { CaptchaNotice } from "@/components/ui/captcha-notice";
 import { CITY_GROUPS } from "@/data/cities";
+import { JOB_CATEGORIES } from "@/data/jobTitles";
 
-const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
+const EXPERIENCE_OPTIONS = [
+  { label: "0-2 years",  value: "Entry" },
+  { label: "3-5 years",  value: "Mid" },
+  { label: "6-10 years", value: "Senior" },
+  { label: "10+ years",  value: "Executive" },
+];
 
 export default function SubmitJobPage() {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -17,7 +23,7 @@ export default function SubmitJobPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     title: "", company: "", city: "", currency: "AED",
-    salary_min: "", salary_max: "", experience_level: "", apply_url: "",
+    category: "", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
     description: "", submitter_email: "",
     website: "", // honeypot
   });
@@ -118,10 +124,20 @@ export default function SubmitJobPage() {
               </div>
 
               <div>
+                <label className={labelCls}>Category *</label>
+                <select className={inputCls} required value={form.category} onChange={e => set("category", e.target.value)}>
+                  <option value="">Select a category…</option>
+                  {JOB_CATEGORIES.map(cat => (
+                    <option key={cat.name} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label className={labelCls}>Experience Level</label>
                 <select className={inputCls} value={form.experience_level} onChange={e => set("experience_level", e.target.value)}>
                   <option value="">Any / not specified</option>
-                  {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                  {EXPERIENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
 

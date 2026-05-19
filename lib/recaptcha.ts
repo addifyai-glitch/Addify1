@@ -10,5 +10,5 @@ export async function verifyRecaptcha(token: string): Promise<{ success: boolean
   });
 
   const data = await response.json();
-  return { success: data.success === true, score: data.score || 0 };
+  return { success: data.success === true && (data.score || 0) >= 0.5, score: data.score || 0 };
 }
