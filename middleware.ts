@@ -9,9 +9,10 @@ export function middleware(req: NextRequest) {
   }
 
   // Check Supabase session cookie — Supabase sets sb-*-auth-token cookies
+  // Supabase SSR may chunk the token into sb-xxx-auth-token.0, .1, etc.
   const hasSession = req.cookies
     .getAll()
-    .some((c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token"));
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
 
   if (!hasSession) {
     const loginUrl = new URL("/admin/login", req.url);
