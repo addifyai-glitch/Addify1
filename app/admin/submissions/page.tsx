@@ -1,28 +1,38 @@
-import { MOCK_JOBS } from "@/data/mockJobs";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Job } from "@/types/job";
 
-function formatDate(iso: string) {
+export const dynamic = "force-dynamic";
+
+function formatDate(iso: string | null | undefined) {
+  if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
 export default async function SubmissionsPage() {
   const connected = isSupabaseConfigured();
   let pending: Job[] = [];
+  let queryError: string | null = null;
 
   if (connected) {
     try {
       const { createAdminClient } = await import("@/lib/supabase/server");
       const supabase = createAdminClient();
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("jobs")
         .select("*")
         .eq("approved", false)
         .eq("source", "user_submission")
-        .order("created_at", { ascending: false });
-      pending = data ?? [];
-    } catch {
-      pending = [];
+        .order("posted_at", { ascending: false });
+
+      if (error) {
+        console.error("[submissions] Supabase error:", error);
+        queryError = error.message;
+      } else {
+        pending = data ?? [];
+      }
+    } catch (e) {
+      console.error("[submissions] Unexpected error:", e);
+      queryError = e instanceof Error ? e.message : String(e);
     }
   }
 
@@ -34,13 +44,13 @@ export default async function SubmissionsPage() {
         {!connected && " (connect Supabase to see real submissions)"}
       </p>
 
-      {!connected && (
-        <div className="mb-6 p-4 bg-accent/10 border border-accent/30 rounded-xl text-sm text-accent">
-          ⚠️ Supabase is not configured — real user submissions will appear here once connected.
+      {queryError && (
+        <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-sm text-destructive font-mono">
+          Query error: {queryError}
         </div>
       )}
 
-      {pending.length === 0 ? (
+      {pending.length === 0 && !queryError ? (
         <div className="text-center py-16 bg-card border border-border rounded-xl">
           <p className="text-muted-foreground">No pending submissions.</p>
         </div>
