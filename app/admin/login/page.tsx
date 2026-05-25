@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
-const SUPABASE_OK =
-  typeof window !== "undefined"
-    ? !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-    : false;
+import { createBrowserClient } from "@supabase/ssr";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error" | "unauthorized">("idle");
+  const [urlError, setUrlError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setUrlError(params.get("error"));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
     setStatus("loading");
 
+    // Step 1: Validate admin email server-side
     const res = await fetch("/api/admin/auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,9 +27,41 @@ export default function AdminLogin() {
     });
 
     const data = await res.json();
-    if (data.unauthorized) setStatus("unauthorized");
-    else if (data.success) setStatus("sent");
-    else setStatus("error");
+    if (data.unauthorized) {
+      setStatus("unauthorized");
+      return;
+    }
+
+    // Step 2: Call Supabase from the browser so PKCE verifier is stored in browser cookies
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      setStatus("sent"); // dev fallback
+      return;
+    }
+
+    try {
+      const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin`,
+        },
+      });
+
+      if (error) {
+        console.error("[admin-login] OTP error:", error.message);
+        setStatus("error");
+        return;
+      }
+
+      setStatus("sent");
+    } catch (err) {
+      console.error("[admin-login] Unexpected error:", err);
+      setStatus("error");
+    }
   }
 
   return (
@@ -37,10 +72,9 @@ export default function AdminLogin() {
           <p className="text-sm text-muted-foreground">Addify · Gulf Careers, Clarified.</p>
         </div>
 
-        {!SUPABASE_OK && (
-          <div className="mb-6 p-4 bg-accent/10 border border-accent/30 rounded-xl text-sm text-accent">
-            ⚠️ Connect Supabase to enable real admin functionality (see{" "}
-            <code className="font-mono text-xs">.env.example</code>).
+        {urlError && (
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-sm text-destructive">
+            Login failed ({urlError}). Request a new magic link below.
           </div>
         )}
 
