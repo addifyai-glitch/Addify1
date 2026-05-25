@@ -14,8 +14,8 @@ export default async function AdminJobsPage() {
 
   if (connected) {
     try {
-      const { createClient } = await import("@/lib/supabase/server");
-      const supabase = await createClient();
+      const { createAdminClient } = await import("@/lib/supabase/server");
+      const supabase = createAdminClient();
       const { data } = await supabase
         .from("jobs")
         .select("*")

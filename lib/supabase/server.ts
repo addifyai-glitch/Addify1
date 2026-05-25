@@ -27,6 +27,20 @@ export async function createClient() {
   );
 }
 
+// Service-role client for admin operations — bypasses RLS.
+// Requires SUPABASE_SERVICE_ROLE_KEY env var (never expose to browser).
+export function createAdminClient() {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  }
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceKey,
+    { auth: { persistSession: false, autoRefreshToken: false } }
+  );
+}
+
 // Cookie-free client for public read-only queries (allows static generation)
 export function createPublicClient() {
   return createSupabaseClient(
