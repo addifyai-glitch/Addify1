@@ -12,11 +12,27 @@ export default async function SubmissionsPage() {
   const connected = isSupabaseConfigured();
   let pending: Job[] = [];
   let queryError: string | null = null;
+  let totalJobs: number | null = null;
+  let unapprovedCount: number | null = null;
 
   if (connected) {
     try {
       const { createAdminClient } = await import("@/lib/supabase/server");
       const supabase = createAdminClient();
+
+      // Diagnostic: total row count (no filter)
+      const { count: total } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact", head: true });
+      totalJobs = total ?? 0;
+
+      // Diagnostic: unapproved count (no source filter)
+      const { count: unapproved } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact", head: true })
+        .eq("approved", false);
+      unapprovedCount = unapproved ?? 0;
+
       const { data, error } = await supabase
         .from("jobs")
         .select("*")
@@ -43,6 +59,10 @@ export default async function SubmissionsPage() {
         {pending.length} pending
         {!connected && " (connect Supabase to see real submissions)"}
       </p>
+
+      <div className="mb-4 p-3 bg-muted rounded-xl text-xs text-muted-foreground font-mono">
+        debug: total={totalJobs ?? "?"} | unapproved={unapprovedCount ?? "?"} | user_submissions={pending.length}
+      </div>
 
       {queryError && (
         <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-sm text-destructive font-mono">
