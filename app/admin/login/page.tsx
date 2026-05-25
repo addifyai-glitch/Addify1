@@ -8,6 +8,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error" | "unauthorized">("idle");
   const [urlError, setUrlError] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -47,12 +48,13 @@ export default function AdminLogin() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) {
-        console.error("[admin-login] OTP error:", error.message);
+        console.error("[admin-login] OTP error:", error.message, error.status);
+        setOtpError(error.message);
         setStatus("error");
         return;
       }
@@ -114,7 +116,7 @@ export default function AdminLogin() {
             </Button>
             {status === "error" && (
               <p className="mt-3 text-sm text-center text-destructive">
-                Something went wrong. Check Supabase configuration.
+                {otpError ?? "Something went wrong. Check Supabase configuration."}
               </p>
             )}
           </form>
