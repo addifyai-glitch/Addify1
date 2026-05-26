@@ -1,5 +1,6 @@
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Job } from "@/types/job";
+import { SubmissionActions } from "@/components/admin/submission-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -12,26 +13,11 @@ export default async function SubmissionsPage() {
   const connected = isSupabaseConfigured();
   let pending: Job[] = [];
   let queryError: string | null = null;
-  let totalJobs: number | null = null;
-  let unapprovedCount: number | null = null;
 
   if (connected) {
     try {
       const { createAdminClient } = await import("@/lib/supabase/server");
       const supabase = createAdminClient();
-
-      // Diagnostic: total row count (no filter)
-      const { count: total } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact", head: true });
-      totalJobs = total ?? 0;
-
-      // Diagnostic: unapproved count (no source filter)
-      const { count: unapproved } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact", head: true })
-        .eq("approved", false);
-      unapprovedCount = unapproved ?? 0;
 
       const { data, error } = await supabase
         .from("jobs")
@@ -59,10 +45,6 @@ export default async function SubmissionsPage() {
         {pending.length} pending
         {!connected && " (connect Supabase to see real submissions)"}
       </p>
-
-      <div className="mb-4 p-3 bg-muted rounded-xl text-xs text-muted-foreground font-mono">
-        debug: total={totalJobs ?? "?"} | unapproved={unapprovedCount ?? "?"} | user_submissions={pending.length}
-      </div>
 
       {queryError && (
         <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-sm text-destructive font-mono">
@@ -96,14 +78,7 @@ export default async function SubmissionsPage() {
                     {job.apply_url}
                   </a>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <button className="px-4 py-1.5 rounded-full bg-success/15 text-success text-xs font-semibold hover:bg-success/25 transition-colors">
-                    Approve
-                  </button>
-                  <button className="px-4 py-1.5 rounded-full bg-destructive/10 text-destructive text-xs font-semibold hover:bg-destructive/20 transition-colors">
-                    Reject
-                  </button>
-                </div>
+                <SubmissionActions jobId={job.id} jobTitle={job.title} />
               </div>
             </div>
           ))}
