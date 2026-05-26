@@ -85,8 +85,8 @@ function dbRowToPost(row: DbRow): Post {
 
 async function getDbPosts(): Promise<Post[]> {
   try {
-    const { createPublicClient } = await import("@/lib/supabase/server");
-    const supabase = createPublicClient();
+    const { createAdminClient } = await import("@/lib/supabase/server");
+    const supabase = createAdminClient();
     const { data } = await supabase
       .from("blog_posts")
       .select("id, slug, title, description, content, author, read_time, category, draft, image, image_alt, date")
@@ -101,8 +101,8 @@ async function getDbPosts(): Promise<Post[]> {
 
 async function getDbPostBySlug(slug: string): Promise<Post | null> {
   try {
-    const { createPublicClient } = await import("@/lib/supabase/server");
-    const supabase = createPublicClient();
+    const { createAdminClient } = await import("@/lib/supabase/server");
+    const supabase = createAdminClient();
     const { data } = await supabase
       .from("blog_posts")
       .select("id, slug, title, description, content, author, read_time, category, draft, image, image_alt, date")
