@@ -4,13 +4,34 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const CATEGORIES = [
+  // Career & Jobs
   'Salary & Compensation',
   'CV and Applications',
   'Job Search',
-  'Visa & Relocation',
   'Career Advice',
+  'Career Growth',
+  'Negotiation',
+  // Gulf Regions
+  'UAE Essentials',
+  'Saudi Arabia',
+  'Qatar',
+  'Kuwait',
+  'Bahrain',
+  'Oman',
+  // Life & Relocation
+  'Visa & Relocation',
+  'Living and Working',
+  // Industry
   'Market Insights',
   'Industry Guides',
+  'Technology',
+  'Finance',
+  'Healthcare',
+  'Construction & Engineering',
+  // New
+  'AI & Future of Work',
+  'Promotions & Perks',
+  'News',
 ];
 
 function slugify(str: string) {
