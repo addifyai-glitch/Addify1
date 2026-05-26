@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 const CATEGORIES = [
   // Career & Jobs
@@ -221,18 +222,12 @@ export default function EditBlogPostPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Hero image URL</label>
-            <input type="url" value={form.image} onChange={(e) => set('image', e.target.value)}
-              className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Image alt text</label>
-            <input type="text" value={form.image_alt} onChange={(e) => set('image_alt', e.target.value)}
-              className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
-          </div>
-        </div>
+        <ImageUploader
+          value={form.image}
+          altValue={form.image_alt}
+          onChangeUrl={(url) => set('image', url)}
+          onChangeAlt={(alt) => set('image_alt', alt)}
+        />
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Content * (Markdown)</label>
