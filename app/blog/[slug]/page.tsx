@@ -8,18 +8,20 @@ import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { AdSlot } from "@/components/ui/ad-slot";
-import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/blog";
+import { getFilePostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 import { ArrowLeft } from "lucide-react";
 
 type Props = { params: Promise<{ slug: string }> };
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }));
+  return getFilePostSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
   return {
     title: `${post.title} | Addify`,
@@ -40,10 +42,10 @@ function formatDate(iso: string) {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const related = getRelatedPosts(slug, 2);
+  const related = await getRelatedPosts(slug, 2);
   const shareUrl = `https://addify.ae/blog/${slug}`;
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedText = encodeURIComponent(`${post.title} via Addify`);

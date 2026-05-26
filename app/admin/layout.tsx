@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoutButton } from "@/components/admin/logout-button";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,7 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <Link href="/admin/jobs" className="hover:text-foreground transition-colors">Jobs</Link>
             <Link href="/admin/submissions" className="hover:text-foreground transition-colors">Submissions</Link>
+            <Link href="/admin/blog" className="hover:text-foreground transition-colors">Blog</Link>
             <Link href="/" className="hover:text-foreground transition-colors">← Site</Link>
+            <LogoutButton />
           </div>
         </div>
       </header>

@@ -25,8 +25,10 @@ function formatDate(iso: string) {
   });
 }
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = await getAllPosts();
   const [featured, ...rest] = posts;
 
   return (
