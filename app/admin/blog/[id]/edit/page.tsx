@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { InsertButtonLink } from '@/components/admin/insert-button-link';
 
 const CATEGORIES = [
   // Career & Jobs
@@ -59,6 +60,7 @@ export default function EditBlogPostPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     async function load() {
@@ -90,6 +92,24 @@ export default function EditBlogPostPage() {
     setForm((prev) => prev ? { ...prev, [key]: value } : prev);
   }
 
+  function insertAtCursor(text: string) {
+    const ta = contentRef.current;
+    if (!ta || !form) {
+      setForm((prev) => prev ? { ...prev, content: prev.content + '\n' + text } : prev);
+      return;
+    }
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    setForm((prev) => prev ? ({
+      ...prev,
+      content: prev.content.slice(0, start) + text + prev.content.slice(end),
+    }) : prev);
+    setTimeout(() => {
+      ta.selectionStart = ta.selectionEnd = start + text.length;
+      ta.focus();
+    }, 0);
+  }
+
   async function handleSave(publishNow?: boolean) {
     if (!form) return;
     setBusy(true);
@@ -112,7 +132,11 @@ export default function EditBlogPostPage() {
         setError(data.error || 'Save failed');
       } else {
         setSaved(true);
-        if (publishNow !== undefined) router.push('/admin/blog');
+        if (publishNow === true) {
+          router.push('/admin/blog');
+        } else if (publishNow === false) {
+          setForm((prev) => prev ? { ...prev, draft: true } : prev);
+        }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error');
@@ -231,7 +255,8 @@ export default function EditBlogPostPage() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Content * (Markdown)</label>
-          <textarea value={form.content} onChange={(e) => set('content', e.target.value)} required rows={24}
+          <InsertButtonLink onInsert={insertAtCursor} />
+          <textarea ref={contentRef} value={form.content} onChange={(e) => set('content', e.target.value)} required rows={24}
             className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 resize-y font-mono leading-relaxed" />
         </div>
 
@@ -246,7 +271,7 @@ export default function EditBlogPostPage() {
               Publish Now
             </button>
           ) : (
-            <button type="button" onClick={() => { set('draft', true); handleSave(); }} disabled={busy}
+            <button type="button" onClick={() => handleSave(false)} disabled={busy}
               className="px-6 py-2.5 rounded-full border border-border text-sm font-semibold text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50">
               Unpublish
             </button>

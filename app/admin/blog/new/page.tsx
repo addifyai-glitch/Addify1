@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { InsertButtonLink } from '@/components/admin/insert-button-link';
 
 const CATEGORIES = [
   // Career & Jobs
@@ -47,6 +48,7 @@ export default function NewBlogPostPage() {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
   const [form, setForm] = useState({
     title: '',
@@ -70,6 +72,24 @@ export default function NewBlogPostPage() {
       }
       return next;
     });
+  }
+
+  function insertAtCursor(text: string) {
+    const ta = contentRef.current;
+    if (!ta) {
+      setForm((prev) => ({ ...prev, content: prev.content + '\n' + text }));
+      return;
+    }
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    setForm((prev) => ({
+      ...prev,
+      content: prev.content.slice(0, start) + text + prev.content.slice(end),
+    }));
+    setTimeout(() => {
+      ta.selectionStart = ta.selectionEnd = start + text.length;
+      ta.focus();
+    }, 0);
   }
 
   async function handleSubmit(e: React.FormEvent, publishNow: boolean) {
@@ -217,7 +237,9 @@ export default function NewBlogPostPage() {
           <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
             Content * <span className="normal-case font-normal">(Markdown)</span>
           </label>
+          <InsertButtonLink onInsert={insertAtCursor} />
           <textarea
+            ref={contentRef}
             value={form.content}
             onChange={(e) => set('content', e.target.value)}
             required

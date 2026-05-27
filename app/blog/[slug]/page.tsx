@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { AdSlot } from "@/components/ui/ad-slot";
+import { ButtonLink } from "@/components/blog/button-link";
 import { getFilePostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 import { ArrowLeft } from "lucide-react";
 
@@ -97,7 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Article body */}
           <article className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
-            <MDXRemote source={post.content} />
+            <MDXRemote source={post.content} components={{ ButtonLink }} />
           </article>
 
           {/* Footer ad */}
