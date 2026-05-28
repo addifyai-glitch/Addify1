@@ -174,7 +174,7 @@ body {
   font-family: var(--font-display);
 }
 
-/* ─── Print styles (for cover letter PDF download) ───────────────────────── */
+/* ─── Print styles (cover letter + resume PDF download) ──────────────────── */
 @media print {
   body * { visibility: hidden; }
   .print-letter, .print-letter * { visibility: visible; }
@@ -189,6 +189,21 @@ body {
     line-height: 1.7;
   }
   .print-letter h1, .print-letter h2, .print-letter h3 { color: black; }
+
+  /* Resume builder print target */
+  .resume-page, .resume-page * { visibility: visible; }
+  .resume-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 40px;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+
   .no-print { display: none !important; }
   @page { margin: 0; size: A4; }
 }
