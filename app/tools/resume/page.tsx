@@ -212,7 +212,9 @@ export default function ResumeBuilderPage() {
             {templateBar}
             {actionButtons}
           </div>
-          <p className="text-xs text-muted-foreground mb-6 no-print">Opens your browser print dialog. Choose &ldquo;Save as PDF&rdquo;.</p>
+          <p className="text-xs text-muted-foreground mb-6 no-print">
+            Click <strong>Download PDF</strong>, then click <strong>Print</strong> in the confirmation — your browser&apos;s print dialog opens next. Choose <strong>Save as PDF</strong> as the destination.
+          </p>
 
           {/* Mobile tab switcher */}
           <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4 no-print">
