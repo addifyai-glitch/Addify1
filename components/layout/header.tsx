@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Salary Check", href: "/salary" },
   { label: "Fit Score", href: "/fit" },
   { label: "Cover Letter", href: "/cover-letter" },
+  { label: "Resume Builder", href: "/tools/resume" },
   { label: "Jobs", href: "/jobs" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },

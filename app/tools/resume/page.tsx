@@ -40,6 +40,17 @@ export default function ResumeBuilderPage() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
 
+  // Share state
+  const [copied, setCopied] = useState(false);
+
+  function handleShare() {
+    const url = 'https://addify.ae/tools/resume';
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   async function handleImproveWithAI() {
     setAiLoading(true);
     setAiError(null);
@@ -113,6 +124,13 @@ export default function ResumeBuilderPage() {
         className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-colors no-print"
       >
         Clear
+      </button>
+      <button
+        type="button"
+        onClick={handleShare}
+        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors no-print"
+      >
+        {copied ? 'Copied!' : 'Share'}
       </button>
       <button
         type="button"
