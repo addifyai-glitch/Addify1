@@ -13,7 +13,9 @@ export function InsertButtonLink({ onInsert }: Props) {
 
   function handleInsert() {
     if (!label.trim() || !url.trim()) return;
-    onInsert(`<ButtonLink href="${url.trim()}">${label.trim()}</ButtonLink>`);
+    // Strip Markdown link brackets if user accidentally pastes [https://...]
+    const cleanUrl = url.trim().replace(/^\[/, '').replace(/\]$/, '');
+    onInsert(`<ButtonLink href="${cleanUrl}">${label.trim()}</ButtonLink>`);
     setLabel('');
     setUrl('');
     setOpen(false);
