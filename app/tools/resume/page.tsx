@@ -62,7 +62,6 @@ export default function ResumeBuilderPage() {
         body: JSON.stringify({
           summary: resume.summary,
           jobTitle: resume.contact.jobTitle,
-          captchaToken: '',
         }),
       });
       const data = await res.json();
@@ -114,28 +113,28 @@ export default function ResumeBuilderPage() {
       <button
         type="button"
         onClick={() => setResume(SAMPLE_RESUME)}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors no-print"
+        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
         Load sample
       </button>
       <button
         type="button"
         onClick={() => { if (confirm('Clear all resume data?')) reset(); }}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-colors no-print"
+        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-colors"
       >
         Clear
       </button>
       <button
         type="button"
         onClick={handleShare}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors no-print"
+        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
         {copied ? 'Copied!' : 'Share'}
       </button>
       <button
         type="button"
         onClick={() => window.print()}
-        className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity no-print"
+        className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
       >
         Download PDF
       </button>
@@ -211,64 +210,68 @@ export default function ResumeBuilderPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 py-8 md:py-12">
-        <Container className="max-w-7xl">
-          {/* Hero */}
-          <div className="mb-6 no-print">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
-            <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
-            <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
-          </div>
-
-          {/* Ad slot */}
-          <AdSlot slot="in-content" className="mb-6 no-print" />
-
-          {/* Top bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 no-print">
-            {templateBar}
-            {actionButtons}
-          </div>
-          <p className="text-xs text-muted-foreground mb-6 no-print">
-            Click <strong>Download PDF</strong>, then click <strong>Print</strong> in the confirmation — your browser&apos;s print dialog opens next. Choose <strong>Save as PDF</strong> as the destination.
-          </p>
-
-          {/* Mobile tab switcher */}
-          <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4 no-print">
-            {(['edit', 'preview'] as Tab[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
-                  tab === t ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
-          {/* Desktop: two columns. Mobile: tabs */}
-          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 xl:grid-cols-[520px_1fr]">
-            {/* Editor column */}
-            <div className={`${tab === 'preview' ? 'hidden lg:block' : ''} no-print`}>
-              {sectionContent}
+    <>
+      {/* ── On-screen UI — hidden during print ───────────────────────────── */}
+      <div className="no-print flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 py-8 md:py-12">
+          <Container className="max-w-7xl">
+            {/* Hero */}
+            <div className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
+              <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
+              <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
             </div>
 
-            {/* Preview column */}
-            <div className={tab === 'edit' ? 'hidden lg:block' : ''}>
-              {previewPane}
+            {/* Ad slot */}
+            <AdSlot slot="in-content" className="mb-6" />
+
+            {/* Top bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+              {templateBar}
+              {actionButtons}
             </div>
-          </div>
-        </Container>
-      </main>
-      {/* Print-only resume – outside overflow containers so position:absolute works */}
-      <div className="resume-print-target hidden print:block">
+            <p className="text-xs text-muted-foreground mb-6">
+              Click <strong>Download PDF</strong>, then click <strong>Print</strong> in the confirmation — your browser&apos;s print dialog opens next. Choose <strong>Save as PDF</strong> as the destination.
+            </p>
+
+            {/* Mobile tab switcher */}
+            <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4">
+              {(['edit', 'preview'] as Tab[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTab(t)}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
+                    tab === t ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop: two columns. Mobile: tabs */}
+            <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 xl:grid-cols-[520px_1fr]">
+              {/* Editor column */}
+              <div className={tab === 'preview' ? 'hidden lg:block' : ''}>
+                {sectionContent}
+              </div>
+
+              {/* Preview column */}
+              <div className={tab === 'edit' ? 'hidden lg:block' : ''}>
+                {previewPane}
+              </div>
+            </div>
+          </Container>
+        </main>
+        <Footer />
+      </div>
+
+      {/* ── Print-only copy — sits at document root, hidden on screen ────── */}
+      <div className="print-only">
         <RenderTemplate id={template} data={resume} />
       </div>
-      <Footer />
-    </div>
+    </>
   );
 }

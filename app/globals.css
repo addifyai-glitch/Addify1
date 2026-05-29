@@ -174,14 +174,30 @@ body {
   font-family: var(--font-display);
 }
 
-/* ─── Print styles (cover letter + resume PDF download) ──────────────────── */
+/* ─── Print styles ───────────────────────────────────────────────────────── */
+
+/* On screen: hide the print-only copy */
+.print-only {
+  display: none;
+}
+
 @media print {
-  body * { visibility: hidden; }
-  .print-letter, .print-letter * { visibility: visible; }
+  /* Hide the on-screen editor (and all site chrome wrapped inside it) */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Belt-and-suspenders: hide any site chrome not wrapped in .no-print */
+  body > header,
+  body > nav,
+  body > footer,
+  body > aside {
+    display: none !important;
+  }
+
+  /* Cover letter — still supported */
   .print-letter {
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block !important;
     padding: 2cm;
     background: white;
     color: black;
@@ -190,24 +206,32 @@ body {
   }
   .print-letter h1, .print-letter h2, .print-letter h3 { color: black; }
 
-  /* Resume builder print target – rendered outside overflow containers */
-  .resume-print-target, .resume-print-target * { visibility: visible; }
-  .resume-print-target {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+  /* Show only the resume print copy */
+  .print-only {
+    display: block !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .resume-print-target .resume-page {
+
+  .print-only .resume-page {
+    margin: 0 !important;
     box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
   }
 
-  .no-print { display: none !important; }
-  @page { margin: 0; size: A4; }
+  /* Prevent extra blank pages */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  @page { size: A4; margin: 0; }
 }
 
 /* ─── Reduced-motion: strip all transitions & animations ──────────────────── */
