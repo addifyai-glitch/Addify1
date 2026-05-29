@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
-import { verifyRecaptcha } from '@/lib/recaptcha';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   try {
-    const { summary, jobTitle, captchaToken } = await req.json();
-
-    const captcha = await verifyRecaptcha(captchaToken || '');
-    if (!captcha.success) {
-      return NextResponse.json({ error: 'Spam check failed. Refresh and try again.' }, { status: 403 });
-    }
+    const { summary, jobTitle } = await req.json();
 
     if (!summary || summary.trim().length < 20) {
       return NextResponse.json(

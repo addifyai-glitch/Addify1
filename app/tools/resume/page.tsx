@@ -264,6 +264,10 @@ export default function ResumeBuilderPage() {
           </div>
         </Container>
       </main>
+      {/* Print-only resume – outside overflow containers so position:absolute works */}
+      <div className="resume-print-target hidden print:block">
+        <RenderTemplate id={template} data={resume} />
+      </div>
       <Footer />
     </div>
   );

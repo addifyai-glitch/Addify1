@@ -190,18 +190,20 @@ body {
   }
   .print-letter h1, .print-letter h2, .print-letter h3 { color: black; }
 
-  /* Resume builder print target */
-  .resume-page, .resume-page * { visibility: visible; }
-  .resume-page {
+  /* Resume builder print target – rendered outside overflow containers */
+  .resume-print-target, .resume-print-target * { visibility: visible; }
+  .resume-print-target {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     margin: 0;
-    padding: 40px;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .resume-print-target .resume-page {
     box-shadow: none !important;
-    background: white !important;
-    color: black !important;
   }
 
   .no-print { display: none !important; }
