@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { DollarSign, Target, FileText, Check, ArrowRight } from "lucide-react";
+import { DollarSign, Target, FileText, LayoutTemplate, Check, ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
 const tools = [
@@ -42,6 +42,18 @@ const tools = [
       "Ready in under 60 seconds",
     ],
   },
+  {
+    Icon: LayoutTemplate,
+    name: "Resume Builder",
+    href: "/tools/resume",
+    description:
+      "Build a polished, ATS-ready resume with 3 professional templates, live preview, and an AI summary helper. No account needed.",
+    bullets: [
+      "3 templates: Modern, Classic, Minimal",
+      "AI-powered summary writer",
+      "One-click PDF export, fully free",
+    ],
+  },
 ];
 
 export function Features() {
@@ -61,14 +73,14 @@ export function Features() {
             <span className="inline-block h-1 w-1 rounded-full bg-accent" />
           </p>
           <h2 className="font-display text-3xl md:text-4xl text-foreground">
-            Three tools. One clear edge.
+            Four tools. One clear edge.
           </h2>
           <p className="mt-3 text-base md:text-lg text-foreground/80 max-w-xl mx-auto">
             Everything you need to walk into your Gulf job search with clarity and confidence.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {tools.map((tool, i) => (
             <motion.div
               key={tool.name}
