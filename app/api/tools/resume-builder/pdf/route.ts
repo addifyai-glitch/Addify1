@@ -301,14 +301,27 @@ export async function POST(req: NextRequest) {
       tpl === 'minimal' ? renderMinimal(data) :
       renderModern(data);
 
-    const chromium = (await import('@sparticuz/chromium')).default;
     const puppeteer = (await import('puppeteer-core')).default;
 
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
-      headless: true,
-    });
+    let browser;
+    try {
+      const chromium = (await import('@sparticuz/chromium')).default;
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      });
+    } catch {
+      // Local dev fallback: use system Chrome when @sparticuz/chromium binary unavailable
+      const localChrome =
+        process.env.PUPPETEER_EXECUTABLE_PATH ||
+        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+      browser = await puppeteer.launch({
+        executablePath: localChrome,
+        headless: true,
+        args: ['--no-sandbox', '--disable-dev-shm-usage'],
+      });
+    }
 
     try {
       const page = await browser.newPage();
