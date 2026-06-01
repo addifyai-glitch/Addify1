@@ -44,7 +44,7 @@ export default function ResumeBuilderPage() {
   const [copied, setCopied] = useState(false);
 
   function handleShare() {
-    const url = 'https://addify.ae/tools/resume';
+    const url = 'https://addify.ae/tools/resume-builder';
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

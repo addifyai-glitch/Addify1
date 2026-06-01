@@ -45,7 +45,7 @@ const tools = [
   {
     Icon: LayoutTemplate,
     name: "Resume Builder",
-    href: "/tools/resume",
+    href: "/tools/resume-builder",
     description:
       "Build a polished, ATS-ready resume with 3 professional templates, live preview, and an AI summary helper. No account needed.",
     bullets: [

@@ -60,6 +60,12 @@ const nextConfig: NextConfig = {
         destination: "/jobs",
         permanent: true,
       },
+      // Resume builder — old URL to new canonical URL
+      {
+        source: '/tools/resume',
+        destination: '/tools/resume-builder',
+        permanent: true,
+      },
       // WordPress admin and login
       {
         source: "/wp-admin/:path*",
