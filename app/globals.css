@@ -174,30 +174,14 @@ body {
   font-family: var(--font-display);
 }
 
-/* ─── Print styles ───────────────────────────────────────────────────────── */
-
-/* On screen: hide the print-only copy */
-.print-only {
-  display: none;
-}
-
+/* ─── Print styles (cover letter only — resume PDF is server-side) ───────── */
 @media print {
-  /* Hide the on-screen editor (and all site chrome wrapped inside it) */
-  .no-print {
-    display: none !important;
-  }
-
-  /* Belt-and-suspenders: hide any site chrome not wrapped in .no-print */
-  body > header,
-  body > nav,
-  body > footer,
-  body > aside {
-    display: none !important;
-  }
-
-  /* Cover letter — still supported */
+  body * { visibility: hidden; }
+  .print-letter, .print-letter * { visibility: visible; }
   .print-letter {
-    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
     padding: 2cm;
     background: white;
     color: black;
@@ -205,33 +189,7 @@ body {
     line-height: 1.7;
   }
   .print-letter h1, .print-letter h2, .print-letter h3 { color: black; }
-
-  /* Show only the resume print copy */
-  .print-only {
-    display: block !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .print-only .resume-page {
-    margin: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    background: white !important;
-    color: black !important;
-  }
-
-  /* Prevent extra blank pages */
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  @page { size: A4; margin: 0; }
+  @page { margin: 1cm; }
 }
 
 /* ─── Reduced-motion: strip all transitions & animations ──────────────────── */

@@ -34,6 +34,7 @@ export default function ResumeBuilderPage() {
   const { resume, setResume, template, setTemplate, loaded, reset } = useResumeStorage();
   const [tab, setTab] = useState<Tab>('edit');
   const [openSection, setOpenSection] = useState<Section>('contact');
+  const [downloading, setDownloading] = useState(false);
 
   // AI summary state
   const [aiLoading, setAiLoading] = useState(false);
@@ -49,6 +50,36 @@ export default function ResumeBuilderPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  }
+
+  async function handleDownloadPDF() {
+    setDownloading(true);
+    try {
+      const res = await fetch('/api/tools/resume-builder/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeData: resume, template }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'PDF generation failed');
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(resume.contact.fullName || 'resume').replace(/[^a-z0-9]/gi, '-')}-resume.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Could not download PDF. ' + (e instanceof Error ? e.message : ''));
+    } finally {
+      setDownloading(false);
+    }
   }
 
   async function handleImproveWithAI() {
@@ -133,10 +164,11 @@ export default function ResumeBuilderPage() {
       </button>
       <button
         type="button"
-        onClick={() => window.print()}
-        className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
+        onClick={handleDownloadPDF}
+        disabled={downloading}
+        className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
       >
-        Download PDF
+        {downloading ? 'Preparing PDF...' : 'Download PDF'}
       </button>
     </div>
   );
@@ -210,68 +242,57 @@ export default function ResumeBuilderPage() {
   );
 
   return (
-    <>
-      {/* ── On-screen UI — hidden during print ───────────────────────────── */}
-      <div className="no-print flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 py-8 md:py-12">
-          <Container className="max-w-7xl">
-            {/* Hero */}
-            <div className="mb-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
-              <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
-              <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 py-8 md:py-12">
+        <Container className="max-w-7xl">
+          {/* Hero */}
+          <div className="mb-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
+            <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
+            <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
+          </div>
+
+          {/* Ad slot */}
+          <AdSlot slot="in-content" className="mb-6" />
+
+          {/* Top bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+            {templateBar}
+            {actionButtons}
+          </div>
+
+          {/* Mobile tab switcher */}
+          <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4">
+            {(['edit', 'preview'] as Tab[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
+                  tab === t ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          {/* Desktop: two columns. Mobile: tabs */}
+          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 xl:grid-cols-[520px_1fr]">
+            {/* Editor column */}
+            <div className={tab === 'preview' ? 'hidden lg:block' : ''}>
+              {sectionContent}
             </div>
 
-            {/* Ad slot */}
-            <AdSlot slot="in-content" className="mb-6" />
-
-            {/* Top bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-              {templateBar}
-              {actionButtons}
+            {/* Preview column */}
+            <div className={tab === 'edit' ? 'hidden lg:block' : ''}>
+              {previewPane}
             </div>
-            <p className="text-xs text-muted-foreground mb-6">
-              Click <strong>Download PDF</strong>, then click <strong>Print</strong> in the confirmation — your browser&apos;s print dialog opens next. Choose <strong>Save as PDF</strong> as the destination.
-            </p>
-
-            {/* Mobile tab switcher */}
-            <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4">
-              {(['edit', 'preview'] as Tab[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTab(t)}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
-                    tab === t ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-
-            {/* Desktop: two columns. Mobile: tabs */}
-            <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 xl:grid-cols-[520px_1fr]">
-              {/* Editor column */}
-              <div className={tab === 'preview' ? 'hidden lg:block' : ''}>
-                {sectionContent}
-              </div>
-
-              {/* Preview column */}
-              <div className={tab === 'edit' ? 'hidden lg:block' : ''}>
-                {previewPane}
-              </div>
-            </div>
-          </Container>
-        </main>
-        <Footer />
-      </div>
-
-      {/* ── Print-only copy — sits at document root, hidden on screen ────── */}
-      <div className="print-only">
-        <RenderTemplate id={template} data={resume} />
-      </div>
-    </>
+          </div>
+        </Container>
+      </main>
+      <Footer />
+    </div>
   );
 }
