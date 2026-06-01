@@ -5,6 +5,13 @@ export function ModernTemplate({ data }: { data: ResumeData }) {
     <div className="resume-page bg-white text-slate-900 p-10" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
       {/* Header */}
       <header className="border-b-2 border-slate-800 pb-4 mb-6">
+        {data.contact.photo && (
+          <img
+            src={data.contact.photo}
+            alt=""
+            className="w-24 h-24 rounded-full object-cover float-right ml-4"
+          />
+        )}
         <h1 className="text-3xl font-bold tracking-tight">{data.contact.fullName || 'Your Name'}</h1>
         {data.contact.jobTitle && <p className="text-lg text-slate-500 mt-1">{data.contact.jobTitle}</p>}
         <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500 mt-2">
@@ -14,6 +21,7 @@ export function ModernTemplate({ data }: { data: ResumeData }) {
           {data.contact.linkedin && <span>{data.contact.linkedin}</span>}
           {data.contact.website && <span>{data.contact.website}</span>}
         </div>
+        <div style={{ clear: 'both' }} />
       </header>
 
       {/* Summary */}

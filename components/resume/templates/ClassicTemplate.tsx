@@ -5,6 +5,13 @@ export function ClassicTemplate({ data }: { data: ResumeData }) {
     <div className="resume-page bg-white text-slate-900 p-10" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
       {/* Centered header */}
       <header className="text-center mb-6 pb-4 border-b border-slate-400">
+        {data.contact.photo && (
+          <img
+            src={data.contact.photo}
+            alt=""
+            className="w-20 h-24 object-cover float-left mr-4 border border-slate-300"
+          />
+        )}
         <h1 className="text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
           {data.contact.fullName || 'Your Name'}
         </h1>
@@ -22,6 +29,7 @@ export function ClassicTemplate({ data }: { data: ResumeData }) {
           {data.contact.linkedin && data.contact.website && <span className="text-slate-300">|</span>}
           {data.contact.website && <span>{data.contact.website}</span>}
         </div>
+        <div style={{ clear: 'both' }} />
       </header>
 
       {/* Summary */}

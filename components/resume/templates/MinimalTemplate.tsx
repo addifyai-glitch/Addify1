@@ -4,6 +4,8 @@ export function MinimalTemplate({ data }: { data: ResumeData }) {
   return (
     <div className="resume-page bg-white text-slate-900 px-10 py-8" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Header — name left, contact right */}
+      {/* Minimal template intentionally omits photos. Users targeting ATS-strict markets
+          (US/UK, remote-first roles) should use this template. */}
       <header className="flex justify-between items-start gap-6 mb-7 pb-5 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{data.contact.fullName || 'Your Name'}</h1>

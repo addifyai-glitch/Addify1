@@ -95,6 +95,7 @@ function renderModern(d: ResumeData): string {
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${css}</style></head><body><div class="page">
     <header class="header">
+      ${d.contact.photo ? `<img src="${d.contact.photo}" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;float:right;margin-left:16px;" />` : ''}
       <h1>${esc(d.contact.fullName) || 'Your Name'}</h1>
       ${d.contact.jobTitle ? `<p class="job-title">${esc(d.contact.jobTitle)}</p>` : ''}
       <div class="contact-row">
@@ -104,6 +105,7 @@ function renderModern(d: ResumeData): string {
         ${d.contact.linkedin ? `<span>${esc(d.contact.linkedin)}</span>` : ''}
         ${d.contact.website ? `<span>${esc(d.contact.website)}</span>` : ''}
       </div>
+      <div style="clear:both;"></div>
     </header>
     ${d.summary ? `<section><h2>Summary</h2><p class="body-text">${esc(d.summary)}</p></section>` : ''}
     ${exp}${edu}${skills}${projects}${langCert}
@@ -184,9 +186,11 @@ function renderClassic(d: ResumeData): string {
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${css}</style></head><body><div class="page">
     <header class="header">
+      ${d.contact.photo ? `<img src="${d.contact.photo}" alt="" style="width:70px;height:90px;object-fit:cover;float:left;margin-right:16px;border:1px solid #cbd5e1;" />` : ''}
       <h1>${esc(d.contact.fullName) || 'Your Name'}</h1>
       ${d.contact.jobTitle ? `<p class="job-title">${esc(d.contact.jobTitle)}</p>` : ''}
       <div class="contact-row">${contacts.join('')}</div>
+      <div style="clear:both;"></div>
     </header>
     ${summary}${exp}${edu}${skills}${projects}${langCert}
   </div></body></html>`;

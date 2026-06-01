@@ -6,6 +6,7 @@ export interface ResumeContact {
   location: string;
   website?: string;
   linkedin?: string;
+  photo?: string; // base64 data URI, JPEG, max ~300KB
 }
 
 export interface ResumeExperience {

@@ -1,6 +1,7 @@
 'use client';
 
 import { ResumeContact } from '@/types/resume';
+import { PhotoUpload } from './PhotoUpload';
 
 interface Props {
   contact: ResumeContact;
@@ -16,6 +17,10 @@ export function ContactSection({ contact, onChange }: Props) {
 
   return (
     <div className="space-y-3">
+      <PhotoUpload
+        value={contact.photo}
+        onChange={(photo) => onChange({ ...contact, photo })}
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Full Name *</label>
