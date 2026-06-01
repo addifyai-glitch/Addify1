@@ -4,9 +4,12 @@ import { join } from "node:path";
 import { MOCK_JOBS } from "@/data/mockJobs";
 import type { Job } from "@/types/job";
 
+export const dynamic = "force-dynamic";
+
 const SUPABASE_OK =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+  !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function getMigrationJobs(): Job[] {
   try {
@@ -41,8 +44,8 @@ export async function GET(req: NextRequest) {
   // ── Try Supabase ────────────────────────────────────────────────────────────
   if (SUPABASE_OK) {
     try {
-      const { createClient } = await import("@/lib/supabase/server");
-      const supabase = await createClient();
+      const { createAdminClient } = await import("@/lib/supabase/server");
+      const supabase = createAdminClient();
 
       let query = supabase
         .from("jobs")
