@@ -10,6 +10,7 @@ const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years"
 export default function NewJobPage() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "", company: "", city: "", country: "", currency: "AED",
     salary_min: "", salary_max: "", experience_level: "", apply_url: "",
@@ -23,22 +24,19 @@ export default function NewJobPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
+    setErrorMsg(null);
     try {
       const res = await fetch("/api/admin/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          salary_min: form.salary_min ? Number(form.salary_min) : null,
-          salary_max: form.salary_max ? Number(form.salary_max) : null,
-          source: "admin",
-          approved: true,
-        }),
+        body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to publish");
       setStatus("success");
       setTimeout(() => router.push("/admin/jobs"), 1500);
-    } catch {
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : "Failed to publish");
       setStatus("error");
     }
   }
@@ -145,7 +143,7 @@ export default function NewJobPage() {
             Cancel
           </Button>
         </div>
-        {status === "error" && <p className="text-sm text-destructive text-center">Failed to publish. Check console.</p>}
+        {status === "error" && <p className="text-sm text-destructive text-center">{errorMsg ?? "Failed to publish."}</p>}
       </form>
     </div>
   );
