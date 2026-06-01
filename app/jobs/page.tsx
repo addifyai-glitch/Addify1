@@ -12,7 +12,7 @@ import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { CITY_GROUPS } from "@/data/cities";
 import type { Job } from "@/types/job";
-import { MapPin, Clock, ArrowUpRight, Briefcase, Search, X } from "lucide-react";
+import { MapPin, Clock, ArrowUpRight, Briefcase, Search, X, ChevronRight } from "lucide-react";
 
 const COUNTRIES = ["All", "UAE", "Saudi Arabia", "Qatar", "Kuwait", "Bahrain", "Oman", "Egypt"];
 const EXPERIENCE = ["All", "0-2 years", "3-5 years", "6-10 years", "10+"];
@@ -42,8 +42,12 @@ function fmtSalary(job: Job) {
 function JobCard({ job }: { job: Job }) {
   const salary = fmtSalary(job);
   const flag = COUNTRY_FLAGS[job.country] ?? "🌍";
+  const slug = job.slug ?? job.id;
   return (
-    <div className="group relative bg-card border border-border rounded-xl p-5 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 flex flex-col gap-3">
+    <Link
+      href={`/jobs/${slug}`}
+      className="group relative bg-card border border-border rounded-xl p-5 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 flex flex-col gap-3"
+    >
       {(job.is_featured) && (
         <Badge variant="accent" className="absolute top-3 right-3 text-xs">Featured</Badge>
       )}
@@ -64,15 +68,10 @@ function JobCard({ job }: { job: Job }) {
         </span>
       </div>
       {salary && <p className="text-sm font-semibold text-accent tabular-nums">{salary} / mo</p>}
-      <a
-        href={job.apply_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground group-hover:text-accent transition-colors duration-200"
-      >
-        Apply <ArrowUpRight size={14} />
-      </a>
-    </div>
+      <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground group-hover:text-accent transition-colors duration-200">
+        View job <ChevronRight size={14} />
+      </span>
+    </Link>
   );
 }
 
