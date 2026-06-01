@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MOCK_JOBS } from "@/data/mockJobs";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
+import { DeleteJobButton } from "@/components/admin/delete-job-button";
 import type { Job } from "@/types/job";
 
 function formatDate(iso: string | null | undefined) {
@@ -97,9 +98,7 @@ export default async function AdminJobsPage() {
                         Edit
                       </Link>
                       <span className="text-border">|</span>
-                      <button className="text-xs text-destructive hover:opacity-70 transition-opacity">
-                        Delete
-                      </button>
+                      <DeleteJobButton id={job.id} />
                     </div>
                   </td>
                 </tr>
