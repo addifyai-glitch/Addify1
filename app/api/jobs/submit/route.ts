@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   } = body;
 
   // Basic validation
-  if (!title || !company || !city || !category || !apply_url || !submitter_email) {
+  if (!title || !city || !category || !apply_url || !submitter_email) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
   try { new URL(apply_url); } catch {
@@ -92,26 +92,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate a unique slug
+    // Generate a unique slug — append a base-36 timestamp to avoid collisions
+    // without querying the DB (anon RLS can't see unapproved rows, so a DB
+    // uniqueness check would always return "available" for pending submissions).
     const baseSlug = generateSlug(title);
-    let slug = baseSlug;
-    let attempt = 0;
-    while (attempt < 20) {
-      const { data: existing } = await supabase
-        .from("jobs")
-        .select("slug")
-        .eq("slug", slug)
-        .maybeSingle();
-      if (!existing) break;
-      attempt++;
-      slug = `${baseSlug}-${attempt}`;
-    }
-    if (attempt >= 20) slug = `${baseSlug}-${Date.now()}`;
+    const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
     const { error } = await supabase.from("jobs").insert({
       slug,
       title,
-      company,
+      company: company || null,
       city,
       country: country ?? city,
       category,

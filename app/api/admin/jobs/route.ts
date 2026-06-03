@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      title, company, city, country, currency,
+      title, company, city, country, currency, category,
       salary_min, salary_max, experience_level,
       apply_url, description, featured, expiry_days,
     } = body;
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
     const { error } = await supabase.from("jobs").insert({
       slug,
       title, company, city, country, currency,
+      category: category || null,
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       experience_level: experience_level || null,

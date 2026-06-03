@@ -6,18 +6,6 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/lib/blog";
 
-const CATEGORIES = [
-  "All",
-  "UAE Essentials",
-  "Saudi Arabia",
-  "Qatar",
-  "Kuwait",
-  "Negotiation",
-  "CV and Applications",
-  "Career Growth",
-  "Living and Working",
-];
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -28,6 +16,7 @@ function formatDate(iso: string) {
 
 export function PostsGrid({ posts }: { posts: Post[] }) {
   const [active, setActive] = useState("All");
+  const categories = ["All", ...Array.from(new Set(posts.map((p) => p.category))).sort()];
 
   const filtered =
     active === "All" ? posts : posts.filter((p) => p.category === active);
@@ -36,7 +25,7 @@ export function PostsGrid({ posts }: { posts: Post[] }) {
     <div>
       {/* Category pills */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActive(cat)}

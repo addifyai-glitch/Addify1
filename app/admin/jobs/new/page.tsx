@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CITY_GROUPS } from "@/data/cities";
+import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { Button } from "@/components/ui/button";
 
 const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
@@ -13,7 +14,7 @@ export default function NewJobPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "", company: "", city: "", country: "", currency: "AED",
-    salary_min: "", salary_max: "", experience_level: "", apply_url: "",
+    category: "", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
     description: "", featured: false, expiry_days: "30",
   });
 
@@ -90,6 +91,16 @@ export default function NewJobPage() {
               {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>Category *</label>
+          <select className={inputClass} required value={form.category} onChange={e => set("category", e.target.value)}>
+            <option value="">Select a category…</option>
+            {JOB_CATEGORIES.map(cat => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

@@ -70,14 +70,7 @@ export function AdSlot({ slot, className }: AdSlotProps) {
   }
 
   if (!IS_DEV) {
-    // Production with ads inactive: empty reserved space, invisible to readers
-    return (
-      <div
-        aria-hidden="true"
-        style={{ minHeight: height }}
-        className={cn("w-full", className)}
-      />
-    );
+    return null;
   }
 
   // Dev: visible placeholder so we know where slots are

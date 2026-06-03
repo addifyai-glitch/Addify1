@@ -87,8 +87,8 @@ export default function SubmitJobPage() {
                   <input className={inputCls} required value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Senior Software Engineer" />
                 </div>
                 <div>
-                  <label className={labelCls}>Company Name *</label>
-                  <input className={inputCls} required value={form.company} onChange={e => set("company", e.target.value)} placeholder="e.g. Noon.com" />
+                  <label className={labelCls}>Company Name <span className="normal-case font-normal">(optional)</span></label>
+                  <input className={inputCls} value={form.company} onChange={e => set("company", e.target.value)} placeholder="e.g. Noon.com" />
                 </div>
               </div>
 
