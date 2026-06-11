@@ -19,20 +19,36 @@ function getMigrationSlugs(): { slug: string; posted_at: string; modified_at?: s
   }
 }
 
-function getBlogSlugs(): { slug: string; date: string }[] {
+async function getBlogSlugs(): Promise<{ slug: string; date: string }[]> {
+  const fileSlugs: { slug: string; date: string }[] = [];
   try {
     const blogDir = join(process.cwd(), "content", "blog");
-    return readdirSync(blogDir)
+    readdirSync(blogDir)
       .filter((f) => f.endsWith(".mdx"))
-      .map((f) => {
+      .forEach((f) => {
         const slug = f.replace(/\.mdx$/, "");
         const content = readFileSync(join(blogDir, f), "utf8");
         const match = content.match(/^date:\s*"?([^"\n]+)"?/m);
-        return { slug, date: match?.[1] ?? new Date().toISOString() };
+        fileSlugs.push({ slug, date: match?.[1] ?? new Date().toISOString() });
       });
-  } catch {
-    return [];
-  }
+  } catch { /* no MDX dir */ }
+
+  const dbSlugs: { slug: string; date: string }[] = [];
+  try {
+    const { createAdminClient } = await import("@/lib/supabase/server");
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("blog_posts")
+      .select("slug, date")
+      .eq("draft", false);
+
+    const fileSlugSet = new Set(fileSlugs.map((p) => p.slug));
+    (data ?? [])
+      .filter((row) => !fileSlugSet.has(row.slug))
+      .forEach((row) => dbSlugs.push({ slug: row.slug, date: row.date }));
+  } catch { /* Supabase unavailable */ }
+
+  return [...fileSlugs, ...dbSlugs];
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -87,7 +103,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Blog pages
-  const blogRoutes: MetadataRoute.Sitemap = getBlogSlugs().map(({ slug, date }) => ({
+  const blogRoutes: MetadataRoute.Sitemap = (await getBlogSlugs()).map(({ slug, date }) => ({
     url: `${SITE}/blog/${slug}`,
     lastModified: new Date(date),
     changeFrequency: "monthly" as const,

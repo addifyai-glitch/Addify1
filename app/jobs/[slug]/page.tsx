@@ -175,6 +175,13 @@ export default async function JobDetailPage({ params }: Props) {
     title: job.title,
     description: job.description ?? "",
     datePosted: job.posted_at,
+    ...(job.expires_at ? { validThrough: job.expires_at } : {}),
+    url: `https://addify.ae/jobs/${slug}`,
+    identifier: {
+      "@type": "PropertyValue",
+      name: "Addify",
+      value: slug,
+    },
     hiringOrganization: {
       "@type": "Organization",
       name: job.company || "See job description",
