@@ -45,6 +45,7 @@ const columns = [
     links: [
       { label: "Blog", href: "/blog" },
       { label: "Salary Guides", href: "/blog" },
+      { label: "Methodology", href: "/methodology" },
       { label: "Contact", href: "/contact" },
     ],
   },
