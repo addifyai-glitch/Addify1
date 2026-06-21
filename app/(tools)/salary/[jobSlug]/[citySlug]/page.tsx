@@ -74,7 +74,10 @@ export default async function SalaryStaticPage({
     .filter((r): r is SalaryResult => r !== null);
   const representative = allBands.find((r) => r.experience === "3-5") ?? allBands[0]!;
 
-  // JSON-LD: Occupation schema
+  const SITE = "https://addify.ae";
+  const pageUrl = `${SITE}/salary/${jobSlug}/${citySlug}`;
+
+  // Occupation schema
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Occupation",
@@ -94,6 +97,51 @@ export default async function SalaryStaticPage({
       median: band.median,
       percentile75: band.p75,
     })),
+    description: `Salary benchmarks for ${role.title} roles in ${city.name}, ${city.country}, based on Gulf market salary data aggregated by Addify.`,
+    mainEntityOfPage: pageUrl,
+  };
+
+  // FAQ schema
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `What is the average ${role.title} salary in ${city.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `A ${role.title} in ${city.name} earns a median of ${formatCurrency(representative.median, city.currency)} per month for 3–5 years of experience, ranging from ${formatCurrency(representative.p25, city.currency)} to ${formatCurrency(representative.p75, city.currency)}. Based on 2025 GCC market salary data.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `How much does an experienced ${role.title} make in ${city.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: allBands.map((b) => `${EXPERIENCE_LABELS_LONG[b.experience]}: ${formatCurrency(b.median, city.currency)}/month (median).`).join(" "),
+        },
+      },
+      {
+        "@type": "Question",
+        name: `What is the total package for a ${role.title} in ${city.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `The total monthly package for a ${role.title} in ${city.name} with 3–5 years of experience is approximately ${formatCurrency(representative.totalPackage, city.currency)}, including a housing allowance of ${formatCurrency(representative.housingMonthly, city.currency)}/month (~${representative.housingPct}% of base salary).`,
+        },
+      },
+    ],
+  };
+
+  // Breadcrumb schema
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home",         item: SITE },
+      { "@type": "ListItem", position: 2, name: "Salary Check", item: `${SITE}/salary` },
+      { "@type": "ListItem", position: 3, name: `${role.title} in ${city.name}`, item: pageUrl },
+    ],
   };
 
   // Related cities (same role)
@@ -108,6 +156,14 @@ export default async function SalaryStaticPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <div className="max-w-4xl mx-auto px-6 py-14 md:py-20">
