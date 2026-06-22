@@ -45,8 +45,17 @@ const columns = [
     links: [
       { label: "Blog", href: "/blog" },
       { label: "Salary Guides", href: "/blog" },
-      { label: "Methodology", href: "/methodology" },
+      { label: "Research", href: "/research" },
       { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    heading: "Data & Trust",
+    links: [
+      { label: "Methodology", href: "/methodology" },
+      { label: "Data Sources", href: "/data-sources" },
+      { label: "About Our Data", href: "/about-our-data" },
+      { label: "Editorial Policy", href: "/editorial-policy" },
     ],
   },
   {
@@ -64,7 +73,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <Container className="py-14 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-8">
           {/* Column 1 — Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-1 mb-3">

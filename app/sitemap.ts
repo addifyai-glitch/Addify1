@@ -67,7 +67,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/privacy`,           lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${SITE}/terms`,             lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${SITE}/submit-job`,        lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE}/methodology`,      lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/methodology`,       lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/data-sources`,     lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/about-our-data`,   lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/editorial-policy`, lastModified: now, changeFrequency: "yearly",  priority: 0.4 },
+    { url: `${SITE}/research`,         lastModified: now, changeFrequency: "monthly", priority: 0.6 },
   ];
 
   // Job pages — try Supabase first, fall back to migration JSON

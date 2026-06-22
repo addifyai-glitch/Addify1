@@ -15,6 +15,7 @@ const navLinks = [
   { label: "Cover Letter", href: "/cover-letter" },
   { label: "Resume Builder", href: "/tools/resume-builder" },
   { label: "Jobs", href: "/jobs" },
+  { label: "Research", href: "/research" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
 ];
