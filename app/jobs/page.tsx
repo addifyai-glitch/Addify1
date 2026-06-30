@@ -201,7 +201,7 @@ export default function JobsPage() {
           )}
 
           {/* Ad slot */}
-          <AdSlot slot="in-content" className="mb-8" />
+          <AdSlot format="in-article" className="mb-8" />
 
           {/* Grid */}
           {loading && jobs.length === 0 ? (

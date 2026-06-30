@@ -254,7 +254,7 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* Ad slot */}
-          <AdSlot slot="in-content" className="mb-6" />
+          <AdSlot format="in-article" className="mb-6" />
 
           {/* Top bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">

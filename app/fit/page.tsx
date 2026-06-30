@@ -254,7 +254,7 @@ export default function FitPage() {
 
           {status === "done" && context && (
             <>
-              <AdSlot slot="in-content" className="mt-10" />
+              <AdSlot format="in-article" className="mt-10" />
               <FitResult context={context} />
             </>
           )}

@@ -170,7 +170,7 @@ export default function SalaryForm() {
       {/* Ad + live jobs (always shown once city is selected) */}
       {cityValue && (
         <>
-          <AdSlot slot="in-content" className="mt-10" />
+          <AdSlot format="in-article" className="mt-10" />
           <LiveJobs jobTitle={jobTitle?.title ?? ""} city={cityValue} category={jobCategory} />
         </>
       )}

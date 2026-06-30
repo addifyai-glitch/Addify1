@@ -307,7 +307,7 @@ export default async function JobDetailPage({ params }: Props) {
           </div>
 
           {/* Ad slot between hero and body */}
-          <AdSlot slot="in-content" className="mb-6" />
+          <AdSlot format="in-article" className="mb-6" />
 
           {/* Two-column layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -321,7 +321,7 @@ export default async function JobDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              <AdSlot slot="in-content" className="mt-6" />
+              <AdSlot format="in-article" className="mt-6" />
             </div>
 
             {/* Right: summary card (sticky) */}

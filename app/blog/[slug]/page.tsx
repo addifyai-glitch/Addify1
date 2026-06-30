@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { AdSlot } from "@/components/ui/ad-slot";
 import { ButtonLink } from "@/components/blog/button-link";
 import { getFilePostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
+import { buildBlogMetadata } from "@/lib/blog-meta";
 import { ArrowLeft } from "lucide-react";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -24,17 +25,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  return {
-    title: `${post.title} | Addify`,
-    description: post.description,
-    alternates: { canonical: `/blog/${slug}` },
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      ...(post.image ? { images: [{ url: post.image, width: 1200, height: 630, alt: post.imageAlt ?? post.title }] } : {}),
-    },
-  };
+  return buildBlogMetadata({
+    slug,
+    title: post.title,
+    body: post.content,
+    seoDescription: post.description,
+    image: post.image,
+  });
 }
 
 function formatDate(iso: string) {
@@ -94,7 +91,7 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* In-content ad */}
-          <AdSlot slot="in-content" className="mb-8" />
+          <AdSlot format="in-article" className="mb-8" />
 
           {/* Article body */}
           <article className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
@@ -102,7 +99,7 @@ export default async function BlogPostPage({ params }: Props) {
           </article>
 
           {/* Footer ad */}
-          <AdSlot slot="footer" className="mt-12 mb-8" />
+          <AdSlot format="multiplex" className="mt-12 mb-8" />
 
           {/* Social share */}
           <div className="border-t border-border pt-8 mt-8">
