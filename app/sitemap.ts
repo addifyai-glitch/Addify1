@@ -71,7 +71,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/data-sources`,     lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
     { url: `${SITE}/about-our-data`,   lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
     { url: `${SITE}/editorial-policy`, lastModified: now, changeFrequency: "yearly",  priority: 0.4 },
-    { url: `${SITE}/research`,         lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/research`,                              lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/research/uae-salary-report-2026`,       lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/research/saudi-arabia-salary-report-2026`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/research/dubai-tech-salary-report-2026`,   lastModified: now, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   // Job pages — try Supabase first, fall back to migration JSON
@@ -125,5 +128,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticRoutes, ...jobRoutes, ...blogRoutes, ...salaryRoutes];
+  // Salary comparison pages
+  let compareRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const { getComparisonPaths } = await import("@/lib/comparison");
+    const paths = await getComparisonPaths();
+    compareRoutes = [
+      { url: `${SITE}/salary/compare`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 },
+      ...paths.map(({ comparison }) => ({
+        url: `${SITE}/salary/compare/${comparison}`,
+        lastModified: now,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
+    ];
+  } catch { /* comparison lib unavailable */ }
+
+  return [...staticRoutes, ...jobRoutes, ...blogRoutes, ...salaryRoutes, ...compareRoutes];
 }
