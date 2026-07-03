@@ -77,7 +77,7 @@ export function Hero() {
 
   // Trigger underline after headline words animate in
   useEffect(() => {
-    const headlineWords = ["Real", "salaries.", "Real", "fit.", "Built", "for", "the", "Gulf."];
+    const headlineWords = ["Your", "Gulf", "career", "co-pilot."];
     const delay = headlineWords.length * 120 + 600 + 300;
     const id = setTimeout(() => setShowUnderline(true), delay);
     return () => clearTimeout(id);
@@ -95,7 +95,7 @@ export function Hero() {
     my.set(0);
   }
 
-  const headlineWords = ["Real", "salaries.", "Real", "fit.", "Built", "for", "the", "Gulf."];
+  const headlineWords = ["Your", "Gulf", "career", "co-pilot."];
 
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40">
@@ -127,18 +127,18 @@ export function Hero() {
         {/* Headline */}
         <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] text-center max-w-4xl mx-auto">
           {headlineWords.map((word, i) => {
-            const isSalaries = word === "salaries.";
-            const isGulf = word === "Gulf.";
+            const isGulf = word === "Gulf";
+            const isPilot = word === "co-pilot.";
             return (
               <Fragment key={i}>
               <motion.span
-                className={`inline-block ${isSalaries ? "text-accent" : ""} ${isGulf ? "relative" : ""}`}
+                className={`inline-block ${isGulf ? "text-accent" : ""} ${isPilot ? "relative" : ""}`}
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: prefersReduced ? 0 : 0.4 + i * 0.12, duration: 0.5 }}
               >
                 {word}
-                {isGulf && showUnderline && !prefersReduced && (
+                {isPilot && showUnderline && !prefersReduced && (
                   <svg
                     className="absolute -bottom-2 left-0 w-full overflow-visible"
                     height="10"

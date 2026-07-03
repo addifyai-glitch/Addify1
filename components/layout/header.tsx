@@ -16,20 +16,15 @@ const toolsLinks = [
   { label: "Resume Builder", href: "/tools/resume-builder", desc: "Gulf-ready resume in minutes" },
 ];
 
-const insightsLinks = [
-  { label: "Research", href: "/research", desc: "Gulf salary reports and market data" },
-  { label: "Blog", href: "/blog", desc: "Career advice and hiring intelligence" },
-];
-
 const standaloneLinks = [
   { label: "Jobs", href: "/jobs" },
-  { label: "About", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const allMobileLinks = [
   ...toolsLinks,
   ...standaloneLinks,
-  ...insightsLinks,
 ];
 
 function NavDropdown({
@@ -139,6 +134,15 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href="/"
+              className={cn(
+                "text-sm font-medium transition-colors duration-150",
+                pathname === "/" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Home
+            </Link>
             <NavDropdown
               label="Tools"
               links={toolsLinks}
@@ -158,11 +162,6 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
-            <NavDropdown
-              label="Insights"
-              links={insightsLinks}
-              activeHrefs={["/research", "/blog"]}
-            />
           </nav>
 
           {/* Right: theme toggle + CTA */}
@@ -200,6 +199,16 @@ export function Header() {
             className="fixed inset-0 z-30 bg-background flex flex-col pt-24 pb-10 px-8 md:hidden overflow-y-auto"
           >
             <nav className="flex flex-col gap-4 flex-1">
+              <Link
+                href="/"
+                className={cn(
+                  "text-xl font-semibold transition-colors",
+                  pathname === "/" ? "text-accent" : "text-foreground hover:text-accent"
+                )}
+                onClick={() => setMenuOpen(false)}
+              >
+                Home
+              </Link>
               {allMobileLinks.map((link) => (
                 <Link
                   key={link.href}
