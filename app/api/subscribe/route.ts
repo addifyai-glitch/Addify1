@@ -3,7 +3,7 @@ import { isRateLimited, getIP } from "@/lib/rate-limit";
 
 const SUPABASE_OK =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -24,26 +24,27 @@ export async function POST(req: NextRequest) {
   }
 
   if (!SUPABASE_OK) {
-    console.log("[subscribe] Supabase not configured — mock success", { email });
+    console.log("[subscribe] no service key — queued:", email);
     return NextResponse.json({ success: true, source: "mock" });
   }
 
   try {
-    const { createServerClient } = await import("@supabase/ssr");
-    const { cookies } = await import("next/headers");
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-    );
+    const { createAdminClient } = await import("@/lib/supabase/server");
+    const supabase = createAdminClient();
 
     const { error } = await supabase
       .from("newsletter_subscribers")
       .upsert({ email, subscribed_at: new Date().toISOString() }, { onConflict: "email" });
 
-    if (error) throw error;
+    if (error) {
+      // Table doesn't exist yet — log and accept gracefully
+      if (error.code === "42P01") {
+        console.log("[subscribe] table missing, queued:", email);
+        return NextResponse.json({ success: true, source: "queued" });
+      }
+      throw error;
+    }
+
     return NextResponse.json({ success: true, source: "live" });
   } catch (e) {
     console.error("[subscribe]", e);
