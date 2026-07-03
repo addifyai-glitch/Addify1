@@ -77,7 +77,7 @@ export function Hero() {
 
   // Trigger underline after headline words animate in
   useEffect(() => {
-    const headlineWords = ["Know", "your", "worth.", "Find", "your", "fit."];
+    const headlineWords = ["Real", "salaries.", "Real", "fit.", "Built", "for", "the", "Gulf."];
     const delay = headlineWords.length * 120 + 600 + 300;
     const id = setTimeout(() => setShowUnderline(true), delay);
     return () => clearTimeout(id);
@@ -95,7 +95,7 @@ export function Hero() {
     my.set(0);
   }
 
-  const headlineWords = ["Know", "your", "worth.", "Find", "your", "fit."];
+  const headlineWords = ["Real", "salaries.", "Real", "fit.", "Built", "for", "the", "Gulf."];
 
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40">
@@ -127,18 +127,18 @@ export function Hero() {
         {/* Headline */}
         <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] text-center max-w-4xl mx-auto">
           {headlineWords.map((word, i) => {
-            const isWorth = word === "worth.";
-            const isFit = word === "fit.";
+            const isSalaries = word === "salaries.";
+            const isGulf = word === "Gulf.";
             return (
               <Fragment key={i}>
               <motion.span
-                className={`inline-block ${isWorth ? "text-accent" : ""} ${isFit ? "relative" : ""}`}
+                className={`inline-block ${isSalaries ? "text-accent" : ""} ${isGulf ? "relative" : ""}`}
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: prefersReduced ? 0 : 0.4 + i * 0.12, duration: 0.5 }}
               >
                 {word}
-                {isFit && showUnderline && !prefersReduced && (
+                {isGulf && showUnderline && !prefersReduced && (
                   <svg
                     className="absolute -bottom-2 left-0 w-full overflow-visible"
                     height="10"
@@ -272,7 +272,7 @@ export function Hero() {
 
                 {/* Meta */}
                 <p className="mt-4 text-xs text-muted-foreground/60">
-                  Updated just now · based on real submissions
+                  Updated 2026 · Gulf market reports
                 </p>
 
                 {/* Progress dots */}

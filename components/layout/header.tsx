@@ -1,24 +1,109 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Menu } from "lucide-react";
+import { X, Menu, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { label: "Salary Check", href: "/salary" },
-  { label: "Fit Score", href: "/fit" },
-  { label: "Cover Letter", href: "/cover-letter" },
-  { label: "Resume Builder", href: "/tools/resume-builder" },
+const toolsLinks = [
+  { label: "Salary Check", href: "/salary", desc: "See what your role pays across the Gulf" },
+  { label: "Fit Score", href: "/fit", desc: "Score any job offer before you apply" },
+  { label: "Cover Letter", href: "/cover-letter", desc: "AI-written, tailored to the role" },
+  { label: "Resume Builder", href: "/tools/resume-builder", desc: "Gulf-ready resume in minutes" },
+];
+
+const insightsLinks = [
+  { label: "Research", href: "/research", desc: "Gulf salary reports and market data" },
+  { label: "Blog", href: "/blog", desc: "Career advice and hiring intelligence" },
+];
+
+const standaloneLinks = [
   { label: "Jobs", href: "/jobs" },
-  { label: "Research", href: "/research" },
-  { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
 ];
+
+const allMobileLinks = [
+  ...toolsLinks,
+  ...standaloneLinks,
+  ...insightsLinks,
+];
+
+function NavDropdown({
+  label,
+  links,
+  activeHrefs,
+}: {
+  label: string;
+  links: { label: string; href: string; desc: string }[];
+  activeHrefs: string[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isActive = activeHrefs.some((h) => pathname.startsWith(h));
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  // Close on navigation
+  useEffect(() => setOpen(false), [pathname]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "flex items-center gap-1 text-sm font-medium transition-colors duration-150",
+          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        aria-expanded={open}
+      >
+        {label}
+        <ChevronDown
+          size={14}
+          className={cn("transition-transform duration-200", open && "rotate-180")}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 top-full mt-3 w-64 rounded-2xl border border-border bg-card shadow-lg p-2 z-50"
+          >
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "flex flex-col gap-0.5 px-3 py-2.5 rounded-xl transition-colors",
+                  pathname === link.href
+                    ? "bg-accent/10 text-accent"
+                    : "hover:bg-muted text-foreground"
+                )}
+              >
+                <span className="text-sm font-medium">{link.label}</span>
+                <span className="text-xs text-muted-foreground leading-snug">{link.desc}</span>
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,7 +116,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close menu on navigation
   useEffect(() => setMenuOpen(false), [pathname]);
 
   return (
@@ -54,14 +138,19 @@ export function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
-            {navLinks.map((link) => (
+          <nav className="hidden md:flex items-center gap-6">
+            <NavDropdown
+              label="Tools"
+              links={toolsLinks}
+              activeHrefs={["/salary", "/fit", "/cover-letter", "/tools"]}
+            />
+            {standaloneLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "transition-colors duration-150",
-                  pathname === link.href
+                  "text-sm font-medium transition-colors duration-150",
+                  pathname === link.href || pathname.startsWith(link.href + "/")
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
@@ -69,6 +158,11 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <NavDropdown
+              label="Insights"
+              links={insightsLinks}
+              activeHrefs={["/research", "/blog"]}
+            />
           </nav>
 
           {/* Right: theme toggle + CTA */}
@@ -103,14 +197,17 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-30 bg-background flex flex-col pt-24 pb-10 px-8 md:hidden"
+            className="fixed inset-0 z-30 bg-background flex flex-col pt-24 pb-10 px-8 md:hidden overflow-y-auto"
           >
-            <nav className="flex flex-col gap-6 flex-1">
-              {navLinks.map((link) => (
+            <nav className="flex flex-col gap-4 flex-1">
+              {allMobileLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-2xl font-semibold text-foreground hover:text-accent transition-colors"
+                  className={cn(
+                    "text-xl font-semibold transition-colors",
+                    pathname === link.href ? "text-accent" : "text-foreground hover:text-accent"
+                  )}
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
