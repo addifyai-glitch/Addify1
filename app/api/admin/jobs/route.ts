@@ -29,11 +29,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       title, company, city, country, currency, category,
-      salary_min, salary_max, experience_level,
+      employment_type, salary_min, salary_max, experience_level,
       apply_url, description, featured, expiry_days,
     } = body;
 
-    if (!title || !company || !city || !apply_url) {
+    if (!title || !city || !apply_url) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       slug,
       title, company, city, country, currency,
       category: category || null,
+      employment_type: employment_type || "On-site",
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       experience_level: experience_level || null,

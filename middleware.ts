@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
 // Legacy spam URLs inherited from the previous domain owner.
 // Returning 410 (Gone) tells Google to deindex them faster than 404.
@@ -17,7 +18,7 @@ const LEGACY_SPAM_EXACT = new Set<string>([
   "/rbtv77-web/",
 ]);
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 410 Gone for inherited legacy spam
@@ -34,17 +35,40 @@ export function middleware(req: NextRequest) {
     );
   }
 
-  // Admin route protection — redirect to login if no Supabase session cookie
+  // Admin route protection — validate session and auto-refresh token
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    const hasSession = req.cookies
-      .getAll()
-      .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (!hasSession) {
+    // If Supabase not configured (local dev without env), allow through
+    if (!supabaseUrl || !supabaseKey) return NextResponse.next();
+
+    let response = NextResponse.next({ request: req });
+
+    const supabase = createServerClient(supabaseUrl, supabaseKey, {
+      cookies: {
+        getAll: () => req.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          // Propagate refreshed cookies to both the request and response
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          response = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    });
+
+    // getUser() verifies the JWT and refreshes it via refresh token if expired
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
       const loginUrl = new URL("/admin/login", req.url);
       loginUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(loginUrl);
     }
+
+    return response;
   }
 
   return NextResponse.next();

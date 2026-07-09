@@ -58,7 +58,13 @@ export async function GET(req: NextRequest) {
       if (country)    query = query.ilike("country", country);
       if (category)   query = query.ilike("category", category);
       if (experience) query = query.ilike("experience_level", experience);
-      if (workType)   query = query.ilike("employment_type", workType);
+      if (workType) {
+        if (workType.toLowerCase() === "on-site") {
+          query = query.or("employment_type.ilike.On-site,employment_type.is.null");
+        } else {
+          query = query.ilike("employment_type", workType);
+        }
+      }
       if (title)      query = query.ilike("title", `%${title}%`);
       if (search)     query = query.or(
         `title.ilike.%${search}%,company.ilike.%${search}%,description.ilike.%${search}%`
@@ -89,7 +95,13 @@ export async function GET(req: NextRequest) {
   if (country)    matched = matched.filter((j) => j.country.toLowerCase() === country.toLowerCase());
   if (category)   matched = matched.filter((j) => j.category?.toLowerCase() === category.toLowerCase());
   if (experience) matched = matched.filter((j) => j.experience_level?.toLowerCase() === experience.toLowerCase());
-  if (workType)   matched = matched.filter((j) => j.employment_type?.toLowerCase() === workType.toLowerCase());
+  if (workType) {
+    matched = matched.filter((j) =>
+      workType.toLowerCase() === "on-site"
+        ? !j.employment_type || j.employment_type.toLowerCase() === "on-site"
+        : j.employment_type?.toLowerCase() === workType.toLowerCase()
+    );
+  }
   if (title) {
     const q = title.toLowerCase();
     matched = matched.filter((j) => j.title.toLowerCase().includes(q));

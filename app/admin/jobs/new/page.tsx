@@ -7,6 +7,7 @@ import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { Button } from "@/components/ui/button";
 
 const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
+const WORK_TYPES = ["On-site", "Remote", "Hybrid"];
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function NewJobPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "", company: "", city: "", country: "", currency: "AED",
-    category: "", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
+    category: "", employment_type: "On-site", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
     description: "", featured: false, expiry_days: "30",
   });
 
@@ -93,14 +94,22 @@ export default function NewJobPage() {
           </div>
         </div>
 
-        <div>
-          <label className={labelClass}>Category *</label>
-          <select className={inputClass} required value={form.category} onChange={e => set("category", e.target.value)}>
-            <option value="">Select a category…</option>
-            {JOB_CATEGORIES.map(cat => (
-              <option key={cat.name} value={cat.name}>{cat.name}</option>
-            ))}
-          </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label className={labelClass}>Category *</label>
+            <select className={inputClass} required value={form.category} onChange={e => set("category", e.target.value)}>
+              <option value="">Select a category…</option>
+              {JOB_CATEGORIES.map(cat => (
+                <option key={cat.name} value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>Work Type *</label>
+            <select className={inputClass} required value={form.employment_type} onChange={e => set("employment_type", e.target.value)}>
+              {WORK_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
