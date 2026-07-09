@@ -62,8 +62,8 @@ export default function NewJobPage() {
             <input className={inputClass} required value={form.title} onChange={e => set("title", e.target.value)} placeholder="Senior Software Engineer" />
           </div>
           <div>
-            <label className={labelClass}>Company *</label>
-            <input className={inputClass} required value={form.company} onChange={e => set("company", e.target.value)} placeholder="Noon.com" />
+            <label className={labelClass}>Company</label>
+            <input className={inputClass} value={form.company} onChange={e => set("company", e.target.value)} placeholder="Noon.com (optional)" />
           </div>
         </div>
 
