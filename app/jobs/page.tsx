@@ -12,10 +12,11 @@ import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { CITY_GROUPS } from "@/data/cities";
 import type { Job } from "@/types/job";
-import { MapPin, Clock, ArrowUpRight, Briefcase, Search, X, ChevronRight } from "lucide-react";
+import { MapPin, Clock, Briefcase, Search, X, ChevronRight, Wifi } from "lucide-react";
 
 const COUNTRIES = ["All", "UAE", "Saudi Arabia", "Qatar", "Kuwait", "Bahrain", "Oman", "Egypt"];
 const EXPERIENCE = ["All", "0-2 years", "3-5 years", "6-10 years", "10+"];
+const WORK_TYPES = ["All", "Remote", "Hybrid", "On-site"];
 
 const COUNTRY_FLAGS: Record<string, string> = {
   UAE: "🇦🇪", "Saudi Arabia": "🇸🇦", Qatar: "🇶🇦",
@@ -39,6 +40,22 @@ function fmtSalary(job: Job) {
   return null;
 }
 
+function WorkTypePill({ type }: { type: string }) {
+  const isRemote = type.toLowerCase() === "remote";
+  const isHybrid = type.toLowerCase() === "hybrid";
+  if (!isRemote && !isHybrid) return null;
+  return (
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+      isRemote
+        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+        : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+    }`}>
+      <Wifi size={10} />
+      {type}
+    </span>
+  );
+}
+
 function JobCard({ job }: { job: Job }) {
   const salary = fmtSalary(job);
   const flag = COUNTRY_FLAGS[job.country] ?? "🌍";
@@ -48,9 +65,13 @@ function JobCard({ job }: { job: Job }) {
       href={`/jobs/${slug}`}
       className="group relative bg-card border border-border rounded-xl p-5 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 flex flex-col gap-3"
     >
-      {(job.is_featured) && (
-        <Badge variant="accent" className="absolute top-3 right-3 text-xs">Featured</Badge>
-      )}
+      <div className="flex items-center justify-between gap-2">
+        {(job.is_featured) && (
+          <Badge variant="accent" className="text-xs">Featured</Badge>
+        )}
+        {job.employment_type && <WorkTypePill type={job.employment_type} />}
+        {!job.is_featured && !job.employment_type && <span />}
+      </div>
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
           <Briefcase size={16} className="text-muted-foreground" />
@@ -80,6 +101,7 @@ export default function JobsPage() {
   const [city, setCity] = useState("All");
   const [category, setCategory] = useState("All");
   const [experience, setExperience] = useState("All");
+  const [workType, setWorkType] = useState("All");
   const [search, setSearch] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [total, setTotal] = useState(0);
@@ -97,6 +119,7 @@ export default function JobsPage() {
     if (city !== "All") params.set("city", city);
     if (category !== "All") params.set("category", category);
     if (experience !== "All") params.set("experience", experience);
+    if (workType !== "All") params.set("workType", workType);
     if (search.trim()) params.set("search", search.trim());
 
     try {
@@ -109,7 +132,7 @@ export default function JobsPage() {
     } finally {
       setLoading(false);
     }
-  }, [country, city, category, experience, search]);
+  }, [country, city, category, experience, workType, search]);
 
   useEffect(() => {
     setPage(0);
@@ -120,11 +143,11 @@ export default function JobsPage() {
   useEffect(() => {
     setPage(0);
     fetchJobs(0, false);
-  }, [city, category, experience, search]);
+  }, [city, category, experience, workType, search]);
 
   function clearFilters() {
     setCountry("All"); setCity("All"); setCategory("All");
-    setExperience("All"); setSearch("");
+    setExperience("All"); setWorkType("All"); setSearch("");
   }
 
   function loadMore() {
@@ -133,7 +156,7 @@ export default function JobsPage() {
     fetchJobs(next * 12, true);
   }
 
-  const hasActiveFilter = country !== "All" || city !== "All" || category !== "All" || experience !== "All" || search !== "";
+  const hasActiveFilter = country !== "All" || city !== "All" || category !== "All" || experience !== "All" || workType !== "All" || search !== "";
   const selectCls = "rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none appearance-none cursor-pointer";
 
   return (
@@ -155,6 +178,31 @@ export default function JobsPage() {
         <Container className="py-8 md:py-12">
           {/* Filter bar */}
           <div className="sticky top-16 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-2xl p-4 mb-6 shadow-soft">
+            {/* Work type pill toggles */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {WORK_TYPES.map((type) => {
+                const isActive = workType === type;
+                return (
+                  <button
+                    key={type}
+                    onClick={() => setWorkType(type)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-150 ${
+                      isActive
+                        ? type === "Remote"
+                          ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+                          : type === "Hybrid"
+                          ? "bg-blue-500/15 border-blue-500/40 text-blue-600 dark:text-blue-400"
+                          : "bg-accent/15 border-accent/40 text-accent"
+                        : "bg-background border-border text-muted-foreground hover:border-accent/30 hover:text-foreground"
+                    }`}
+                  >
+                    {type === "Remote" && <Wifi size={11} />}
+                    {type}
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="flex flex-wrap gap-3 items-center">
               {/* Search */}
               <div className="relative flex-1 min-w-[160px]">

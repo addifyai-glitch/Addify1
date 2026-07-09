@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
   const country    = searchParams.get("country") ?? "";
   const category   = searchParams.get("category") ?? "";
   const experience = searchParams.get("experience") ?? "";
+  const workType   = searchParams.get("workType") ?? "";
   const search     = searchParams.get("search") ?? "";
   const limit      = Math.min(parseInt(searchParams.get("limit") ?? "12", 10), 50);
   const offset     = parseInt(searchParams.get("offset") ?? "0", 10);
@@ -57,6 +58,7 @@ export async function GET(req: NextRequest) {
       if (country)    query = query.ilike("country", country);
       if (category)   query = query.ilike("category", category);
       if (experience) query = query.ilike("experience_level", experience);
+      if (workType)   query = query.ilike("employment_type", workType);
       if (title)      query = query.ilike("title", `%${title}%`);
       if (search)     query = query.or(
         `title.ilike.%${search}%,company.ilike.%${search}%,description.ilike.%${search}%`
@@ -87,6 +89,7 @@ export async function GET(req: NextRequest) {
   if (country)    matched = matched.filter((j) => j.country.toLowerCase() === country.toLowerCase());
   if (category)   matched = matched.filter((j) => j.category?.toLowerCase() === category.toLowerCase());
   if (experience) matched = matched.filter((j) => j.experience_level?.toLowerCase() === experience.toLowerCase());
+  if (workType)   matched = matched.filter((j) => j.employment_type?.toLowerCase() === workType.toLowerCase());
   if (title) {
     const q = title.toLowerCase();
     matched = matched.filter((j) => j.title.toLowerCase().includes(q));
