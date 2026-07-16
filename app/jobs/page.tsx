@@ -91,7 +91,7 @@ function JobCard({ job }: { job: Job }) {
       <h3 className="text-base font-semibold text-foreground leading-snug">{job.title}</h3>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <MapPin size={11} />{flag} {job.city}
+          <MapPin size={11} />{job.city ? `${flag} ${job.city}` : "Remote"}
         </span>
         {job.experience_level && <span>{EXP_LABEL[job.experience_level] ?? job.experience_level}</span>}
         <span className="flex items-center gap-1">

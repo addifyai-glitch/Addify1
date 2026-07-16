@@ -75,14 +75,14 @@ export default function NewJobPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className={labelClass}>City *</label>
-            <select className={inputClass} required value={form.city} onChange={e => {
+            <label className={labelClass}>City <span className="normal-case font-normal">(optional for Remote)</span></label>
+            <select className={inputClass} value={form.city} onChange={e => {
               const city = e.target.value;
               const country = CITY_GROUPS.find(g => g.cities.some(c => c.name === city))?.country ?? "";
               const currency = CITY_GROUPS.find(g => g.cities.some(c => c.name === city))?.currency ?? "AED";
               setForm(f => ({ ...f, city, country, currency }));
             }}>
-              <option value="">Select city…</option>
+              <option value="">— No specific city —</option>
               {CITY_GROUPS.map(g => (
                 <optgroup key={g.country} label={g.country}>
                   {g.cities.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}

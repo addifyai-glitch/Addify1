@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       apply_url, description, featured, expiry_days,
     } = body;
 
-    if (!title || !city || !apply_url) {
+    if (!title || !apply_url) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
     const supabase = createAdminClient();
     const { error } = await supabase.from("jobs").insert({
       slug,
-      title, company, city, country, currency,
+      title,
+      company: company || null,
+      city: city || null,
+      country: country || null,
+      currency,
       category: category || null,
       employment_type: employment_type || "On-site",
       salary_min: salary_min ? Number(salary_min) : null,
