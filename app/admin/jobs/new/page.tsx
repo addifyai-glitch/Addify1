@@ -6,7 +6,12 @@ import { CITY_GROUPS } from "@/data/cities";
 import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { Button } from "@/components/ui/button";
 
-const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
+const EXPERIENCE_LEVELS = [
+  { value: "Entry",     label: "Entry (0-2 years)" },
+  { value: "Mid",       label: "Mid (3-5 years)" },
+  { value: "Senior",    label: "Senior (6-10 years)" },
+  { value: "Executive", label: "Executive (10+ years)" },
+];
 const WORK_TYPES = ["On-site", "Remote", "Hybrid"];
 
 export default function NewJobPage() {
@@ -15,7 +20,7 @@ export default function NewJobPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "", company: "", city: "", country: "", currency: "AED",
-    category: "", employment_type: "On-site", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
+    category: "", employment_type: "On-site", salary_min: "", salary_max: "", experience_level: "Entry", apply_url: "",
     description: "", featured: false, expiry_days: "30",
   });
 
@@ -87,9 +92,8 @@ export default function NewJobPage() {
           </div>
           <div>
             <label className={labelClass}>Experience Level</label>
-            <select className={inputClass} value={form.experience_level} onChange={e => set("experience_level", e.target.value)}>
-              <option value="">Any</option>
-              {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+            <select className={inputClass} required value={form.experience_level} onChange={e => set("experience_level", e.target.value)}>
+              {EXPERIENCE_LEVELS.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
         </div>

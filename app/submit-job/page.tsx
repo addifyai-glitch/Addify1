@@ -23,7 +23,7 @@ export default function SubmitJobPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     title: "", company: "", city: "", currency: "AED",
-    category: "", salary_min: "", salary_max: "", experience_level: "", apply_url: "",
+    category: "", salary_min: "", salary_max: "", experience_level: "Entry", apply_url: "",
     description: "", submitter_email: "",
     website: "", // honeypot
   });
@@ -136,7 +136,6 @@ export default function SubmitJobPage() {
               <div>
                 <label className={labelCls}>Experience Level</label>
                 <select className={inputCls} value={form.experience_level} onChange={e => set("experience_level", e.target.value)}>
-                  <option value="">Any / not specified</option>
                   {EXPERIENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>

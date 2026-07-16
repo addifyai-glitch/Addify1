@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       currency,
-      experience_level: experience_level || null,
+      experience_level: experience_level || "Entry",
       apply_url,
       description,
       submitter_email,

@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { CITY_GROUPS } from "@/data/cities";
 
-const EXPERIENCE_LEVELS = ["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16+ years"];
+const EXPERIENCE_LEVELS = [
+  { value: "Entry",     label: "Entry (0-2 years)" },
+  { value: "Mid",       label: "Mid (3-5 years)" },
+  { value: "Senior",    label: "Senior (6-10 years)" },
+  { value: "Executive", label: "Executive (10+ years)" },
+];
 
 type FormState = {
   title: string;
@@ -173,8 +178,8 @@ export default function EditJobPage() {
           <div>
             <label className={labelClass}>Experience Level</label>
             <select className={inputClass} value={form.experience_level} onChange={(e) => set("experience_level", e.target.value)}>
-              <option value="">Any</option>
-              {EXPERIENCE_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+              <option value="">— not set —</option>
+              {EXPERIENCE_LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
         </div>

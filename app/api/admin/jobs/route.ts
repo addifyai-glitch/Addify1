@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       employment_type: employment_type || "On-site",
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
-      experience_level: experience_level || null,
+      experience_level: experience_level || "Entry",
       apply_url, description,
       is_featured: !!featured,
       approved: true,

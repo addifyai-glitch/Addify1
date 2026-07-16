@@ -15,7 +15,17 @@ import type { Job } from "@/types/job";
 import { MapPin, Clock, Briefcase, Search, X, ChevronRight, Wifi } from "lucide-react";
 
 const COUNTRIES = ["All", "UAE", "Saudi Arabia", "Qatar", "Kuwait", "Bahrain", "Oman", "Egypt"];
-const EXPERIENCE = ["All", "0-2 years", "3-5 years", "6-10 years", "10+"];
+const EXPERIENCE = [
+  { value: "All",       label: "All experience" },
+  { value: "Entry",     label: "Entry (0-2 yrs)" },
+  { value: "Mid",       label: "Mid (3-5 yrs)" },
+  { value: "Senior",    label: "Senior (6-10 yrs)" },
+  { value: "Executive", label: "Executive (10+)" },
+];
+
+const EXP_LABEL: Record<string, string> = {
+  Entry: "0-2 yrs", Mid: "3-5 yrs", Senior: "6-10 yrs", Executive: "10+",
+};
 const WORK_TYPES = ["All", "Remote", "Hybrid", "On-site"];
 
 const COUNTRY_FLAGS: Record<string, string> = {
@@ -83,7 +93,7 @@ function JobCard({ job }: { job: Job }) {
         <span className="flex items-center gap-1">
           <MapPin size={11} />{flag} {job.city}
         </span>
-        {job.experience_level && <span>{job.experience_level}</span>}
+        {job.experience_level && <span>{EXP_LABEL[job.experience_level] ?? job.experience_level}</span>}
         <span className="flex items-center gap-1">
           <Clock size={11} />{timeAgo(job.posted_at)}
         </span>
@@ -228,7 +238,7 @@ export default function JobsPage() {
                 {JOB_CATEGORIES.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
               </select>
               <select className={selectCls} value={experience} onChange={(e) => setExperience(e.target.value)}>
-                {EXPERIENCE.map((e) => <option key={e}>{e}</option>)}
+                {EXPERIENCE.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
               </select>
               {hasActiveFilter && (
                 <button
