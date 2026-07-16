@@ -4,6 +4,8 @@ import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { DeleteJobButton } from "@/components/admin/delete-job-button";
 import type { Job } from "@/types/job";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(iso: string | null | undefined) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
