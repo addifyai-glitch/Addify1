@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       title,
       company: company || null,
       city: city || null,
-      country: country || null,
+      country: country || "Remote",
       currency,
       category: category || null,
       employment_type: employment_type || "On-site",
