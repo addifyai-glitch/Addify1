@@ -4,6 +4,11 @@ import type { ResumeData, TemplateId } from '@/types/resume';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
+// Log which browser strategy is in use (helps diagnose Puppeteer issues per env)
+console.log(
+  `[pdf-route] Browser strategy: ${process.env.DEPLOY_ENV === 'hetzner' ? 'local-chromium' : 'sparticuz-chromium'}`
+);
+
 function esc(text: string | undefined | null): string {
   if (!text) return '';
   return String(text)
@@ -284,6 +289,47 @@ function renderMinimal(d: ResumeData): string {
   </div></body></html>`;
 }
 
+// Environment-aware browser launch: local Chromium on Hetzner, @sparticuz/chromium
+// on Vercel (with a system Chrome fallback for local dev where neither is set up).
+async function getBrowser() {
+  const puppeteer = (await import('puppeteer-core')).default;
+
+  if (process.env.DEPLOY_ENV === 'hetzner') {
+    // Hetzner: use local Chromium installed via apt
+    const chromiumPath = process.env.CHROMIUM_PATH || '/usr/bin/chromium-browser';
+    return puppeteer.launch({
+      executablePath: chromiumPath,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--headless=new',
+      ],
+      headless: true,
+    });
+  }
+
+  try {
+    const chromium = (await import('@sparticuz/chromium')).default;
+    return await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  } catch {
+    // Local dev fallback: use system Chrome when @sparticuz/chromium binary unavailable
+    const localChrome =
+      process.env.PUPPETEER_EXECUTABLE_PATH ||
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    return puppeteer.launch({
+      executablePath: localChrome,
+      headless: true,
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    });
+  }
+}
+
 // ─── Route handler ────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
@@ -301,27 +347,7 @@ export async function POST(req: NextRequest) {
       tpl === 'minimal' ? renderMinimal(data) :
       renderModern(data);
 
-    const puppeteer = (await import('puppeteer-core')).default;
-
-    let browser;
-    try {
-      const chromium = (await import('@sparticuz/chromium')).default;
-      browser = await puppeteer.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath(),
-        headless: true,
-      });
-    } catch {
-      // Local dev fallback: use system Chrome when @sparticuz/chromium binary unavailable
-      const localChrome =
-        process.env.PUPPETEER_EXECUTABLE_PATH ||
-        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-      browser = await puppeteer.launch({
-        executablePath: localChrome,
-        headless: true,
-        args: ['--no-sandbox', '--disable-dev-shm-usage'],
-      });
-    }
+    const browser = await getBrowser();
 
     try {
       const page = await browser.newPage();
