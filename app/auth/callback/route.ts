@@ -4,12 +4,13 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
   const code = requestUrl.searchParams.get("code");
   const next = requestUrl.searchParams.get("next") || "/admin";
 
   if (!code) {
     console.error("[auth/callback] No code parameter");
-    return NextResponse.redirect(`${requestUrl.origin}/admin/login?error=no_code`);
+    return NextResponse.redirect(`${baseUrl}/admin/login?error=no_code`);
   }
 
   const cookieStore = await cookies();
@@ -33,8 +34,8 @@ export async function GET(request: Request) {
 
   if (error) {
     console.error("[auth/callback] Exchange failed:", error.message);
-    return NextResponse.redirect(`${requestUrl.origin}/admin/login?error=exchange_failed`);
+    return NextResponse.redirect(`${baseUrl}/admin/login?error=exchange_failed`);
   }
 
-  return NextResponse.redirect(`${requestUrl.origin}${next}`);
+  return NextResponse.redirect(`${baseUrl}${next}`);
 }
