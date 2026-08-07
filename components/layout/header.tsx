@@ -57,8 +57,10 @@ function NavDropdown({
       <button
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex items-center gap-1 text-sm font-medium transition-colors duration-150",
-          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+          "flex items-center gap-1 text-[15px] font-medium px-3 py-2 rounded-md transition-colors duration-200",
+          isActive
+            ? "text-accent font-semibold"
+            : "text-foreground/80 hover:text-accent hover:bg-accent/5"
         )}
         aria-expanded={open}
       >
@@ -137,8 +139,10 @@ export function Header() {
             <Link
               href="/"
               className={cn(
-                "text-sm font-medium transition-colors duration-150",
-                pathname === "/" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                "text-[15px] font-medium px-3 py-2 rounded-md transition-colors duration-200",
+                pathname === "/"
+                  ? "text-accent font-semibold"
+                  : "text-foreground/80 hover:text-accent hover:bg-accent/5"
               )}
             >
               Home
@@ -153,10 +157,10 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors duration-150",
+                  "text-[15px] font-medium px-3 py-2 rounded-md transition-colors duration-200",
                   pathname === link.href || pathname.startsWith(link.href + "/")
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-accent font-semibold"
+                    : "text-foreground/80 hover:text-accent hover:bg-accent/5"
                 )}
               >
                 {link.label}
