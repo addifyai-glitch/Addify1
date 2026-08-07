@@ -36,6 +36,7 @@ const columns = [
       { label: "Fit Score", href: "/fit" },
       { label: "Cover Letter", href: "/cover-letter" },
       { label: "Resume Builder", href: "/tools/resume-builder" },
+      { label: "Gratuity Calculator", href: "/tools/gratuity-calculator" },
       { label: "Jobs", href: "/jobs" },
       { label: "Post a Job", href: "/submit-job" },
     ],

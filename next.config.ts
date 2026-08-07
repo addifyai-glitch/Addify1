@@ -74,6 +74,17 @@ const nextConfig: NextConfig = {
         destination: '/tools/resume-builder',
         permanent: true,
       },
+      // Gratuity calculator — old standalone HTML file to new Next.js page
+      {
+        source: '/tools/uae-gratuity-calculator.html',
+        destination: '/tools/gratuity-calculator',
+        permanent: true,
+      },
+      {
+        source: '/tools/uae-gratuity-calculator',
+        destination: '/tools/gratuity-calculator',
+        permanent: true,
+      },
       // WordPress admin and login
       {
         source: "/wp-admin/:path*",
