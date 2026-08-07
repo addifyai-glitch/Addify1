@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { sendJobApprovedEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
 
@@ -46,17 +47,23 @@ export async function PATCH(
   try {
     const supabase = createAdminClient();
 
-    const { error } = await supabase
+    const { data: job, error } = await supabase
       .from('jobs')
       .update({
         approved: true,
         modified_at: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq('id', id)
+      .select('title, slug, submitter_email')
+      .single();
 
     if (error) {
       console.error('[admin/approve] Supabase error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (job?.submitter_email) {
+      await sendJobApprovedEmail(job.submitter_email, job.title, job.slug);
     }
 
     return NextResponse.json({ success: true, action: 'approved' });
