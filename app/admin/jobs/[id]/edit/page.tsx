@@ -11,12 +11,15 @@ const EXPERIENCE_LEVELS = [
   { value: "Executive", label: "Executive (10+ years)" },
 ];
 
+const WORK_TYPES = ["On-site", "Remote", "Hybrid"];
+
 type FormState = {
   title: string;
   company: string;
   city: string;
   country: string;
   currency: string;
+  employment_type: string;
   salary_min: string;
   salary_max: string;
   experience_level: string;
@@ -48,6 +51,7 @@ export default function EditJobPage() {
           city: data.city ?? "",
           country: data.country ?? "",
           currency: data.currency ?? "AED",
+          employment_type: data.employment_type ?? "On-site",
           salary_min: data.salary_min != null ? String(data.salary_min) : "",
           salary_max: data.salary_max != null ? String(data.salary_max) : "",
           experience_level: data.experience_level ?? "",
@@ -161,7 +165,13 @@ export default function EditJobPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className={labelClass}>City</label>
+            <label className={labelClass}>Work Type</label>
+            <select className={inputClass} value={form.employment_type} onChange={(e) => set("employment_type", e.target.value)}>
+              {WORK_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>City <span className="normal-case font-normal">(optional for remote roles)</span></label>
             <select className={inputClass} value={form.city} onChange={(e) => {
               const city = e.target.value;
               const group = CITY_GROUPS.find((g) => g.cities.some((c) => c.name === city));
@@ -175,13 +185,14 @@ export default function EditJobPage() {
               ))}
             </select>
           </div>
-          <div>
-            <label className={labelClass}>Experience Level</label>
-            <select className={inputClass} value={form.experience_level} onChange={(e) => set("experience_level", e.target.value)}>
-              <option value="">— not set —</option>
-              {EXPERIENCE_LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
-            </select>
-          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>Experience Level</label>
+          <select className={inputClass} value={form.experience_level} onChange={(e) => set("experience_level", e.target.value)}>
+            <option value="">— not set —</option>
+            {EXPERIENCE_LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
+          </select>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
