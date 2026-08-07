@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
@@ -256,6 +256,9 @@ export default function GratuityCalculatorPage() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [shareStatus, setShareStatus] = useState("");
 
+  const resultRef = useRef<HTMLElement>(null);
+  const compareRef = useRef<HTMLElement>(null);
+
   const dir = lang === "ar" ? "rtl" : "ltr";
   const t = T[lang];
 
@@ -270,6 +273,14 @@ export default function GratuityCalculatorPage() {
       // ignore corrupt history
     }
   }, []);
+
+  useEffect(() => {
+    if (result) resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [result]);
+
+  useEffect(() => {
+    if (compareResults) compareRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [compareResults]);
 
   function parseInputs() {
     return {
@@ -528,7 +539,7 @@ export default function GratuityCalculatorPage() {
           </form>
 
           {result && (
-            <section className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft mb-6">
+            <section ref={resultRef} className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft mb-6">
               <h2 className="font-display text-xl text-foreground mb-5 print:hidden">{t.resultHeading}</h2>
               <ResultCard r={result} />
 
@@ -582,7 +593,7 @@ export default function GratuityCalculatorPage() {
           )}
 
           {compareResults && (
-            <section className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft mb-6 print:hidden">
+            <section ref={compareRef} className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft mb-6 print:hidden">
               <h2 className="font-display text-xl text-foreground mb-1">{t.compareHeading}</h2>
               <p className="text-sm text-muted-foreground mb-5">{t.compareSubtitle}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
