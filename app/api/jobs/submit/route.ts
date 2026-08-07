@@ -29,14 +29,17 @@ export async function POST(req: NextRequest) {
   }
 
   const {
-    title, company, city, country, category,
+    title, company, city, country, category, employment_type,
     salary_min, salary_max, currency,
     experience_level, apply_url, description, submitter_email,
     captchaToken,
   } = body;
 
+  const ALLOWED_WORK_TYPES = ["On-site", "Remote", "Hybrid"];
+  const validEmploymentType = ALLOWED_WORK_TYPES.includes(employment_type) ? employment_type : "On-site";
+
   // Basic validation
-  if (!title || !city || !category || !apply_url || !submitter_email) {
+  if (!title || !category || !apply_url || !submitter_email) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
   try { new URL(apply_url); } catch {
@@ -102,9 +105,10 @@ export async function POST(req: NextRequest) {
       slug,
       title,
       company: company || null,
-      city,
-      country: country ?? city,
+      city: city || null,
+      country: country || "Remote",
       category,
+      employment_type: validEmploymentType,
       salary_min: salary_min ? Number(salary_min) : null,
       salary_max: salary_max ? Number(salary_max) : null,
       currency,

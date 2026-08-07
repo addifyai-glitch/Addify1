@@ -17,13 +17,15 @@ const EXPERIENCE_OPTIONS = [
   { label: "10+ years",  value: "Executive" },
 ];
 
+const WORK_TYPES = ["On-site", "Remote", "Hybrid"];
+
 export default function SubmitJobPage() {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     title: "", company: "", city: "", currency: "AED",
-    category: "", salary_min: "", salary_max: "", experience_level: "Entry", apply_url: "",
+    category: "", employment_type: "On-site", salary_min: "", salary_max: "", experience_level: "Entry", apply_url: "",
     description: "", submitter_email: "",
     website: "", // honeypot
   });
@@ -35,7 +37,9 @@ export default function SubmitJobPage() {
     setStatus("loading");
     try {
       const captchaToken = executeRecaptcha ? await executeRecaptcha("submit_job") : "";
-      const country = CITY_GROUPS.find(g => g.cities.some(c => c.name === form.city))?.country ?? form.city;
+      const country = form.city
+        ? (CITY_GROUPS.find(g => g.cities.some(c => c.name === form.city))?.country ?? form.city)
+        : "Remote";
       const res = await fetch("/api/jobs/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,20 +96,28 @@ export default function SubmitJobPage() {
                 </div>
               </div>
 
-              <div>
-                <label className={labelCls}>City *</label>
-                <select className={inputCls} required value={form.city} onChange={e => {
-                  const city = e.target.value;
-                  const currency = CITY_GROUPS.find(g => g.cities.some(c => c.name === city))?.currency ?? "AED";
-                  setForm(f => ({ ...f, city, currency }));
-                }}>
-                  <option value="">Select a city…</option>
-                  {CITY_GROUPS.map(g => (
-                    <optgroup key={g.country} label={`${g.country} (${g.currency})`}>
-                      {g.cities.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-                    </optgroup>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className={labelCls}>Work Type *</label>
+                  <select className={inputCls} required value={form.employment_type} onChange={e => set("employment_type", e.target.value)}>
+                    {WORK_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelCls}>City <span className="normal-case font-normal">(optional for remote roles)</span></label>
+                  <select className={inputCls} value={form.city} onChange={e => {
+                    const city = e.target.value;
+                    const currency = CITY_GROUPS.find(g => g.cities.some(c => c.name === city))?.currency ?? "AED";
+                    setForm(f => ({ ...f, city, currency }));
+                  }}>
+                    <option value="">Select a city…</option>
+                    {CITY_GROUPS.map(g => (
+                      <optgroup key={g.country} label={`${g.country} (${g.currency})`}>
+                        {g.cities.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
