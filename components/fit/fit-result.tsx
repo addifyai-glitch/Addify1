@@ -2,40 +2,27 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Check, AlertTriangle, ArrowRight, MapPin, Briefcase } from "lucide-react";
+import { Check, AlertTriangle, ArrowRight, MapPin, Briefcase, Lightbulb, MessageSquare } from "lucide-react";
 import { MOCK_JOBS } from "@/data/mockJobs";
 import type { Job } from "@/types/job";
+import type { FitAnalysis } from "@/lib/analyzers/fit-score";
 
 export type FitInputContext = {
   resumeLabel: string;
   jdLabel: string;
 };
 
-const MOCK_RESULT = {
-  score: 78,
-  summary: "Strong match. Worth applying with a few targeted tweaks.",
-  categories: [
-    { label: "Skill Match", score: 85 },
-    { label: "Experience Fit", score: 72 },
-    { label: "Salary Alignment", score: 80 },
-    { label: "Location and Visa Fit", score: 90 },
-    { label: "Career Trajectory", score: 65 },
-  ],
-  strengths: [
-    "5 or more years of experience in the required domain",
-    "Matches 8 of 10 required skills",
-    "Salary expectation aligns with the posted range",
-  ],
-  gaps: [
-    "AWS certification mentioned in the job description is not on your resume",
-    "2 years below the preferred tenure",
-  ],
-  nextSteps: [
-    "Highlight your domain experience more prominently in your CV summary",
-    "Add quantified results to your most recent role (revenue, users, time saved)",
-    "Mention any certifications you are currently pursuing",
-  ],
+const VERDICT_LABEL: Record<FitAnalysis["verdict"], string> = {
+  strong_fit: "Strong fit",
+  moderate_fit: "Moderate fit",
+  weak_fit: "Weak fit",
 };
+
+function scoreColorClass(score: number): string {
+  if (score >= 80) return "text-success";
+  if (score >= 60) return "text-accent";
+  return "text-destructive";
+}
 
 function ScoreRing({ score }: { score: number }) {
   const circleRef = useRef<SVGCircleElement>(null);
@@ -64,7 +51,7 @@ function ScoreRing({ score }: { score: number }) {
             cx="60" cy="60" r={r}
             fill="none"
             stroke="currentColor"
-            className="text-accent"
+            className={scoreColorClass(score)}
             strokeWidth="10"
             strokeLinecap="round"
           />
@@ -78,102 +65,132 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-function CategoryBar({ label, score }: { label: string; score: number }) {
-  return (
-    <div>
-      <div className="flex justify-between text-sm mb-1.5">
-        <span className="text-foreground font-medium">{label}</span>
-        <span className="text-muted-foreground tabular-nums">{score}%</span>
-      </div>
-      <div className="h-2 rounded-full bg-muted overflow-hidden">
-        <div
-          className="h-full rounded-full bg-accent transition-all duration-700"
-          style={{ width: `${score}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-export function FitResult({ context }: { context: FitInputContext }) {
-  const r = MOCK_RESULT;
-
+export function FitResult({ analysis, labels }: { analysis: FitAnalysis; labels?: FitInputContext }) {
   return (
     <div className="mt-10 space-y-6">
-      {/* Demo badge */}
-      <div className="bg-accent/10 border border-accent/20 rounded-xl p-4">
-        <p className="text-sm font-semibold text-foreground mb-1">Demo result. Live AI analysis is coming soon.</p>
-        <p className="text-xs text-muted-foreground">This score is illustrative. Connect your resume and the job description above to see a real analysis when the feature launches.</p>
-      </div>
-
-      {/* What was matched */}
-      <div className="bg-muted/40 border border-border rounded-xl p-4 text-sm text-muted-foreground space-y-1">
-        <p><span className="font-medium text-foreground">Resume:</span> {context.resumeLabel}</p>
-        <p><span className="font-medium text-foreground">Job description:</span> {context.jdLabel}</p>
-      </div>
+      {labels && (
+        <div className="bg-muted/40 border border-border rounded-xl p-4 text-sm text-muted-foreground space-y-1">
+          <p><span className="font-medium text-foreground">Resume:</span> {labels.resumeLabel}</p>
+          <p><span className="font-medium text-foreground">Job description:</span> {labels.jdLabel}</p>
+        </div>
+      )}
 
       {/* Score card */}
       <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft">
         <div className="flex flex-col md:flex-row md:items-center gap-8">
-          <ScoreRing score={r.score} />
+          <ScoreRing score={analysis.score} />
           <div className="flex-1">
-            <p className="text-xl font-semibold text-foreground mb-1">{r.summary}</p>
-            <p className="text-sm text-muted-foreground mb-6">Based on what you provided above.</p>
-            <div className="space-y-3">
-              {r.categories.map((c) => (
-                <CategoryBar key={c.label} label={c.label} score={c.score} />
-              ))}
-            </div>
+            <p className={`text-sm font-semibold uppercase tracking-wide mb-1 ${scoreColorClass(analysis.score)}`}>
+              {VERDICT_LABEL[analysis.verdict]}
+            </p>
+            <p className="text-lg font-semibold text-foreground">{analysis.summary}</p>
           </div>
         </div>
       </div>
 
-      {/* Strengths + Gaps */}
+      {/* Honest warning */}
+      {analysis.honest_warning && (
+        <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4">
+          <p className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+            <AlertTriangle size={15} className="text-destructive" />
+            Honest read
+          </p>
+          <p className="text-sm text-muted-foreground">{analysis.honest_warning}</p>
+        </div>
+      )}
+
+      {/* Matched + Missing skills */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="bg-success/5 border border-success/20 rounded-xl p-6">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
             <Check size={16} className="text-success" />
-            Strengths
+            Matched skills
           </h3>
-          <ul className="space-y-2.5">
-            {r.strengths.map((s) => (
-              <li key={s} className="flex items-start gap-2.5 text-sm text-foreground">
-                <Check size={13} className="text-success shrink-0 mt-0.5" />
-                {s}
-              </li>
-            ))}
-          </ul>
+          {analysis.matched_skills.length > 0 ? (
+            <ul className="space-y-2.5">
+              {analysis.matched_skills.map((s) => (
+                <li key={s} className="flex items-start gap-2.5 text-sm text-foreground">
+                  <Check size={13} className="text-success shrink-0 mt-0.5" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">No direct matches found.</p>
+          )}
         </div>
         <div className="bg-accent/5 border border-accent/20 rounded-xl p-6">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
             <AlertTriangle size={16} className="text-accent" />
             Gaps to address
           </h3>
+          {analysis.missing_skills.length > 0 ? (
+            <ul className="space-y-2.5">
+              {analysis.missing_skills.map((g) => (
+                <li key={g} className="flex items-start gap-2.5 text-sm text-foreground">
+                  <AlertTriangle size={13} className="text-accent shrink-0 mt-0.5" />
+                  {g}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">No significant gaps found.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Transferable experience */}
+      {analysis.transferable_experience.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6 shadow-soft">
+          <h3 className="font-semibold text-foreground mb-4">Transferable experience</h3>
           <ul className="space-y-2.5">
-            {r.gaps.map((g) => (
-              <li key={g} className="flex items-start gap-2.5 text-sm text-foreground">
-                <AlertTriangle size={13} className="text-accent shrink-0 mt-0.5" />
-                {g}
+            {analysis.transferable_experience.map((s) => (
+              <li key={s} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                <ArrowRight size={13} className="text-muted-foreground shrink-0 mt-0.5" />
+                {s}
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      )}
 
-      {/* Next steps */}
-      <div className="bg-card border border-border rounded-xl p-6 shadow-soft">
-        <h3 className="font-semibold text-foreground mb-4">Recommended next steps</h3>
-        <ol className="space-y-2.5">
-          {r.nextSteps.map((step, i) => (
-            <li key={step} className="flex items-start gap-3 text-sm text-muted-foreground">
-              <span className="shrink-0 w-5 h-5 rounded-full bg-accent/15 text-accent text-xs font-bold flex items-center justify-center mt-0.5">
-                {i + 1}
-              </span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </div>
+      {/* Recommendations */}
+      {analysis.recommendations.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6 shadow-soft">
+          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Lightbulb size={16} className="text-accent" />
+            Recommended next steps
+          </h3>
+          <ol className="space-y-2.5">
+            {analysis.recommendations.map((step, i) => (
+              <li key={step} className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="shrink-0 w-5 h-5 rounded-full bg-accent/15 text-accent text-xs font-bold flex items-center justify-center mt-0.5">
+                  {i + 1}
+                </span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* Interview talking points */}
+      {analysis.interview_talking_points.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6 shadow-soft">
+          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+            <MessageSquare size={16} className="text-accent" />
+            If you apply, emphasize
+          </h3>
+          <ul className="space-y-2.5">
+            {analysis.interview_talking_points.map((p) => (
+              <li key={p} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                <Check size={13} className="text-accent shrink-0 mt-0.5" />
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Job recommendations */}
       <section className="mt-2">

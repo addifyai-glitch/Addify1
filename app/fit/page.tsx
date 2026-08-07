@@ -1,12 +1,46 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 import { AdSlot } from "@/components/ui/ad-slot";
-import { FitResult, type FitInputContext } from "@/components/fit/fit-result";
+import { FitResult } from "@/components/fit/fit-result";
+import type { FitAnalysis } from "@/lib/analyzers/fit-score";
+import type { ResumeData } from "@/types/resume";
 import { Sparkles, Upload, FileText, X, Link as LinkIcon } from "lucide-react";
+
+const RESUME_STORAGE_KEY = "addify-resume-draft";
+
+function resumeDataToText(data: ResumeData): string {
+  const parts: string[] = [];
+
+  if (data.contact) {
+    parts.push(data.contact.fullName || "");
+    parts.push(data.contact.jobTitle || "");
+    if (data.contact.location) parts.push(`Location: ${data.contact.location}`);
+  }
+  if (data.summary) parts.push(`\nSUMMARY\n${data.summary}`);
+  if (data.experience?.length) {
+    parts.push("\nEXPERIENCE");
+    data.experience.forEach((exp) => {
+      parts.push(`\n${exp.role} at ${exp.company} (${exp.startDate} - ${exp.endDate})`);
+      if (exp.bullets?.length) parts.push(exp.bullets.filter(Boolean).map((b) => `- ${b}`).join("\n"));
+    });
+  }
+  if (data.education?.length) {
+    parts.push("\nEDUCATION");
+    data.education.forEach((edu) => {
+      parts.push(`${edu.degree}${edu.field ? ", " + edu.field : ""} at ${edu.institution} (${edu.startDate} - ${edu.endDate})`);
+    });
+  }
+  if (data.skills?.length) parts.push(`\nSKILLS\n${data.skills.join(", ")}`);
+  if (data.languages?.length) parts.push(`\nLANGUAGES\n${data.languages.join(", ")}`);
+  if (data.certifications?.length) parts.push(`\nCERTIFICATIONS\n${data.certifications.join(", ")}`);
+
+  return parts.filter(Boolean).join("\n");
+}
 
 type ResumeTab = "upload" | "paste";
 type JDTab = "paste" | "url" | "upload";
@@ -29,7 +63,9 @@ export default function FitPage() {
   const jdFileRef = useRef<HTMLInputElement>(null);
 
   const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
-  const [context, setContext] = useState<FitInputContext | null>(null);
+  const [analysis, setAnalysis] = useState<FitAnalysis | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   function getResumeLabel(): string {
     if (resumeTab === "upload" && resumeFile) return resumeFile.name;
@@ -75,13 +111,77 @@ export default function FitPage() {
     }
   }
 
+  function getResumeText(): string {
+    return resumeTab === "paste" ? resumeText.trim() : "";
+  }
+
+  function getJDText(): string {
+    // The URL tab already fetches plain text into jdText via fetchJD.
+    if (jdTab === "paste" || jdTab === "url") return jdText.trim();
+    return "";
+  }
+
+  function loadFromResumeBuilder() {
+    setError(null);
+    try {
+      const stored = localStorage.getItem(RESUME_STORAGE_KEY);
+      if (!stored) {
+        setError("No saved resume found. Build one at /tools/resume-builder first.");
+        return;
+      }
+      const data: ResumeData = JSON.parse(stored);
+      setResumeTab("paste");
+      setResumeText(resumeDataToText(data));
+    } catch {
+      setError("Could not load your saved resume.");
+    }
+  }
+
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+
+    const resumeVal = getResumeText();
+    const jdVal = getJDText();
+
+    if (resumeTab === "upload") {
+      setError("File parsing isn't supported yet. Switch to \"Paste Text\" for your resume.");
+      return;
+    }
+    if (jdTab === "upload") {
+      setError("File parsing isn't supported yet. Switch to \"Paste Text\" or \"Paste URL\" for the job description.");
+      return;
+    }
+    if (resumeVal.length < 200) {
+      setError("Please provide more resume detail (at least 200 characters).");
+      return;
+    }
+    if (jdVal.length < 100) {
+      setError("Please provide the full job description (at least 100 characters).");
+      return;
+    }
+
     setStatus("loading");
-    setContext(null);
-    await new Promise((r) => setTimeout(r, 1500));
-    setContext({ resumeLabel: getResumeLabel(), jdLabel: getJDLabel() });
-    setStatus("done");
+    setAnalysis(null);
+    try {
+      const captchaToken = executeRecaptcha ? await executeRecaptcha("fit_score") : "";
+      const res = await fetch("/api/tools/fit-score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resumeText: resumeVal, jobDescription: jdVal, captchaToken }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Analysis failed");
+        setStatus("idle");
+        return;
+      }
+      setAnalysis(data.analysis);
+      setStatus("done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Network error. Please try again.");
+      setStatus("idle");
+    }
   }
 
   const tabBtn = (active: boolean) =>
@@ -111,7 +211,12 @@ export default function FitPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Resume column */}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-foreground/75 mb-2">Your Resume</p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground/75">Your Resume</p>
+                  <button type="button" onClick={loadFromResumeBuilder} className="text-xs font-semibold text-accent hover:underline">
+                    Load from Resume Builder
+                  </button>
+                </div>
                 <div className="flex gap-2 mb-3">
                   <button type="button" className={tabBtn(resumeTab === "upload")} onClick={() => setResumeTab("upload")}>
                     <span className="flex items-center gap-1.5"><Upload size={12} /> Upload File</span>
@@ -250,14 +355,24 @@ export default function FitPage() {
                 Free. No signup required. Your data is not stored.
               </p>
             </div>
+
+            {error && (
+              <div className="mt-6 bg-destructive/10 border border-destructive/30 rounded-xl p-4 text-sm text-destructive text-center">
+                {error}
+              </div>
+            )}
           </form>
 
-          {status === "done" && context && (
+          {status === "done" && analysis && (
             <>
               <AdSlot format="in-article" className="mt-10" />
-              <FitResult context={context} />
+              <FitResult analysis={analysis} labels={{ resumeLabel: getResumeLabel(), jdLabel: getJDLabel() }} />
             </>
           )}
+
+          <p className="text-xs text-muted-foreground text-center mt-8">
+            Analysis powered by AI. Results are guidance, not a guarantee of hiring outcomes.
+          </p>
         </Container>
       </main>
       <Footer />
