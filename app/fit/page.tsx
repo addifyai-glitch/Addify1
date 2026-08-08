@@ -47,7 +47,7 @@ type JDTab = "paste" | "url" | "upload";
 
 export default function FitPage() {
   // Resume state
-  const [resumeTab, setResumeTab] = useState<ResumeTab>("upload");
+  const [resumeTab, setResumeTab] = useState<ResumeTab>("paste");
   const [resumeText, setResumeText] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const resumeFileRef = useRef<HTMLInputElement>(null);
