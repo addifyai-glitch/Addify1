@@ -8,7 +8,7 @@ import { FinalCTA } from "@/components/sections/final-cta";
 import { Shield, MapPin, BadgeCheck, Heart } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Addify | Gulf Careers, Clarified.",
+  title: "About",
   description: "We built Addify to give Gulf professionals real salary data, honest job fit scores, and clear career advice. Learn who we are and why we built it.",
   alternates: { canonical: "/about" },
 };

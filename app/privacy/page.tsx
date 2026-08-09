@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Addify",
+  title: "Privacy Policy",
   description: "How Addify collects, uses, and protects your personal data. GDPR and UAE PDPL compliant.",
   alternates: { canonical: "/privacy" },
 };

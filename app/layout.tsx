@@ -22,7 +22,11 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Addify. Gulf Careers, Clarified.",
+  metadataBase: new URL("https://addify.ae"),
+  title: {
+    default: "Addify. Gulf Careers, Clarified.",
+    template: "%s | Addify",
+  },
   description:
     "Salary benchmarks and job fit scores for UAE and GCC job seekers. Find out what your role pays and whether a job is right for you.",
 };

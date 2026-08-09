@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder | Addify',
+  title: 'Free Resume Builder',
   description: 'Build a professional resume in minutes. 3 templates, live preview, AI summary helper, browser PDF export. Free, anonymous, no account needed.',
   alternates: { canonical: '/tools/resume-builder' },
   openGraph: {

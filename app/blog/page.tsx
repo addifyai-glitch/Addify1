@@ -11,7 +11,7 @@ import { NewsletterForm } from "@/components/blog/newsletter-form";
 import { PostsGrid } from "@/components/blog/posts-grid";
 
 export const metadata: Metadata = {
-  title: "Blog | Addify. Gulf Careers, Clarified.",
+  title: "Blog",
   description:
     "Salary guides, job market insights, and career advice for professionals across the UAE, Saudi Arabia, Qatar, and the wider Gulf.",
   alternates: { canonical: "/blog" },

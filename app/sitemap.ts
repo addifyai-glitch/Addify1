@@ -83,11 +83,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
+    const now = new Date().toISOString();
     const { data } = await supabase
       .from("jobs")
       .select("slug, modified_at, posted_at")
       .eq("approved", true)
-      .eq("is_filled", false);
+      .eq("is_filled", false)
+      // Not expired = no expiry set at all, or expiry in the future.
+      // `expires_at.gt.<now>` alone would silently drop every NULL row,
+      // since SQL NULL > x is never true.
+      .or(`expires_at.is.null,expires_at.gt.${now}`);
 
     if (data && data.length > 0) {
       jobRoutes = data.map((j) => ({

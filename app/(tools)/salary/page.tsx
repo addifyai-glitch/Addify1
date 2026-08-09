@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SalaryForm from "./SalaryForm";
 
 export const metadata: Metadata = {
-  title: "GCC Salary Check | Know What You're Worth | Addify",
+  title: "GCC Salary Check | Know What You're Worth",
   description:
     "Free salary benchmarks for 120+ roles across 34 cities in the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. Know what your role pays.",
   alternates: { canonical: "/salary" },

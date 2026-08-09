@@ -7,7 +7,7 @@ const PAGE_URL = "https://addify.ae/data-sources";
 const LAST_REVIEWED = "2026-06-22";
 
 export const metadata: Metadata = {
-  title: "Data Sources | Addify",
+  title: "Data Sources",
   description:
     "The three published GCC salary reports that power Addify's salary benchmarks, and exactly how each is used.",
   alternates: { canonical: PAGE_URL },

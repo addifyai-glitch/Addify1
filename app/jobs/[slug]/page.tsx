@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { readFileSync } from "node:fs";
@@ -28,14 +28,20 @@ async function getJob(slug: string): Promise<Job | null> {
       .from("jobs")
       .select("*")
       .eq("slug", slug)
+      .eq("approved", true)
       .single();
     if (!error && data) return data as Job;
   } catch {
     // fall through
   }
-  // JSON fallback
+  // JSON fallback — pre-migration WordPress jobs have no approved/expires_at
+  // columns at all, so they're not subject to the approval or expiry gate.
   const jobs = getMigrationJobs();
   return jobs.find((j) => j.slug === slug) ?? null;
+}
+
+function isExpired(job: Job): boolean {
+  return Boolean(job.expires_at) && new Date(job.expires_at as string).getTime() < Date.now();
 }
 
 async function getSimilarJobs(category: string, excludeSlug: string): Promise<Job[]> {
@@ -68,7 +74,14 @@ export async function generateStaticParams() {
   try {
     const { createPublicClient } = await import("@/lib/supabase/server");
     const supabase = createPublicClient();
-    const { data } = await supabase.from("jobs").select("slug").eq("approved", true);
+    const { data } = await supabase
+      .from("jobs")
+      .select("slug")
+      .eq("approved", true)
+      // Not expired = no expiry set at all, or expiry in the future.
+      // `expires_at.gt.<now>` alone would silently drop every NULL row,
+      // since SQL NULL > x is never true.
+      .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
     if (data && data.length > 0) {
       return data.map((j) => ({ slug: j.slug as string }));
     }
@@ -86,7 +99,8 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const job = await getJob(slug);
-  if (!job) return { title: "Job not found | Addify" };
+  if (!job) return { title: "Job not found" };
+  if (isExpired(job)) return { title: "Job no longer available", robots: { index: false, follow: false } };
 
   const description = (job.description ?? "")
     .replace(/\s+/g, " ")
@@ -94,7 +108,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .slice(0, 160);
 
   return {
-    title: `${job.title} in ${job.city} | Addify`,
+    title: `${job.title} in ${job.city}`,
     description,
     alternates: {
       canonical: `https://addify.ae/jobs/${slug}`,
@@ -158,6 +172,7 @@ export default async function JobDetailPage({ params }: Props) {
   const { slug } = await params;
   const job = await getJob(slug);
   if (!job) notFound();
+  if (isExpired(job)) redirect("/410?reason=expired");
 
   const similarJobs = job.category
     ? await getSimilarJobs(job.category, slug)

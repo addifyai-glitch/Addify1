@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Addify",
+  title: "Terms of Service",
   description: "Addify Terms of Service. Your rights and obligations when using the platform.",
   alternates: { canonical: "/terms" },
 };

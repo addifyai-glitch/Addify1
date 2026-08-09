@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // static generation. Fall back to minimal, valid, noindex metadata instead.
   if (!post || typeof post.title !== "string" || !post.title.trim()) {
     return {
-      title: "Post not found | Addify",
+      title: "Post not found",
       robots: { index: false, follow: false },
     };
   }

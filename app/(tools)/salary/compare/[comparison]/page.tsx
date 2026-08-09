@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { left, right } = await resolveSides(p);
   if (!left || !right) return {};
   const url = comparisonUrl(comparison);
-  const title = `${p.role.name} Salary: ${p.leftLabel} vs ${p.rightLabel} (2026) | Addify`;
+  const title = `${p.role.name} Salary: ${p.leftLabel} vs ${p.rightLabel} (2026)`;
   const desc =
     `Compare ${p.role.name} salaries in ${p.leftLabel} and ${p.rightLabel}. ` +
     `Median ${left.currency} ${left.median.toLocaleString()} vs ${right.currency} ${right.median.toLocaleString()} per month.`;

@@ -7,7 +7,7 @@ const PAGE_URL = "https://addify.ae/research";
 const LAST_REVIEWED = "2026-06-22";
 
 export const metadata: Metadata = {
-  title: "Research | Addify",
+  title: "Research",
   description:
     "Salary reports, hiring trend analyses, and Gulf labour market research published by Addify.",
   alternates: { canonical: PAGE_URL },

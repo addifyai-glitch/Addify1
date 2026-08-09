@@ -8,7 +8,7 @@ const LAST_REVIEWED = "2026-06-22";
 const DATA_LAST_UPDATED = "2025-01-01";
 
 export const metadata: Metadata = {
-  title: "About Our Data | Addify",
+  title: "About Our Data",
   description:
     "Quick facts about Addify's GCC salary dataset: cities covered, roles, sources, freshness, and confidence model.",
   alternates: { canonical: PAGE_URL },

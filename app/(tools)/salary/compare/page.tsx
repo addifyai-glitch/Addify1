@@ -4,7 +4,7 @@ import { getComparisonPaths } from "@/lib/comparison";
 import { parseComparisonSlug } from "@/lib/comparison";
 
 export const metadata: Metadata = {
-  title: "Salary Comparisons: Gulf Cities & Countries | Addify",
+  title: "Salary Comparisons: Gulf Cities & Countries",
   description:
     "Compare salaries for the same role across Gulf cities and countries. Side-by-side median figures from Addify GCC salary data.",
   alternates: { canonical: "https://addify.ae/salary/compare" },
