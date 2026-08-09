@@ -18,7 +18,7 @@ const LEGACY_SPAM_EXACT = new Set<string>([
   "/rbtv77-web/",
 ]);
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 410 Gone for inherited legacy spam
