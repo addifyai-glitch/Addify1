@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Legacy WordPress candidate profiles: real individuals' names + CV links.
+      // Privacy takedown — must be gone, not just moved. Placed first.
+      {
+        source: "/candidate/:path*",
+        destination: "/410?reason=privacy",
+        permanent: true,
+      },
       // CV PDFs: privacy — send to 410 Gone handler
       {
         source: "/wp-content/uploads/jobsearch-resumes/:path*",
