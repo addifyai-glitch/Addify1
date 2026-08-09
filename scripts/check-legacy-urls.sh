@@ -73,6 +73,14 @@ CHECKS=(
 
   # WordPress date archives -> /blog (next.config.ts)
   "/2021/05/some-old-post|200|Old WP date archive, redirects to /blog"
+
+  # Duplicate salary reports removed from blog_posts, /research is canonical (next.config.ts)
+  "/blog/uae-salary-report-2026-salaries-hiring-trends-and-what-professionals-need-to-know|200|Removed duplicate, redirects to /research/uae-salary-report-2026"
+  "/blog/saudi-arabia-salary-report-2026-and-gcc-hiring-trends|200|Removed duplicate, redirects to /research/saudi-arabia-salary-report-2026"
+  "/blog/dubai-tech-salary-report-2026-what-software-engineers-ai-experts-and-tech-leaders-are-really-earning|200|Removed duplicate, redirects to /research/dubai-tech-salary-report-2026"
+
+  # Off-topic blog post removed, no equivalent destination (proxy.ts)
+  "/blog/start-earning-free-rewards-with-microsoft-rewards-no-cost-just-daily-browsing|410|Off-topic post, deliberately removed"
 )
 
 fail=0
