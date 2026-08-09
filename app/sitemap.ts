@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROLE_SLUGS, CITY_SLUGS } from "@/lib/salary";
+import { getCategorySummaries } from "@/lib/blog-categories";
 
 const SITE = "https://addify.ae";
 
@@ -124,6 +125,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Blog category archives
+  const blogCategoryRoutes: MetadataRoute.Sitemap = (await getCategorySummaries()).map((c) => ({
+    url: `${SITE}/blog/category/${c.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+  }));
+
   // Salary tool pages
   const salaryRoutes: MetadataRoute.Sitemap = ROLE_SLUGS.flatMap((jobSlug) =>
     CITY_SLUGS.map((citySlug) => ({
@@ -150,5 +159,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
   } catch { /* comparison lib unavailable */ }
 
-  return [...staticRoutes, ...jobRoutes, ...blogRoutes, ...salaryRoutes, ...compareRoutes];
+  return [...staticRoutes, ...jobRoutes, ...blogRoutes, ...blogCategoryRoutes, ...salaryRoutes, ...compareRoutes];
 }

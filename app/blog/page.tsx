@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { getAllPosts } from "@/lib/blog";
+import { slugifyCategory } from "@/lib/slugify-category";
 import { NewsletterForm } from "@/components/blog/newsletter-form";
 import { PostsGrid } from "@/components/blog/posts-grid";
 
@@ -64,7 +65,7 @@ export default async function BlogPage() {
             <>
               {/* Featured post */}
               {featured && (
-                <Link href={`/blog/${featured.slug}`} className="block mb-12 group">
+                <div className="relative block mb-12 group">
                   <div className="bg-card border border-border rounded-2xl shadow-soft hover:shadow-hover hover:-translate-y-0.5 hover:border-accent/40 transition-all duration-300 overflow-hidden">
                     {featured.image && (
                       <div className="relative aspect-[21/8] w-full overflow-hidden">
@@ -79,9 +80,13 @@ export default async function BlogPage() {
                       </div>
                     )}
                     <div className="p-8 md:p-10">
-                      <Badge variant="accent" className="mb-4">
-                        {featured.category}
-                      </Badge>
+                      {/* Own link, above the card-wide stretched link below */}
+                      <Link
+                        href={`/blog/category/${slugifyCategory(featured.category)}`}
+                        className="relative z-10 inline-block mb-4"
+                      >
+                        <Badge variant="accent">{featured.category}</Badge>
+                      </Link>
                       <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 group-hover:text-accent transition-colors">
                         {featured.title}
                       </h2>
@@ -97,7 +102,10 @@ export default async function BlogPage() {
                       </div>
                     </div>
                   </div>
-                </Link>
+                  {/* Stretched link: makes the whole card clickable to the
+                      post without nesting an <a> inside the badge's <a> above */}
+                  <Link href={`/blog/${featured.slug}`} className="absolute inset-0 z-0" aria-label={featured.title} />
+                </div>
               )}
 
               {/* Filterable grid */}

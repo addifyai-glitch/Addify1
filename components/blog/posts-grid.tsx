@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { slugifyCategory } from "@/lib/slugify-category";
 import type { Post } from "@/lib/blog";
 
 function formatDate(iso: string) {
@@ -48,7 +49,7 @@ export function PostsGrid({ posts }: { posts: Post[] }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((post) => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
+            <div key={post.slug} className="relative block group">
               <div className="bg-card border border-border rounded-xl shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 h-full flex flex-col overflow-hidden">
                 {post.image && (
                   <div className="relative aspect-video w-full overflow-hidden">
@@ -62,9 +63,13 @@ export function PostsGrid({ posts }: { posts: Post[] }) {
                   </div>
                 )}
                 <div className="p-6 flex flex-col flex-1">
-                  <Badge variant="default" className="mb-3 self-start">
-                    {post.category}
-                  </Badge>
+                  {/* Own link, above the card-wide stretched link below */}
+                  <Link
+                    href={`/blog/category/${slugifyCategory(post.category)}`}
+                    className="relative z-10 mb-3 self-start"
+                  >
+                    <Badge variant="default">{post.category}</Badge>
+                  </Link>
                   <h3 className="font-semibold text-foreground text-base leading-snug mb-2 group-hover:text-accent transition-colors flex-1">
                     {post.title}
                   </h3>
@@ -78,7 +83,10 @@ export function PostsGrid({ posts }: { posts: Post[] }) {
                   </div>
                 </div>
               </div>
-            </Link>
+              {/* Stretched link: makes the whole card clickable to the post
+                  without nesting an <a> inside the category badge's <a> above */}
+              <Link href={`/blog/${post.slug}`} className="absolute inset-0 z-0" aria-label={post.title} />
+            </div>
           ))}
         </div>
       )}

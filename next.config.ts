@@ -159,6 +159,24 @@ const nextConfig: NextConfig = {
         destination: "/blog",
         permanent: true,
       },
+      // Duplicate salary report content removed from blog_posts in favor of
+      // /research, which is now canonical for these three reports. The old
+      // /blog/<slug> URLs are indexed — redirect, don't leave them 404ing.
+      {
+        source: "/blog/uae-salary-report-2026-salaries-hiring-trends-and-what-professionals-need-to-know",
+        destination: "/research/uae-salary-report-2026",
+        permanent: true,
+      },
+      {
+        source: "/blog/saudi-arabia-salary-report-2026-and-gcc-hiring-trends",
+        destination: "/research/saudi-arabia-salary-report-2026",
+        permanent: true,
+      },
+      {
+        source: "/blog/dubai-tech-salary-report-2026-what-software-engineers-ai-experts-and-tech-leaders-are-really-earning",
+        destination: "/research/dubai-tech-salary-report-2026",
+        permanent: true,
+      },
     ];
   },
 };

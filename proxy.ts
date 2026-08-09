@@ -23,6 +23,13 @@ const LEGACY_SPAM_EXACT = new Set<string>([
 // kept as its own block rather than folded into LEGACY_SPAM_PATTERNS.
 const LEGACY_EMPLOYER_PREFIX = "/employer/";
 
+// Off-topic blog posts removed from blog_posts (not a Gulf careers/salary/
+// visa/employment topic) with no equivalent destination — deliberately gone,
+// not a redirect candidate.
+const LEGACY_REMOVED_BLOG_POSTS = new Set<string>([
+  "/blog/start-earning-free-rewards-with-microsoft-rewards-no-cost-just-daily-browsing",
+]);
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -45,6 +52,15 @@ export async function proxy(req: NextRequest) {
     return new NextResponse(
       `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
       `<body><h1>410 Gone</h1><p>This employer page no longer exists. Visit <a href="https://addify.ae">Addify</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
+  // 410 Gone for removed off-topic blog posts
+  if (LEGACY_REMOVED_BLOG_POSTS.has(pathname) || LEGACY_REMOVED_BLOG_POSTS.has(normalised)) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This post has been removed. Visit <a href="https://addify.ae/blog">the Addify blog</a>.</p></body></html>`,
       { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
     );
   }
