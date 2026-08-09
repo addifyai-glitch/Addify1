@@ -1,9 +1,7 @@
 // lib/salary-data.ts
 // Data adapter for programmatic salary pages.
-// Currently backed by salaries.json (Bayt/Robert Half/Cooper Fitch data).
-// To switch to live Supabase submissions, replace getSalaryRecord() with a
-// real query against a salary_submissions table and update sampleSize to
-// reflect the actual submission count.
+// Backed by salaries.json (Bayt/Robert Half/Cooper Fitch data). There is no
+// live user-submission source — the salary submission feature was removed.
 
 import salariesJson from "@/data/salaries.json";
 

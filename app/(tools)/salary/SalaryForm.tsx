@@ -158,11 +158,7 @@ export default function SalaryForm() {
             We couldn&apos;t generate an estimate for this combination.
           </p>
           <p className="text-sm text-muted-foreground">
-            Try a different role or city, or{" "}
-            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
-              contribute your salary
-            </a>{" "}
-            to help us expand coverage.
+            Try a different role or city.
           </p>
         </div>
       )}
@@ -270,11 +266,7 @@ function ResultCard({ result }: { result: SalaryResult }) {
         {result.isEstimate ? (
           <p className="text-xs text-muted-foreground border-t border-[var(--border)] pt-4">
             These figures are regional estimates based on GCC market benchmarks and category averages.
-            We are working on collecting verified data for this role and city.{" "}
-            <a href="/contribute" className="text-[var(--accent)] underline underline-offset-2 hover:no-underline">
-              Contribute your salary
-            </a>{" "}
-            to help us improve accuracy. Actual compensation varies by company, nationality, and negotiation.
+            Actual compensation varies by company, nationality, and negotiation.
           </p>
         ) : (
           <p className="text-xs text-muted-foreground border-t border-[var(--border)] pt-4">

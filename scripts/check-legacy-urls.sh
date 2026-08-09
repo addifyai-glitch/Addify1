@@ -21,6 +21,9 @@ CHECKS=(
   "/when-is-the-next-sassa-payment-for-2021/|410|Legacy spam, inherited from previous domain owner"
   "/rbtv77-web/|410|Legacy spam, inherited from previous domain owner"
 
+  # Removed salary submission feature (proxy.ts, direct 410)
+  "/contribute|410|Salary submission feature, removed entirely"
+
   # Former WordPress employer profile pages (proxy.ts LEGACY_EMPLOYER_PREFIX)
   "/employer/kingston-stanley/|410|Legacy employer page, deliberately removed"
   "/employer/deepscale-technologies-ltd/|410|Legacy employer page, deliberately removed"
