@@ -35,6 +35,19 @@ export async function middleware(req: NextRequest) {
     );
   }
 
+  // 410 Gone, directly at the URL, for legacy WordPress candidate profiles.
+  // Privacy takedown of real individuals' names + CV links — no redirect hop,
+  // so there's no intermediate 3xx for a crawler to consolidate as canonical.
+  if (pathname === "/candidate" || pathname.startsWith("/candidate/")) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">` +
+      `<title>Content removed | Addify</title></head>` +
+      `<body><h1>This content has been removed</h1><p>We no longer host candidate resumes for privacy reasons.</p>` +
+      `<a href="/jobs">Browse current jobs &rarr;</a></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // Admin route protection — validate session and auto-refresh token
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

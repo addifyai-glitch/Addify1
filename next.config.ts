@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Legacy WordPress candidate profiles (real individuals' names + CV
+      // links) are handled directly in middleware.ts as a same-URL 410, not
+      // a redirect — see the note there on why direct beats a redirect hop
+      // for a privacy takedown.
       // CV PDFs: privacy — send to 410 Gone handler
       {
         source: "/wp-content/uploads/jobsearch-resumes/:path*",
