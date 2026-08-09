@@ -18,6 +18,11 @@ const LEGACY_SPAM_EXACT = new Set<string>([
   "/rbtv77-web/",
 ]);
 
+// Real former-employer profile pages from the WordPress job board, removed
+// deliberately — these companies aren't on the new platform. Not spam, so
+// kept as its own block rather than folded into LEGACY_SPAM_PATTERNS.
+const LEGACY_EMPLOYER_PREFIX = "/employer/";
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -31,6 +36,15 @@ export async function proxy(req: NextRequest) {
     return new NextResponse(
       `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
       `<body><h1>410 Gone</h1><p>This page no longer exists. Visit <a href="https://addify.ae">Addify</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
+  // 410 Gone for legacy WordPress employer profile pages
+  if (pathname.startsWith(LEGACY_EMPLOYER_PREFIX)) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This employer page no longer exists. Visit <a href="https://addify.ae">Addify</a>.</p></body></html>`,
       { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
     );
   }
