@@ -24,13 +24,23 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return {};
+
+  // Guard every field buildBlogMetadata/cleanTitle read unconditionally — a
+  // post with missing or malformed frontmatter must never throw during
+  // static generation. Fall back to minimal, valid, noindex metadata instead.
+  if (!post || typeof post.title !== "string" || !post.title.trim()) {
+    return {
+      title: "Post not found | Addify",
+      robots: { index: false, follow: false },
+    };
+  }
+
   return buildBlogMetadata({
     slug,
     title: post.title,
-    body: post.content,
-    seoDescription: post.description,
-    image: post.image,
+    body: typeof post.content === "string" ? post.content : "",
+    seoDescription: typeof post.description === "string" ? post.description : undefined,
+    image: typeof post.image === "string" ? post.image : undefined,
   });
 }
 
