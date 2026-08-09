@@ -4,9 +4,14 @@ export function GET(request: Request) {
   const url = new URL(request.url);
   const reason = url.searchParams.get("reason") ?? "general";
 
+  const heading =
+    reason === "expired" ? "This job posting has expired" : "This content has been removed";
+
   const message =
     reason === "privacy"
       ? "We no longer host candidate resumes for privacy reasons."
+      : reason === "expired"
+      ? "This role is no longer accepting applications."
       : "This page is no longer available.";
 
   const html = `<!DOCTYPE html>
@@ -22,7 +27,7 @@ export function GET(request: Request) {
     a:hover{text-decoration:underline}
   </style>
 </head><body>
-  <h1>This content has been removed</h1>
+  <h1>${heading}</h1>
   <p>${message}</p>
   <a href="/jobs">Browse current jobs &rarr;</a>
 </body></html>`;

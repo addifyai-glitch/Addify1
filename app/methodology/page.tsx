@@ -13,7 +13,7 @@ const PAGE_URL = "https://addify.ae/methodology";
 const LAST_REVIEWED = "2026-06-22";
 
 export const metadata: Metadata = {
-  title: "How We Calculate Salaries | Methodology | Addify",
+  title: "How We Calculate Salaries | Methodology",
   description:
     "How Addify builds GCC salary estimates: data sources, geographic coverage, confidence levels, update frequency, and the honest limits of what we publish.",
   alternates: { canonical: PAGE_URL },

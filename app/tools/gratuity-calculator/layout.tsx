@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "UAE End-of-Service Gratuity Calculator 2026 | Addify.ae",
+  title: "UAE End-of-Service Gratuity Calculator 2026",
   description:
     "Calculate your UAE end-of-service gratuity for 2026. Covers limited and unlimited contracts, resignation and termination rules, and the 2 year salary cap. Free and instant.",
   alternates: { canonical: "/tools/gratuity-calculator" },

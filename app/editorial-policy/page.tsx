@@ -7,7 +7,7 @@ const PAGE_URL = "https://addify.ae/editorial-policy";
 const LAST_REVIEWED = "2026-06-22";
 
 export const metadata: Metadata = {
-  title: "Editorial Policy | Addify",
+  title: "Editorial Policy",
   description:
     "How Addify reviews salary data, handles corrections, uses AI tools, and maintains editorial independence.",
   alternates: { canonical: PAGE_URL },

@@ -62,7 +62,7 @@ export function buildBlogMetadata(
   const description = deriveMetaDescription(post);
   const url = `https://addify.ae/blog/${post.slug}`;
   return {
-    title: `${title} | Addify`,
+    title,
     description,
     alternates: { canonical: url },
     openGraph: {
