@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ShieldCheck, ExternalLink } from "lucide-react";
 
 type Source = {
@@ -79,39 +78,8 @@ const COUNTRY_SOURCES: Record<string, Source[]> = {
   ],
 };
 
-const MOCK_SUBMISSION_COUNT = 12;
-const MOCK_LAST_UPDATED = "April 2026";
-
 function ConfidenceLine() {
-  const count = MOCK_SUBMISSION_COUNT;
-  if (count >= 10) {
-    return (
-      <span>
-        Based on {count} anonymous submissions plus public benchmarks. Last updated {MOCK_LAST_UPDATED}.
-      </span>
-    );
-  }
-  if (count >= 1) {
-    return (
-      <span>
-        Based on {count} anonymous submission{count > 1 ? "s" : ""} and public benchmarks.{" "}
-        Help improve accuracy by{" "}
-        <Link href="/contribute" className="underline underline-offset-2 hover:no-underline">
-          adding yours
-        </Link>
-        .
-      </span>
-    );
-  }
-  return (
-    <span>
-      Based on public salary guides only.{" "}
-      <Link href="/contribute" className="underline underline-offset-2 hover:no-underline">
-        Be the first to contribute data
-      </Link>{" "}
-      for this role and city.
-    </span>
-  );
+  return <span>Based on public salary guides only.</span>;
 }
 
 export function SourceAttribution({ country }: { country: string }) {
@@ -125,9 +93,9 @@ export function SourceAttribution({ country }: { country: string }) {
       </h3>
 
       <p className="mt-3 text-sm text-foreground/75 leading-relaxed">
-        Ranges are built from anonymous user submissions on Addify, public job postings, and salary
-        guides from Robert Half, Cooper Fitch, and Hays. Allowance norms and labor standards
-        reference each country&apos;s official labor framework.
+        Ranges are built from public job postings and salary guides from Robert Half, Cooper Fitch,
+        and Hays. Allowance norms and labor standards reference each country&apos;s official labor
+        framework.
       </p>
 
       <div className="mt-5 grid gap-4 md:grid-cols-2 text-sm">

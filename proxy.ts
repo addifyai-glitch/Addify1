@@ -65,6 +65,17 @@ export async function proxy(req: NextRequest) {
     );
   }
 
+  // 410 Gone for the removed salary submission feature. The page and its
+  // API route are gone — not worth fixing or maintaining, per the decision
+  // to remove it entirely rather than repair the broken insert path.
+  if (pathname === "/contribute" || pathname.startsWith("/contribute/")) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This feature is no longer available. Visit <a href="https://addify.ae/salary">Addify's Salary Check</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // 410 Gone, directly at the URL, for legacy WordPress candidate profiles.
   // Privacy takedown of real individuals' names + CV links — no redirect hop,
   // so there's no intermediate 3xx for a crawler to consolidate as canonical.
