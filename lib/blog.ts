@@ -142,11 +142,36 @@ export async function getRelatedPosts(slug: string, limit = 2): Promise<Post[]> 
   return all.filter((p) => p.slug !== slug).slice(0, limit);
 }
 
-// Sync version used only for generateStaticParams (file posts only — DB posts handled via dynamic routing)
+// Required for a post to be buildable. "excerpt" maps to this codebase's
+// `description` field — same concept, this project's field name.
+const REQUIRED_FRONTMATTER_FIELDS: (keyof PostFrontmatter)[] = ["title", "description", "date"];
+
+function missingRequiredFields(data: Partial<PostFrontmatter>): string[] {
+  return REQUIRED_FRONTMATTER_FIELDS.filter((field) => {
+    const value = data[field];
+    return typeof value !== "string" || !value.trim();
+  });
+}
+
+// Sync version used only for generateStaticParams (file posts only — DB posts handled via dynamic routing).
+// Skips (and warns on) any post missing required frontmatter, so one bad file
+// can never fail the whole static build again.
 export function getFilePostSlugs(): string[] {
   if (!fs.existsSync(BLOG_DIR)) return [];
+
   return fs
     .readdirSync(BLOG_DIR)
     .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+    .filter((filename) => {
+      const slug = filename.replace(/\.(mdx|md)$/, "");
+      const raw = fs.readFileSync(path.join(BLOG_DIR, filename), "utf8");
+      const { data } = matter(raw);
+      const missing = missingRequiredFields(data as Partial<PostFrontmatter>);
+      if (missing.length > 0) {
+        console.warn(`[blog] Skipping "${filename}" from static build — missing required frontmatter: ${missing.join(", ")}`);
+        return false;
+      }
+      return true;
+    })
     .map((f) => f.replace(/\.(mdx|md)$/, ""));
 }
