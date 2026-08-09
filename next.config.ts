@@ -28,18 +28,12 @@ const nextConfig: NextConfig = {
         destination: "/410?reason=privacy",
         permanent: true,
       },
-      // Old WordPress job URLs: preserve slug, route to new structure
-      {
-        source: "/job/:slug",
-        destination: "/jobs/:slug",
-        permanent: true,
-      },
-      {
-        source: "/job/:slug/",
-        destination: "/jobs/:slug",
-        permanent: true,
-      },
-      // 3 high-traffic slugs that no longer exist in WP data
+      // 3 high-traffic slugs that no longer exist in WP data. Must come
+      // BEFORE the generic /job/:slug rule below: Next.js redirects() takes
+      // the first match, and /job/:slug is a wildcard that would otherwise
+      // shadow these every time, sending them to a /jobs/:slug that doesn't
+      // exist (404) instead of this category-filtered fallback. Found via
+      // scripts/check-legacy-urls.sh during the legacy-redirect-map fix.
       {
         source: "/job/custom-and-excise-tax-manager",
         destination: "/jobs?category=Finance+%26+Accounting",
@@ -53,6 +47,22 @@ const nextConfig: NextConfig = {
       {
         source: "/job/it-support-engineer-7",
         destination: "/jobs?category=Technology+%26+Engineering",
+        permanent: true,
+      },
+      // Old WordPress job URLs: preserve slug, route to new structure.
+      // The trailing-slash entry below is dead code, confirmed by testing:
+      // Next's own trailing-slash normalization strips the slash before this
+      // redirects() list is ever consulted, so a slashed request always
+      // arrives here already normalized. Left in place rather than removed
+      // since it's harmless and not part of the task that found this.
+      {
+        source: "/job/:slug",
+        destination: "/jobs/:slug",
+        permanent: true,
+      },
+      {
+        source: "/job/:slug/",
+        destination: "/jobs/:slug",
         permanent: true,
       },
       // WordPress jobs index trailing slash
@@ -127,6 +137,25 @@ const nextConfig: NextConfig = {
       // Date archives
       {
         source: "/:year(\\d{4})/:month(\\d{2})/:slug",
+        destination: "/blog",
+        permanent: true,
+      },
+      // Old jobsearch plugin login/registration — no equivalent on the new
+      // site, send to the homepage rather than a dead end. No trailing-slash
+      // duplicate needed: Next's own trailing-slash normalization strips the
+      // slash before this redirects() list is ever consulted, so a slashed
+      // request always arrives here already normalized (see the note on
+      // /job/:slug/ above — that duplicate is dead for the same reason).
+      {
+        source: "/user-login",
+        destination: "/",
+        permanent: true,
+      },
+      // WordPress pagination (e.g. /page/2/, often with a ?detail=... query
+      // string from the old jobsearch listing plugin — the query string
+      // passes through untouched since it's not part of the match).
+      {
+        source: "/page/:n(\\d+)",
         destination: "/blog",
         permanent: true,
       },
