@@ -18,6 +18,7 @@ const toolsLinks = [
 ];
 
 const standaloneLinks = [
+  { label: "All Tools", href: "/tools" },
   { label: "Jobs", href: "/jobs" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
