@@ -197,6 +197,9 @@ export function Hero() {
           <Link href="/fit">
             <Button size="lg" variant="secondary">Analyze a Job Offer</Button>
           </Link>
+          <Link href="/tools/gratuity-calculator">
+            <Button size="lg" variant="secondary">Calculate Your Gratuity</Button>
+          </Link>
         </motion.div>
 
         {/* Live demo card */}

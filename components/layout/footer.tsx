@@ -32,6 +32,7 @@ const columns = [
   {
     heading: "Product",
     links: [
+      { label: "All Tools", href: "/tools" },
       { label: "Salary Check", href: "/salary" },
       { label: "Fit Score", href: "/fit" },
       { label: "Cover Letter", href: "/cover-letter" },
