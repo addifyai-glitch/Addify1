@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s | Addify",
   },
   description:
-    "Salary benchmarks and job fit scores for UAE and GCC job seekers. Find out what your role pays and whether a job is right for you.",
+    "Salary benchmarks and free career tools for UAE and GCC job seekers. Find out what your role pays and get a Gulf-ready resume or cover letter in minutes.",
 };
 
 export default function RootLayout({

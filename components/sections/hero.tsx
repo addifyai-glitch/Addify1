@@ -173,9 +173,9 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: prefersReduced ? 0 : 1.6, duration: 0.6 }}
         >
-          The only salary and job-fit platform built for the Gulf. Check what you
-          should earn in 34 cities, score any job offer, and get a tailored cover
-          letter in under 60 seconds.
+          The only career platform built for the Gulf. Check what you should earn
+          in 34 cities, build a Gulf-ready resume, and get a tailored cover letter
+          in under 60 seconds.
         </motion.p>
 
         {/* CTA group */}
@@ -194,8 +194,11 @@ export function Hero() {
               />
             </Button>
           </Link>
-          <Link href="/fit">
-            <Button size="lg" variant="secondary">Analyze a Job Offer</Button>
+          <Link href="/tools/resume-builder">
+            <Button size="lg" variant="secondary">Build Your Resume</Button>
+          </Link>
+          <Link href="/cover-letter">
+            <Button size="lg" variant="secondary">Write a Cover Letter</Button>
           </Link>
           <Link href="/tools/gratuity-calculator">
             <Button size="lg" variant="secondary">Calculate Your Gratuity</Button>

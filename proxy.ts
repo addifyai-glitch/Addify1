@@ -76,6 +76,22 @@ export async function proxy(req: NextRequest) {
     );
   }
 
+  // 410 Gone for the removed Fit Score feature (page + its API route).
+  // Not worth fixing — reCAPTCHA and ANTHROPIC_API_KEY were never
+  // configured for it. The API path is explicitly allow-listed in the
+  // matcher below since the general config excludes all of /api/.
+  if (
+    pathname === "/fit" ||
+    pathname.startsWith("/fit/") ||
+    pathname === "/api/tools/fit-score"
+  ) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This feature is no longer available. Visit <a href="https://addify.ae/tools">Addify's free tools</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // 410 Gone, directly at the URL, for legacy WordPress candidate profiles.
   // Privacy takedown of real individuals' names + CV links — no redirect hop,
   // so there's no intermediate 3xx for a crawler to consolidate as canonical.
@@ -129,5 +145,11 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/|api/|favicon.ico|robots.txt|sitemap.xml).*)"],
+  matcher: [
+    "/((?!_next/|api/|favicon.ico|robots.txt|sitemap.xml).*)",
+    // Explicit exception so the removed /fit API route can be caught above —
+    // the general pattern excludes all of /api/. Exact literal path only,
+    // so no other /api/ route is affected.
+    "/api/tools/fit-score",
+  ],
 };

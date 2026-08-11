@@ -14,7 +14,7 @@ const organizationLd = {
   name: "Addify",
   url: "https://addify.ae",
   logo: "https://addify.ae/logo.png",
-  description: "Gulf career platform with real salary data, job fit scores, and career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
+  description: "Gulf career platform with real salary data and free career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
   areaServed: ["AE", "SA", "QA", "KW", "BH", "OM"],
 };
 

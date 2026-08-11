@@ -24,6 +24,10 @@ CHECKS=(
   # Removed salary submission feature (proxy.ts, direct 410)
   "/contribute|410|Salary submission feature, removed entirely"
 
+  # Removed Fit Score feature (proxy.ts, direct 410, page + its API route)
+  "/fit|410|Fit Score feature, removed entirely"
+  "/api/tools/fit-score|410|Fit Score API route, removed entirely"
+
   # Former WordPress employer profile pages (proxy.ts LEGACY_EMPLOYER_PREFIX)
   "/employer/kingston-stanley/|410|Legacy employer page, deliberately removed"
   "/employer/deepscale-technologies-ltd/|410|Legacy employer page, deliberately removed"

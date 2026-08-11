@@ -34,7 +34,6 @@ const columns = [
     links: [
       { label: "All Tools", href: "/tools" },
       { label: "Salary Check", href: "/salary" },
-      { label: "Fit Score", href: "/fit" },
       { label: "Cover Letter", href: "/cover-letter" },
       { label: "Resume Builder", href: "/tools/resume-builder" },
       { label: "Gratuity Calculator", href: "/tools/gratuity-calculator" },

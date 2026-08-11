@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { DollarSign, Target, FileText, LayoutTemplate, Check, ArrowRight } from "lucide-react";
+import { DollarSign, Calculator, FileText, LayoutTemplate, Check, ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
 const tools = [
@@ -19,15 +19,15 @@ const tools = [
     ],
   },
   {
-    Icon: Target,
-    name: "Fit Score",
-    href: "/fit",
+    Icon: Calculator,
+    name: "Gratuity Calculator",
+    href: "/tools/gratuity-calculator",
     description:
-      "Paste a job description and your experience. Get an honest fit score from 0 to 100 with clear reasons so you apply where you'll actually land.",
+      "Estimate your UAE end-of-service gratuity in seconds. Covers limited and unlimited contracts, resignation and termination rules, and the 2 year salary cap.",
     bullets: [
-      "AI-powered skill gap analysis",
-      "Tailored to Gulf hiring standards",
-      "Know your chances before you apply",
+      "Built on UAE labor law rules",
+      "Covers resignation & termination cases",
+      "Free and instant, no signup",
     ],
   },
   {
