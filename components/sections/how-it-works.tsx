@@ -22,9 +22,9 @@ const steps = [
   {
     number: "03",
     Icon: FileCheck2,
-    title: "Know your fit",
+    title: "Get application-ready",
     description:
-      "Upload your resume, paste any job description, and we score your fit from 0 to 100 with reasons.",
+      "Build a Gulf-ready resume and a tailored cover letter in minutes. Free, no signup required.",
   },
 ];
 
