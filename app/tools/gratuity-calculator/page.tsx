@@ -129,7 +129,7 @@ const T = {
     relatedHeading: "Keep exploring",
     linkSalary: "Explore UAE Salary Guides",
     linkCoverLetter: "Build a cover letter",
-    linkFit: "Check your job fit score",
+    linkResume: "Build your resume",
     linkJobs: "Browse UAE jobs",
     linkBlog: "Read the Addify blog",
     footerText: "This tool is for guidance only and is not legal advice.",
@@ -215,7 +215,7 @@ const T = {
     relatedHeading: "تابع الاستكشاف",
     linkSalary: "استكشف أدلة الرواتب في الإمارات",
     linkCoverLetter: "أنشئ خطاب تقديم",
-    linkFit: "تحقق من درجة ملاءمة وظيفتك",
+    linkResume: "أنشئ سيرتك الذاتية",
     linkJobs: "تصفح وظائف الإمارات",
     linkBlog: "اقرأ مدونة Addify",
     footerText: "هذه الأداة للإرشاد فقط وليست استشارة قانونية.",
@@ -656,7 +656,7 @@ export default function GratuityCalculatorPage() {
             <div className="flex flex-wrap gap-3">
               <a href="/salary" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkSalary} &rarr;</a>
               <a href="/cover-letter" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkCoverLetter}</a>
-              <a href="/fit" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkFit}</a>
+              <a href="/tools/resume-builder" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkResume}</a>
               <a href="/jobs" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkJobs}</a>
               <a href="/blog" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkBlog}</a>
             </div>

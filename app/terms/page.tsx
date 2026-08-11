@@ -33,7 +33,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="2. Service description">
-            <p>Addify provides salary benchmarking, job fit scoring, cover letter generation, and job listing tools for professionals in the Gulf Cooperation Council (GCC) region and Egypt. The Service is provided &quot;as is&quot; and may change without notice.</p>
+            <p>Addify provides salary benchmarking, resume building, cover letter generation, and job listing tools for professionals in the Gulf Cooperation Council (GCC) region and Egypt. The Service is provided &quot;as is&quot; and may change without notice.</p>
           </Section>
 
           <Section title="3. User accounts">

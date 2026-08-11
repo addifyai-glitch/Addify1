@@ -9,7 +9,7 @@ import { Shield, MapPin, BadgeCheck, Heart } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "We built Addify to give Gulf professionals real salary data, honest job fit scores, and clear career advice. Learn who we are and why we built it.",
+  description: "We built Addify to give Gulf professionals real salary data, free career tools, and clear career advice. Learn who we are and why we built it.",
   alternates: { canonical: "/about" },
 };
 
@@ -32,7 +32,7 @@ const differentiators = [
   {
     Icon: Heart,
     title: "Free will stay free.",
-    body: "Salary Check, Fit Score, and Cover Letter will always be free for job seekers. We will charge employers for advanced hiring tools. Never you.",
+    body: "Salary Check, Resume Builder, and Cover Letter will always be free for job seekers. We will charge employers for advanced hiring tools. Never you.",
   },
 ];
 
@@ -53,7 +53,7 @@ const organizationLd = {
   name: "Addify",
   url: "https://addify.ae",
   logo: "https://addify.ae/logo.png",
-  description: "Gulf career platform with real salary data, job fit scores, and career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
+  description: "Gulf career platform with real salary data and free career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
   areaServed: ["AE", "SA", "QA", "KW", "BH", "OM"],
 };
 
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 So people accept offers that are too low. Or they ask for too much and lose the job. Or they take a role that looks good on paper and quit six months later because it was not a fit.
               </p>
               <p>
-                We built Addify to fix that. You tell us your role and your city, and you get a real salary range built from real submissions. You upload your resume and paste a job, and you get a fit score with specific reasons. You do all of this for free, without signing up, without giving away your data, without a recruiter calling you the next day.
+                We built Addify to fix that. You tell us your role and your city, and you get a real salary range built from real submissions. You build a resume or a tailored cover letter in minutes, ready to send. You do all of this for free, without signing up, without giving away your data, without a recruiter calling you the next day.
               </p>
             </div>
           </Container>

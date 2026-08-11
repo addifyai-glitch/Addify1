@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 
 const toolsLinks = [
   { label: "Salary Check", href: "/salary", desc: "See what your role pays across the Gulf" },
-  { label: "Fit Score", href: "/fit", desc: "Score any job offer before you apply" },
   { label: "Cover Letter", href: "/cover-letter", desc: "AI-written, tailored to the role" },
   { label: "Resume Builder", href: "/tools/resume-builder", desc: "Gulf-ready resume in minutes" },
   { label: "Gratuity Calculator", href: "/tools/gratuity-calculator", desc: "Estimate your UAE end-of-service payout" },
@@ -152,7 +151,7 @@ export function Header() {
             <NavDropdown
               label="Tools"
               links={toolsLinks}
-              activeHrefs={["/salary", "/fit", "/cover-letter", "/tools"]}
+              activeHrefs={["/salary", "/cover-letter", "/tools"]}
             />
             {standaloneLinks.map((link) => (
               <Link

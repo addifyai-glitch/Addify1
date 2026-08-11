@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Calculator, LayoutTemplate, ArrowRight } from "lucide-react";
+import { Calculator, LayoutTemplate, FileText, ArrowRight } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
@@ -10,13 +10,13 @@ const PAGE_URL = "https://addify.ae/tools";
 export const metadata: Metadata = {
   title: "Free Career Tools",
   description:
-    "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity and build an ATS-ready resume in minutes. No signup required.",
+    "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter in minutes. No signup required.",
   alternates: { canonical: "/tools" },
   openGraph: {
     type: "website",
     title: "Free Career Tools | Addify",
     description:
-      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity and build an ATS-ready resume in minutes.",
+      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter.",
     url: PAGE_URL,
     siteName: "Addify.ae",
     locale: "en_AE",
@@ -37,6 +37,13 @@ const tools = [
     href: "/tools/resume-builder",
     description:
       "Build a polished, ATS-ready resume with live preview and instant PDF export. No account needed.",
+  },
+  {
+    Icon: FileText,
+    name: "Cover Letter",
+    href: "/cover-letter",
+    description:
+      "Generate a tailored cover letter for any Gulf role in Arabic or English, ready in under 60 seconds.",
   },
 ];
 
@@ -59,7 +66,7 @@ export default function ToolsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {tools.map((tool) => (
               <Link
                 key={tool.href}
