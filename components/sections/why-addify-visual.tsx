@@ -82,7 +82,7 @@ export function WhyAddifyVisual() {
         </motion.div>
       </motion.div>
 
-      {/* Card 2: Fit score — top-right */}
+      {/* Card 2: Gratuity estimate — top-right */}
       <motion.div {...riseVariant(1)}>
         <motion.div
           className="absolute top-12 right-0 w-48 rounded-xl border border-border p-4 backdrop-blur-xl bg-gradient-to-br from-card via-card to-accent/5 hover:border-accent/30 hover:-translate-y-2 transition-all duration-300"
@@ -90,26 +90,10 @@ export function WhyAddifyVisual() {
           animate={floatAnimate(10, 5)}
           transition={floatTransition(0.5, 10)}
         >
-          <div className="flex items-center gap-3">
-            <svg width="52" height="52" viewBox="0 0 56 56">
-              <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" strokeWidth="4" className="text-border" />
-              <circle
-                cx="28" cy="28" r="24"
-                fill="none" stroke="currentColor" strokeWidth="4"
-                className="text-accent"
-                strokeDasharray={`${(78 / 100) * 150.8} 150.8`}
-                strokeLinecap="round"
-                transform="rotate(-90 28 28)"
-              />
-              {/* Shimmer overlay on the score number */}
-              <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="bold" fill="currentColor" className="text-foreground">78</text>
-            </svg>
-            <div>
-              <p className="font-display text-xl text-foreground">78</p>
-              <p className="text-xs text-foreground/60">Fit Score</p>
-            </div>
-          </div>
-          <p className="mt-3 text-xs text-success font-medium">Strong skill match</p>
+          <p className="text-xs uppercase tracking-wider text-accent font-semibold">Gratuity Estimate</p>
+          <p className="mt-2 font-display text-2xl text-foreground">AED 42,300</p>
+          <p className="text-xs text-foreground/60">8 years, unlimited contract</p>
+          <p className="mt-3 text-xs text-success font-medium">Within the 2-year cap</p>
         </motion.div>
       </motion.div>
 

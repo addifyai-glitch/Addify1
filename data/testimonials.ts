@@ -16,7 +16,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
     stars: 5,
-    quote: "I found out I was underpaid by about 22 percent. I used the fit score on three different roles and landed one within a month at the right number.",
+    quote: "I found out I was underpaid by about 22 percent. I used the salary numbers to negotiate and landed a new role within a month at the right number.",
     name: "Ahmad R.",
     role: "Senior Software Engineer",
     city: "Dubai",
@@ -56,7 +56,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 5,
     stars: 4,
-    quote: "The fit score told me I was missing one certification. I got it, applied again, got hired. Wish the score broke down soft skills more, but the technical match was spot on.",
+    quote: "Rewriting my resume with the builder made me realize I was missing one certification the roles kept asking for. I got it, reapplied, got hired. Wish it had a stronger skills view, but the formatting was spot on.",
     name: "Hassan A.",
     role: "Cybersecurity Analyst",
     city: "Doha",
@@ -86,7 +86,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 8,
     stars: 4,
-    quote: "Used the fit score on a Muscat opportunity I was unsure about. Score was 64 with clear gaps listed. Decided not to apply and saved myself two weeks of process. Honest tool.",
+    quote: "Checked the salary range for a Muscat opportunity I was unsure about. The number came in well below similar roles. Decided not to apply and saved myself two weeks of process. Honest tool.",
     name: "Reem A.",
     role: "Project Manager",
     city: "Muscat",
