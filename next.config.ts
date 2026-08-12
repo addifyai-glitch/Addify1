@@ -18,6 +18,21 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Canonicalize www -> apex. Host-level redirect so it applies to every
+      // path, checked first since it's identity canonicalization, not
+      // content routing. Note: as of 2026-08-12, www.addify.ae returns a
+      // Cloudflare-edge 503 ("no available server") and never reaches this
+      // Next.js app at all — that's a DNS/Cloudflare origin-binding issue,
+      // not something this redirect can fix on its own. This rule exists so
+      // that once www is correctly routed to the origin at the Cloudflare
+      // level, it lands here and gets canonicalized instead of serving
+      // duplicate content.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.addify.ae" }],
+        destination: "https://addify.ae/:path*",
+        permanent: true,
+      },
       // Legacy WordPress candidate profiles (real individuals' names + CV
       // links) are handled directly in middleware.ts as a same-URL 410, not
       // a redirect — see the note there on why direct beats a redirect hop
