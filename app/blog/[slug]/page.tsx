@@ -58,8 +58,36 @@ export default async function BlogPostPage({ params }: Props) {
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedText = encodeURIComponent(`${post.title} via Addify`);
 
+  // BlogPosting schema. datePublished comes straight from the post's real
+  // frontmatter/DB date — never fabricated. author is only included when the
+  // post actually has one, typed as Organization (not Person) since the real
+  // byline is a team credit ("Addify Team"), not an individual — inventing a
+  // Person here would misrepresent it. Omit rather than invent, same rule as
+  // the testimonials cleanup.
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: typeof post.description === "string" ? post.description : undefined,
+    datePublished: post.date,
+    image: post.image ? [post.image] : undefined,
+    author: post.author?.trim()
+      ? { "@type": "Organization", name: post.author }
+      : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "Addify",
+      logo: { "@type": "ImageObject", url: "https://addify.ae/logo.png" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
       <Header />
       <main className="flex-1 py-12 md:py-16">
         <Container className="max-w-3xl">
