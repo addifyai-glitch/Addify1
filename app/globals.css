@@ -175,9 +175,17 @@ body {
 }
 
 /* ─── Print styles (cover letter only — resume PDF is server-side) ───────── */
+/* Scoped with :has() so this "hide everything except .print-letter" rule   */
+/* only activates on the cover-letter page. Without this scoping it was a   */
+/* global `body * { visibility: hidden }` that hid EVERY page's content on  */
+/* window.print(), including tools (e.g. the gratuity calculator) that use  */
+/* the normal Tailwind `print:hidden` opt-out pattern instead of opting in  */
+/* via `.print-letter` — those pages rendered blank except for any element  */
+/* (like an injected ad) that ignored the inherited visibility.             */
 @media print {
-  body * { visibility: hidden; }
-  .print-letter, .print-letter * { visibility: visible; }
+  body:has(.print-letter) * { visibility: hidden; }
+  body:has(.print-letter) .print-letter,
+  body:has(.print-letter) .print-letter * { visibility: visible; }
   .print-letter {
     position: absolute;
     top: 0;
