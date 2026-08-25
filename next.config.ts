@@ -34,15 +34,10 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       // Legacy WordPress candidate profiles (real individuals' names + CV
-      // links) are handled directly in middleware.ts as a same-URL 410, not
-      // a redirect — see the note there on why direct beats a redirect hop
-      // for a privacy takedown.
-      // CV PDFs: privacy — send to 410 Gone handler
-      {
-        source: "/wp-content/uploads/jobsearch-resumes/:path*",
-        destination: "/410?reason=privacy",
-        permanent: true,
-      },
+      // links), including the CV PDFs themselves under
+      // /wp-content/uploads/jobsearch-resumes/, are handled directly in
+      // proxy.ts as a same-URL 410, not a redirect — see the note there on
+      // why direct beats a redirect hop for a privacy takedown.
       // 3 high-traffic slugs that no longer exist in WP data. Must come
       // BEFORE the generic /job/:slug rule below: Next.js redirects() takes
       // the first match, and /job/:slug is a wildcard that would otherwise
