@@ -105,6 +105,25 @@ export async function proxy(req: NextRequest) {
     );
   }
 
+  // 410 Gone, directly at the URL, for legacy WordPress CV/resume uploads.
+  // Same privacy-takedown category as /candidate/ above (real individuals'
+  // CV files) — no redirect hop, so there's no intermediate 3xx for a
+  // crawler to consolidate as canonical. No files back this path in this
+  // repo or its deployment; this exists purely to keep already-indexed URLs
+  // deindexing correctly.
+  if (
+    pathname === "/wp-content/uploads/jobsearch-resumes" ||
+    pathname.startsWith("/wp-content/uploads/jobsearch-resumes/")
+  ) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">` +
+      `<title>Content removed | Addify</title></head>` +
+      `<body><h1>This content has been removed</h1><p>We no longer host candidate resumes for privacy reasons.</p>` +
+      `<a href="/jobs">Browse current jobs &rarr;</a></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // Admin route protection — validate session and auto-refresh token
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

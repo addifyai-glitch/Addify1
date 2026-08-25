@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /wp-content/uploads/jobsearch-resumes/
+Disallow: /wp-content/
 Disallow: /admin/
 Disallow: /api/
 
