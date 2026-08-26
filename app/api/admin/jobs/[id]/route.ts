@@ -46,20 +46,34 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
+  const supabase = createAdminClient();
+
+  // body is a partial payload — guarding it alone misses violations sitting
+  // in fields the edit didn't touch (e.g. description). Fetch the current
+  // row and merge first so the guard sees the record as it will exist after
+  // this update, not just the diff.
+  const { data: existing, error: fetchError } = await supabase
+    .from("jobs")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (fetchError || !existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  const merged = { ...existing, ...body };
 
   // Ingest-time check, not a post-hoc audit — covers edits, not just
   // initial creation. Warns and logs context only; flagged matches are
   // persisted to flagged_reasons (overwriting any previous value — an
   // edit that fixes flagged content should clear the banner, and one that
   // introduces new flagged content should show it).
-  const { matches } = buildRowWithFlags(body, "admin-edit");
+  const { matches } = buildRowWithFlags(merged, "admin-edit");
   const update: Record<string, unknown> = {
     ...body,
     modified_at: new Date().toISOString(),
     flagged_reasons: matches.length > 0 ? matches : null,
   };
 
-  const supabase = createAdminClient();
   let { error } = await supabase.from("jobs").update(update).eq("id", id);
   if (error && isMissingFlaggedReasonsColumnError(error)) {
     console.error(

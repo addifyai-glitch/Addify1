@@ -69,14 +69,15 @@ export function Features() {
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3 flex items-center justify-center gap-2">
             <span className="inline-block h-1 w-1 rounded-full bg-accent" />
-            The tools
+            Start with your number
             <span className="inline-block h-1 w-1 rounded-full bg-accent" />
           </p>
           <h2 className="font-display text-3xl md:text-4xl text-foreground">
-            Four tools. One clear edge.
+            Know your worth. Then go get it.
           </h2>
           <p className="mt-3 text-base md:text-lg text-foreground/80 max-w-xl mx-auto">
-            Everything you need to walk into your Gulf job search with clarity and confidence.
+            Start with a real salary number for your role and city, then use our free tools to
+            build the resume and cover letter that land it.
           </p>
         </motion.div>
 
@@ -122,7 +123,7 @@ export function Features() {
               {/* Link */}
               <Link
                 href={tool.href}
-                className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-accent group/link hover:gap-2.5 transition-all duration-200"
+                className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-accent group/link hover:gap-2.5 hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm transition-all duration-200"
               >
                 Try it free
                 <ArrowRight

@@ -185,7 +185,10 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: prefersReduced ? 0 : 1.9, duration: 0.5 }}
         >
-          <Link href="/salary" className="group">
+          <Link
+            href="/salary"
+            className="group rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
             <Button size="lg" variant="primary" className="group">
               Check Your Salary
               <ArrowRight
@@ -194,13 +197,22 @@ export function Hero() {
               />
             </Button>
           </Link>
-          <Link href="/tools/resume-builder">
+          <Link
+            href="/tools/resume-builder"
+            className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
             <Button size="lg" variant="secondary">Build Your Resume</Button>
           </Link>
-          <Link href="/cover-letter">
+          <Link
+            href="/cover-letter"
+            className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
             <Button size="lg" variant="secondary">Write a Cover Letter</Button>
           </Link>
-          <Link href="/tools/gratuity-calculator">
+          <Link
+            href="/tools/gratuity-calculator"
+            className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
             <Button size="lg" variant="secondary">Calculate Your Gratuity</Button>
           </Link>
         </motion.div>

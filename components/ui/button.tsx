@@ -12,7 +12,7 @@ const buttonVariants = cva(
         primary:
           "bg-accent text-accent-foreground rounded-full shadow-soft hover:shadow-glow-accent hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] active:shadow-soft",
         secondary:
-          "bg-transparent text-primary border border-primary rounded-full hover:bg-primary/5",
+          "bg-transparent text-primary border border-primary rounded-full hover:bg-primary/5 hover:border-accent hover:-translate-y-0.5 active:translate-y-0",
         ghost:
           "bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg",
       },
