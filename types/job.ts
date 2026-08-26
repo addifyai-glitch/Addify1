@@ -28,4 +28,13 @@ export type Job = {
   expires_at?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
+  // Set only when lib/discriminatory-language-guard.mjs fires at write
+  // time. Null on every pre-existing row (no backfill) and on every row
+  // where the guard never matched.
+  flagged_reasons?: {
+    field: string;
+    label: string;
+    matchedText: string;
+    context: string;
+  }[] | null;
 };

@@ -60,6 +60,20 @@ export default async function SubmissionsPage() {
         <div className="flex flex-col gap-4">
           {pending.map((job) => (
             <div key={job.id} className="bg-card border border-border rounded-xl p-6 shadow-soft">
+              {job.flagged_reasons && job.flagged_reasons.length > 0 && (
+                <div className="mb-4 p-4 bg-destructive/10 border border-destructive/30 rounded-xl">
+                  <p className="text-sm font-semibold text-destructive mb-2">
+                    ⚠ Flagged by the discriminatory-language guard — review before approving
+                  </p>
+                  <ul className="space-y-1.5">
+                    {job.flagged_reasons.map((m, i) => (
+                      <li key={i} className="text-xs text-destructive/90 font-mono">
+                        field={m.field} pattern=&quot;{m.label}&quot; matched=&quot;{m.matchedText}&quot; — &quot;...{m.context}...&quot;
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <h3 className="text-base font-semibold text-foreground">{job.title}</h3>

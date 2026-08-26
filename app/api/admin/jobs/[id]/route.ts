@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
+import { buildRowWithFlags, isMissingFlaggedReasonsColumnError } from "@/lib/job-guard-db-helpers";
 
 export const runtime = "nodejs";
 
@@ -48,14 +48,26 @@ export async function PATCH(
   const body = await req.json();
 
   // Ingest-time check, not a post-hoc audit — covers edits, not just
-  // initial creation. Warns and logs context only.
-  warnIfDiscriminatoryLanguage(body, "admin-edit");
+  // initial creation. Warns and logs context only; flagged matches are
+  // persisted to flagged_reasons (overwriting any previous value — an
+  // edit that fixes flagged content should clear the banner, and one that
+  // introduces new flagged content should show it).
+  const { matches } = buildRowWithFlags(body, "admin-edit");
+  const update: Record<string, unknown> = {
+    ...body,
+    modified_at: new Date().toISOString(),
+    flagged_reasons: matches.length > 0 ? matches : null,
+  };
 
   const supabase = createAdminClient();
-  const { error } = await supabase
-    .from("jobs")
-    .update({ ...body, modified_at: new Date().toISOString() })
-    .eq("id", id);
+  let { error } = await supabase.from("jobs").update(update).eq("id", id);
+  if (error && isMissingFlaggedReasonsColumnError(error)) {
+    console.error(
+      "[admin/jobs/patch] flagged_reasons column not found — has supabase/migrations/20260826_add_jobs_flagged_reasons.sql been applied? Retrying update without it."
+    );
+    const { flagged_reasons: _drop, ...fallbackUpdate } = update;
+    ({ error } = await supabase.from("jobs").update(fallbackUpdate).eq("id", id));
+  }
 
   if (error) {
     console.error("[admin/jobs/patch]", error);

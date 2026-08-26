@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { verifyRecaptcha } from "@/lib/recaptcha";
-import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
+import { buildRowWithFlags, isMissingFlaggedReasonsColumnError } from "@/lib/job-guard-db-helpers";
 
 const SUPABASE_OK =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -125,11 +125,19 @@ export async function POST(req: NextRequest) {
 
     // Ingest-time check, not a post-hoc audit. Warns and logs context only
     // — never blocks the submission or strips text. This job is already
-    // unapproved (approved: false) pending manual admin review, so a
-    // flagged submission gets a human look either way.
-    warnIfDiscriminatoryLanguage(jobRow, "user_submission");
+    // unapproved (approved: false) pending manual admin review; flagged
+    // matches are persisted to flagged_reasons so /admin/submissions can
+    // show a warning banner instead of relying on someone reading server
+    // logs.
+    const { row, matches } = buildRowWithFlags(jobRow, "user_submission");
 
-    const { error } = await supabase.from("jobs").insert(jobRow);
+    let { error } = await supabase.from("jobs").insert(row);
+    if (error && isMissingFlaggedReasonsColumnError(error) && matches.length > 0) {
+      console.error(
+        "[submit-job] flagged_reasons column not found — has supabase/migrations/20260826_add_jobs_flagged_reasons.sql been applied? Retrying insert without it."
+      );
+      ({ error } = await supabase.from("jobs").insert(jobRow));
+    }
 
     if (error) throw error;
     return NextResponse.json({ success: true, source: "live" });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
+import { buildRowWithFlags, isMissingFlaggedReasonsColumnError } from "@/lib/job-guard-db-helpers";
 
 export const runtime = "nodejs";
 
@@ -64,12 +64,19 @@ export async function POST(req: NextRequest) {
     };
 
     // Ingest-time check, not a post-hoc audit. Warns and logs context only
-    // — admin jobs go live immediately (approved: true), so this is the
-    // only check this content gets before publishing.
-    warnIfDiscriminatoryLanguage(jobRow, "admin");
+    // — admin jobs go live immediately (approved: true), so flagged_reasons
+    // is the only record of a match beyond the console log, in case it
+    // needs review later.
+    const { row, matches } = buildRowWithFlags(jobRow, "admin");
 
     const supabase = createAdminClient();
-    const { error } = await supabase.from("jobs").insert(jobRow);
+    let { error } = await supabase.from("jobs").insert(row);
+    if (error && isMissingFlaggedReasonsColumnError(error) && matches.length > 0) {
+      console.error(
+        "[admin/jobs] flagged_reasons column not found — has supabase/migrations/20260826_add_jobs_flagged_reasons.sql been applied? Retrying insert without it."
+      );
+      ({ error } = await supabase.from("jobs").insert(jobRow));
+    }
 
     if (error) {
       console.error("[admin/jobs] Insert error:", error);
