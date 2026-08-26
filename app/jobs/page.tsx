@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
@@ -17,15 +15,6 @@ export const metadata: Metadata = {
     "Browse live job openings across the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. Filter by city, category, experience level, and work type.",
   alternates: { canonical: "/jobs" },
 };
-
-function getMigrationJobs(): Job[] {
-  try {
-    const file = join(process.cwd(), "data", "migration-jobs.json");
-    return JSON.parse(readFileSync(file, "utf8")) as Job[];
-  } catch {
-    return [];
-  }
-}
 
 function normalizeMockJob(j: (typeof MOCK_JOBS)[number]): Job {
   return {
@@ -49,15 +38,21 @@ async function getLiveJobs(): Promise<Job[]> {
       // `expires_at.gt.<now>` alone would silently drop every NULL row,
       // since SQL NULL > x is never true.
       .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+      // wordpress_migration jobs (posted 2021) all have expires_at: null,
+      // which passes the "not expired" filter above — they were showing up
+      // in this listing (verified live, 31 of 48 returned rows) despite
+      // being retired to 410. Excluded explicitly.
+      .neq("source", "wordpress_migration")
       .order("is_featured", { ascending: false })
       .order("posted_at", { ascending: false });
     if (!error && data && data.length > 0) return data as Job[];
   } catch {
     // fall through
   }
-  // JSON + mock fallback — these have no approved/expires_at columns at all,
-  // so (like the [slug] page's fallback) they're not subject to that gate.
-  return [...getMigrationJobs(), ...MOCK_JOBS.map(normalizeMockJob)];
+  // Mock fallback only — the JSON migration file is exclusively
+  // wordpress_migration jobs being retired to 410, so it's excluded here
+  // too, not just from the live-query path above.
+  return MOCK_JOBS.map(normalizeMockJob);
 }
 
 export default async function JobsPage() {

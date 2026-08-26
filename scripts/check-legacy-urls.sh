@@ -35,6 +35,15 @@ CHECKS=(
   # Legacy WordPress passive-income article at /uae/ (proxy.ts, direct 410)
   "/uae|410|Legacy WP passive-income article, deliberately removed"
 
+  # Retired wordpress_migration job listings (app/jobs/[slug]/page.tsx
+  # redirect -> /410?reason=legacy-job). Sample across apply_url types:
+  # dead external ATS link, self-referential internal link, mailto.
+  "/jobs/procurement-manager-dubai|410|Legacy WP job, dead careers-page.com apply link"
+  "/jobs/casino-dealer|410|Legacy WP job, ATS says no longer available"
+  "/jobs/academic-supervisors|410|Legacy WP job, self-referential apply_url"
+  "/jobs/carpenters-assistant|410|Legacy WP job, mailto apply_url"
+  "/jobs/bartender-abu-dhabi|410|Legacy WP job, dead careers-page.com apply link"
+
   # Former WordPress employer profile pages (proxy.ts LEGACY_EMPLOYER_PREFIX)
   "/employer/kingston-stanley/|410|Legacy employer page, deliberately removed"
   "/employer/deepscale-technologies-ltd/|410|Legacy employer page, deliberately removed"
@@ -48,7 +57,10 @@ CHECKS=(
   "/employer/addify-recruitment-2-2/|410|Legacy employer page, deliberately removed"
 
   # Old WordPress job URLs -> new job structure (next.config.ts)
-  "/job/prepress-operator|200|Old WP job URL, redirects to /jobs/:slug (slug currently live)"
+  # prepress-operator itself is now retired (wordpress_migration -> 410,
+  # see the legacy-job checks above) — this old-URL redirect now correctly
+  # terminates there instead of at a live 200.
+  "/job/prepress-operator|410|Old WP job URL, redirects to /jobs/prepress-operator, now retired to 410"
   "/job/custom-and-excise-tax-manager|200|High-traffic slug with no WP-data equivalent, redirects to category filter"
   "/job/purchasing-assistant-dubai|200|High-traffic slug with no WP-data equivalent, redirects to category filter"
   "/job/it-support-engineer-7|200|High-traffic slug with no WP-data equivalent, redirects to category filter"

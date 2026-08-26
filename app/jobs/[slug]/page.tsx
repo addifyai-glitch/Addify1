@@ -45,17 +45,28 @@ function isExpired(job: Job): boolean {
   return Boolean(job.expires_at) && new Date(job.expires_at as string).getTime() < Date.now();
 }
 
+// The 31 wordpress_migration jobs (posted 2021) are being retired to 410 —
+// their apply_url values were verified dead (careers-page.com listings
+// 404ing, ATS pages returning "no longer available", others redirecting to
+// generic search pages). Checked by source rather than a hardcoded slug
+// list since every wordpress_migration row is being retired, not a
+// curated subset.
+function isLegacyWordPressJob(job: Job): boolean {
+  return job.source === "wordpress_migration";
+}
+
 async function getSimilarJobs(category: string, excludeSlug: string): Promise<Job[]> {
   try {
     const { createPublicClient } = await import("@/lib/supabase/server");
     const supabase = createPublicClient();
     const { data } = await supabase
       .from("jobs")
-      .select("id, slug, title, company, city, country, category, salary_min, salary_max, currency, is_featured, posted_at, apply_url, experience_level")
+      .select("id, slug, title, company, city, country, category, salary_min, salary_max, currency, is_featured, posted_at, apply_url, experience_level, source")
       .eq("approved", true)
       .eq("is_filled", false)
       .eq("category", category)
       .neq("slug", excludeSlug)
+      .neq("source", "wordpress_migration")
       .order("is_featured", { ascending: false })
       .order("posted_at", { ascending: false })
       .limit(4);
@@ -63,10 +74,11 @@ async function getSimilarJobs(category: string, excludeSlug: string): Promise<Jo
   } catch {
     // fall through
   }
-  const jobs = getMigrationJobs();
-  return jobs
-    .filter((j) => j.category === category && j.slug !== excludeSlug)
-    .slice(0, 4);
+  // JSON fallback only fires when the Supabase query itself throws (outage).
+  // Every JSON-fallback record is a wordpress_migration job being retired,
+  // so there's nothing fresh to recommend here — an empty "Similar jobs"
+  // section is correct, not a degraded one.
+  return [];
 }
 
 // ── Static generation ────────────────────────────────────────────────────────
@@ -82,15 +94,22 @@ export async function generateStaticParams() {
       // Not expired = no expiry set at all, or expiry in the future.
       // `expires_at.gt.<now>` alone would silently drop every NULL row,
       // since SQL NULL > x is never true.
-      .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+      .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+      // wordpress_migration jobs are retired to 410 — excluded from static
+      // generation entirely, same treatment as expired jobs above. The
+      // runtime redirect() below still catches them if requested directly
+      // (e.g. from the JSON fallback, or a stale build).
+      .neq("source", "wordpress_migration");
     if (data && data.length > 0) {
       return data.map((j) => ({ slug: j.slug as string }));
     }
   } catch {
     // fall through
   }
-  const jobs = getMigrationJobs();
-  return jobs.map((j) => ({ slug: j.slug as string }));
+  // JSON fallback only fires on a total Supabase outage. Every record in it
+  // is a wordpress_migration job being retired to 410, so there is nothing
+  // to statically generate here — an empty array is correct.
+  return [];
 }
 
 // ── Metadata ─────────────────────────────────────────────────────────────────
@@ -102,6 +121,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const job = await getJob(slug);
   if (!job) return { title: "Job not found" };
   if (isExpired(job)) return { title: "Job no longer available", robots: { index: false, follow: false } };
+  if (isLegacyWordPressJob(job)) return { title: "Job no longer available", robots: { index: false, follow: false } };
 
   const description = (job.description ?? "")
     .replace(/\s+/g, " ")
@@ -193,6 +213,7 @@ export default async function JobDetailPage({ params }: Props) {
   const job = await getJob(slug);
   if (!job) notFound();
   if (isExpired(job)) redirect("/410?reason=expired");
+  if (isLegacyWordPressJob(job)) redirect("/410?reason=legacy-job");
 
   const similarJobs = job.category
     ? await getSimilarJobs(job.category, slug)
