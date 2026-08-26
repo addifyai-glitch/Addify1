@@ -32,3 +32,28 @@ Not urgent, not user-facing harm — just wrong metadata.
   across all WordPress-migration records to check for other
   country/city mismatches beyond just this `(m/f/d)` pattern (this was
   found incidentally, not from an exhaustive check).
+
+- **Non-Gulf job listings mixed into the Gulf jobs table.** Found
+  2026-08-26 while checking whether the 31 stale `wordpress_migration`
+  jobs' `apply_url` values still resolve (see the P1.7-followup report for
+  the full liveness check). Several of the 14 external apply URLs point to
+  job boards with no Gulf connection at all — all still filed under
+  `country: UAE` or similar:
+
+  - `sales-manager-mainosherva-oy-click-human-resources-oy-pirkkala` ->
+    `tyomarkkinatori.fi` (Finnish national job bank)
+  - `technical-writer-technical-writer-to-medtech-company-in-uppsala` ->
+    `arbetsformedlingen.se` (Swedish employment agency); title says
+    "Uppsala" (a Swedish city)
+  - `temporary-position-educational-manager-preschool-teacher-kindergarten-teacher`
+    -> `arbeidsplassen.nav.no` (Norwegian employment agency)
+  - `customer-support-representative-2` -> `sdworxprofessionals.be`
+    (Belgian HR platform)
+  - `corporate-intelligence-compliance` -> `arendt.com` (Luxembourg law
+    firm)
+
+  Combined with the `(m/f/d)` finding above, this points to the same root
+  cause: the WordPress-era job import mixed in content from an
+  international/multi-market job feed without a country filter. Likely
+  more mis-filed non-Gulf jobs exist beyond the ones found incidentally
+  here — worth an exhaustive pass, not just spot-checking.
