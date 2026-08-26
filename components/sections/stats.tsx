@@ -1,60 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
+// Static display strings, not animated counters: a count-up-from-zero
+// effect can only start from 0 on the client after hydration, which meant
+// the real values never existed in SSR HTML at all (crawlers and
+// pre-hydration first paint both saw "0 Gulf cities", "0+ Global job
+// titles", "0s Avg. time"). The real numbers now render immediately,
+// server-side; only the surrounding card still animates in (opacity/y).
 const stats = [
-  { value: 34, suffix: "", label: "Gulf cities covered" },
-  { value: 120, suffix: "+", label: "Global job titles" },
-  { value: 60, suffix: "s", label: "Avg. time to result" },
-  { value: 0, suffix: "", label: "Core tools, always", isZero: true },
+  { value: "34", label: "Gulf cities covered" },
+  { value: "120+", label: "Global job titles" },
+  { value: "60s", label: "Avg. time to result" },
+  { value: "Free", label: "Core tools, always" },
 ];
-
-function StatNumber({
-  value,
-  suffix,
-  isZero,
-}: {
-  value: number;
-  suffix: string;
-  isZero?: boolean;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.3 });
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    if (!inView || isZero) return;
-    const start = performance.now();
-    const duration = 1200;
-
-    const step = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(eased * value));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-
-    requestAnimationFrame(step);
-  }, [inView, value, isZero]);
-
-  if (isZero) {
-    return (
-      <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground transition-all duration-300 group-hover:text-accent group-hover:[text-shadow:_0_0_30px_rgb(245_158_11_/_0.3)]">
-        Free
-      </span>
-    );
-  }
-
-  return (
-    <span ref={ref} className="font-display text-5xl md:text-6xl text-primary-foreground tabular-nums transition-all duration-300 group-hover:text-accent group-hover:[text-shadow:_0_0_30px_rgb(245_158_11_/_0.3)]">
-      {inView ? display : 0}
-      {suffix}
-    </span>
-  );
-}
 
 export function Stats() {
   return (
@@ -70,11 +30,9 @@ export function Stats() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
             >
-              <StatNumber
-                value={stat.value}
-                suffix={stat.suffix}
-                isZero={stat.isZero}
-              />
+              <span className="font-display text-5xl md:text-6xl text-primary-foreground tabular-nums transition-all duration-300 group-hover:text-accent group-hover:[text-shadow:_0_0_30px_rgb(245_158_11_/_0.3)]">
+                {stat.value}
+              </span>
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-accent mt-1">
                 {stat.label}
               </p>

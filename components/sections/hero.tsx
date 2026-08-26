@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 const countries = ["UAE", "KSA", "QATAR", "OMAN", "BAHRAIN", "KUWAIT", "EGYPT"];
 
 const demoRoles = [
-  { title: "Chief Financial Officer", city: "Dubai", flag: "🇦🇪", salary: "AED 85,000 to 120,000", period: "per month" },
+  { title: "Finance Manager", city: "Dubai", flag: "🇦🇪", salary: "AED 33,000 to 55,000", period: "per month" },
   { title: "Senior Software Engineer", city: "Riyadh", flag: "🇸🇦", salary: "SAR 22,000 to 35,000", period: "per month" },
   { title: "Marketing Manager", city: "Doha", flag: "🇶🇦", salary: "QAR 22,000 to 35,000", period: "per month" },
   { title: "Registered Nurse", city: "Abu Dhabi", flag: "🇦🇪", salary: "AED 12,000 to 18,000", period: "per month" },

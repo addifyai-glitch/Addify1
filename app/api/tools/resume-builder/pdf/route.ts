@@ -9,6 +9,63 @@ console.log(
   `[pdf-route] Browser strategy: ${process.env.DEPLOY_ENV === 'hetzner' ? 'local-chromium' : 'sparticuz-chromium'}`
 );
 
+// ─── Concurrency gate ──────────────────────────────────────────────────────
+// Each request launches a full headless Chromium process. On a small VPS
+// (3.7GB), a handful of concurrent PDF requests launching their own browser
+// each is a real OOM risk. Cap actual concurrent generation at 1 and queue
+// the rest, rather than letting every request spawn a browser at once.
+// Module-level state — correct for a persistent Node process (Hetzner);
+// on a serverless/multi-instance deploy this only limits concurrency
+// per-instance, which is still strictly better than no limit at all.
+const MAX_CONCURRENT_PDF = 1;
+const QUEUE_WAIT_TIMEOUT_MS = 15_000; // give up waiting for a slot after this
+const GENERATION_TIMEOUT_MS = 30_000; // hard cap once generation has a slot
+
+let activePdfCount = 0;
+const pdfWaitQueue: Array<() => void> = [];
+
+function releaseNextInQueue() {
+  const next = pdfWaitQueue.shift();
+  if (next) next();
+}
+
+async function acquirePdfSlot(): Promise<() => void> {
+  if (activePdfCount < MAX_CONCURRENT_PDF) {
+    activePdfCount++;
+    return () => {
+      activePdfCount--;
+      releaseNextInQueue();
+    };
+  }
+
+  return new Promise((resolve, reject) => {
+    const onTurn = () => {
+      clearTimeout(timer);
+      activePdfCount++;
+      resolve(() => {
+        activePdfCount--;
+        releaseNextInQueue();
+      });
+    };
+    const timer = setTimeout(() => {
+      const idx = pdfWaitQueue.indexOf(onTurn);
+      if (idx !== -1) pdfWaitQueue.splice(idx, 1);
+      reject(new Error('busy'));
+    }, QUEUE_WAIT_TIMEOUT_MS);
+    pdfWaitQueue.push(onTurn);
+  });
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
 function esc(text: string | undefined | null): string {
   if (!text) return '';
   return String(text)
@@ -332,6 +389,7 @@ async function getBrowser() {
 
 // ─── Route handler ────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  let release: (() => void) | null = null;
   try {
     const { resumeData, template } = await req.json();
 
@@ -347,37 +405,52 @@ export async function POST(req: NextRequest) {
       tpl === 'minimal' ? renderMinimal(data) :
       renderModern(data);
 
-    const browser = await getBrowser();
-
     try {
-      const page = await browser.newPage();
-      await page.setContent(html, { waitUntil: 'load' });
-
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: { top: '0', bottom: '0', left: '0', right: '0' },
-      });
-
-      const safeName = (data.contact?.fullName || 'resume')
-        .replace(/[^a-z0-9]/gi, '-')
-        .replace(/-+/g, '-')
-        .toLowerCase();
-
-      return new NextResponse(Buffer.from(pdfBuffer), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename="${safeName}-resume.pdf"`,
-          'Cache-Control': 'no-store',
-        },
-      });
-    } finally {
-      await browser.close();
+      release = await acquirePdfSlot();
+    } catch {
+      return NextResponse.json(
+        { error: 'The server is busy generating another PDF. Please try again in a few seconds.' },
+        { status: 503 }
+      );
     }
+
+    const pdfBuffer = await withTimeout(
+      (async () => {
+        const browser = await getBrowser();
+        try {
+          const page = await browser.newPage();
+          await page.setContent(html, { waitUntil: 'load' });
+          return await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: { top: '0', bottom: '0', left: '0', right: '0' },
+          });
+        } finally {
+          await browser.close();
+        }
+      })(),
+      GENERATION_TIMEOUT_MS,
+      'PDF generation'
+    );
+
+    const safeName = (data.contact?.fullName || 'resume')
+      .replace(/[^a-z0-9]/gi, '-')
+      .replace(/-+/g, '-')
+      .toLowerCase();
+
+    return new NextResponse(Buffer.from(pdfBuffer), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${safeName}-resume.pdf"`,
+        'Cache-Control': 'no-store',
+      },
+    });
   } catch (e) {
     console.error('[resume-pdf]', e);
     const msg = e instanceof Error ? e.message : 'PDF generation failed';
     return NextResponse.json({ error: msg }, { status: 500 });
+  } finally {
+    release?.();
   }
 }

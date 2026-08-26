@@ -14,36 +14,6 @@ export type Testimonial = {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    id: 1,
-    stars: 5,
-    quote: "I found out I was underpaid by about 22 percent. I used the salary numbers to negotiate and landed a new role within a month at the right number.",
-    name: "Ahmad R.",
-    role: "Senior Software Engineer",
-    city: "Dubai",
-    initials: "AR",
-    color: "bg-accent/15 text-accent",
-  },
-  {
-    id: 2,
-    stars: 4,
-    quote: "I rewrote my cover letter five times before submitting. Each version took less than a minute. Way better than staring at a blank Word doc. Hoping the Arabic version comes soon.",
-    name: "Priya S.",
-    role: "Marketing Manager",
-    city: "Abu Dhabi",
-    initials: "PS",
-    color: "bg-success/15 text-success",
-  },
-  {
-    id: 3,
-    stars: 5,
-    quote: "Finally a salary tool that understands housing allowance and visa status. Bayt is okay but Glassdoor is useless for the region.",
-    name: "Omar K.",
-    role: "Finance Director",
-    city: "Riyadh",
-    initials: "OK",
-    color: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-foreground",
-  },
-  {
     id: 4,
     stars: 5,
     quote: "I was about to accept an offer 8,000 dirhams below market. The benchmark gave me the confidence to push back. They came up.",

@@ -1,294 +1,91 @@
-'use client';
-
-import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Container } from '@/components/ui/container';
-import { AdSlot } from '@/components/ui/ad-slot';
-import { useResumeStorage } from '@/lib/hooks/useResumeStorage';
-import { SAMPLE_RESUME, TemplateId } from '@/types/resume';
-import { ContactSection } from '@/components/resume/editor/ContactSection';
-import { SummarySection } from '@/components/resume/editor/SummarySection';
-import { ExperienceSection } from '@/components/resume/editor/ExperienceSection';
-import { EducationSection } from '@/components/resume/editor/EducationSection';
-import { SkillsSection } from '@/components/resume/editor/SkillsSection';
-import { ProjectsSection } from '@/components/resume/editor/ProjectsSection';
-import { SimpleListSection } from '@/components/resume/editor/SimpleListSection';
-import { RenderTemplate, TEMPLATES } from '@/components/resume/templates';
+import { TEMPLATES } from '@/components/resume/templates';
+import { ResumeBuilderClient } from './resume-builder-client';
 
-type Tab = 'edit' | 'preview';
-type Section = 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'projects' | 'languages' | 'certifications';
+const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
+  Modern: 'A clean, sans-serif layout with a bold name header and an optional profile photo. Works well for most Gulf and international roles.',
+  Classic: 'A traditional serif layout with a centered header, suited to finance, legal, and other more conservative industries.',
+  Minimal: 'A single-column, photo-free layout built for ATS (applicant tracking system) parsing — the safest choice for strict automated screening, especially outside the Gulf.',
+};
 
-const SECTIONS: { id: Section; label: string }[] = [
-  { id: 'contact', label: 'Contact' },
-  { id: 'summary', label: 'Summary' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'education', label: 'Education' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'languages', label: 'Languages' },
-  { id: 'certifications', label: 'Certifications' },
+const FAQS = [
+  {
+    q: 'Is the resume builder really free?',
+    a: 'Yes. All three templates, the AI summary helper, and PDF export are free, with no signup or account required.',
+  },
+  {
+    q: "Is my resume data stored on Addify's servers?",
+    a: "No. Your resume is saved only in your own browser's local storage. It's sent to our server briefly only when you export a PDF or request an AI-written summary, and isn't stored afterward.",
+  },
+  {
+    q: 'Will I lose my information if I switch templates?',
+    a: 'No. Your content and your template choice are stored separately, so you can switch between Modern, Classic, and Minimal at any time without re-entering anything.',
+  },
+  {
+    q: 'Which template should I use for ATS (applicant tracking system) screening?',
+    a: "Minimal is the safest choice — it's a single-column, photo-free layout built for automated parsing. Modern and Classic include an optional photo, which is common in Gulf hiring but can be less compatible with strict ATS systems used more often outside the region.",
+  },
+  {
+    q: 'Do I need to create an account?',
+    a: 'No. Just start typing — your draft saves automatically in your browser as you go.',
+  },
 ];
 
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 export default function ResumeBuilderPage() {
-  const { resume, setResume, template, setTemplate, loaded, reset } = useResumeStorage();
-  const [tab, setTab] = useState<Tab>('edit');
-  const [openSection, setOpenSection] = useState<Section>('contact');
-  const [downloading, setDownloading] = useState(false);
-
-  // AI summary state
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-  const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
-
-  // Share state
-  const [copied, setCopied] = useState(false);
-
-  function handleShare() {
-    const url = 'https://addify.ae/tools/resume-builder';
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }
-
-  async function handleDownloadPDF() {
-    setDownloading(true);
-    try {
-      const res = await fetch('/api/tools/resume-builder/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeData: resume, template }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'PDF generation failed');
-      }
-
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${(resume.contact.fullName || 'resume').replace(/[^a-z0-9]/gi, '-')}-resume.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (e) {
-      alert('Could not download PDF. ' + (e instanceof Error ? e.message : ''));
-    } finally {
-      setDownloading(false);
-    }
-  }
-
-  async function handleImproveWithAI() {
-    setAiLoading(true);
-    setAiError(null);
-    setAiSuggestion(null);
-    try {
-      const res = await fetch('/api/tools/resume/improve-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          summary: resume.summary,
-          jobTitle: resume.contact.jobTitle,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setAiError(data.error || 'AI request failed');
-      } else {
-        setAiSuggestion(data.improved);
-      }
-    } catch {
-      setAiError('Network error. Please try again.');
-    } finally {
-      setAiLoading(false);
-    }
-  }
-
-  if (!loaded) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-muted-foreground">Loading...</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  const templateBar = (
-    <div className="flex items-center gap-1 p-1 rounded-xl bg-muted border border-border">
-      {TEMPLATES.map((t) => (
-        <button
-          key={t.id}
-          type="button"
-          onClick={() => setTemplate(t.id as TemplateId)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            template === t.id
-              ? 'bg-accent text-accent-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          {t.name}
-        </button>
-      ))}
-    </div>
-  );
-
-  const actionButtons = (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={() => setResume(SAMPLE_RESUME)}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-      >
-        Load sample
-      </button>
-      <button
-        type="button"
-        onClick={() => { if (confirm('Clear all resume data?')) reset(); }}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-colors"
-      >
-        Clear
-      </button>
-      <button
-        type="button"
-        onClick={handleShare}
-        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-      >
-        {copied ? 'Copied!' : 'Share'}
-      </button>
-      <button
-        type="button"
-        onClick={handleDownloadPDF}
-        disabled={downloading}
-        className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
-      >
-        {downloading ? 'Preparing PDF...' : 'Download PDF'}
-      </button>
-    </div>
-  );
-
-  const sectionContent = (
-    <div className="space-y-1">
-      {SECTIONS.map(({ id, label }) => (
-        <div key={id} className="rounded-xl border border-border bg-card overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setOpenSection(openSection === id ? ('_none' as Section) : id)}
-            className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
-          >
-            <span>{label}</span>
-            <svg
-              className={`w-4 h-4 text-muted-foreground transition-transform ${openSection === id ? 'rotate-180' : ''}`}
-              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          {openSection === id && (
-            <div className="px-4 pb-4 pt-1 border-t border-border">
-              {id === 'contact' && (
-                <ContactSection contact={resume.contact} onChange={(c) => setResume({ ...resume, contact: c })} />
-              )}
-              {id === 'summary' && (
-                <SummarySection
-                  summary={resume.summary}
-                  onChange={(s) => setResume({ ...resume, summary: s })}
-                  jobTitle={resume.contact.jobTitle}
-                  onImproveWithAI={handleImproveWithAI}
-                  aiLoading={aiLoading}
-                  aiError={aiError}
-                  aiSuggestion={aiSuggestion}
-                  onAcceptAI={() => { if (aiSuggestion) { setResume({ ...resume, summary: aiSuggestion }); setAiSuggestion(null); } }}
-                  onDismissAI={() => setAiSuggestion(null)}
-                />
-              )}
-              {id === 'experience' && (
-                <ExperienceSection experience={resume.experience} onChange={(e) => setResume({ ...resume, experience: e })} />
-              )}
-              {id === 'education' && (
-                <EducationSection education={resume.education} onChange={(e) => setResume({ ...resume, education: e })} />
-              )}
-              {id === 'skills' && (
-                <SkillsSection items={resume.skills} onChange={(s) => setResume({ ...resume, skills: s })} />
-              )}
-              {id === 'projects' && (
-                <ProjectsSection projects={resume.projects} onChange={(p) => setResume({ ...resume, projects: p })} />
-              )}
-              {id === 'languages' && (
-                <SimpleListSection items={resume.languages} onChange={(l) => setResume({ ...resume, languages: l })} placeholder="e.g. English (Fluent)" />
-              )}
-              {id === 'certifications' && (
-                <SimpleListSection items={resume.certifications} onChange={(c) => setResume({ ...resume, certifications: c })} placeholder="e.g. Google Ads Certified" />
-              )}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-
-  const previewPane = (
-    <div className="rounded-2xl border border-border bg-muted/30 overflow-auto shadow-soft">
-      <div className="min-w-[600px]">
-        <RenderTemplate id={template} data={resume} />
-      </div>
-    </div>
-  );
-
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
       <Header />
-      <main className="flex-1 py-8 md:py-12">
-        <Container className="max-w-7xl">
-          {/* Hero */}
-          <div className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
-            <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
-            <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
-          </div>
+      <main className="flex-1">
+        <Container className="max-w-4xl pt-8 md:pt-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
+          <h1 className="font-display text-3xl md:text-4xl text-foreground mb-3">Build your resume</h1>
+          <p className="text-base text-muted-foreground max-w-2xl">
+            Free, anonymous, auto-saved. Pick a template, fill in your experience, and export
+            a polished, Gulf-ready resume as a PDF. No account needed.
+          </p>
 
-          {/* Ad slot */}
-          <AdSlot format="in-article" className="mb-6" />
-
-          {/* Top bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-            {templateBar}
-            {actionButtons}
-          </div>
-
-          {/* Mobile tab switcher */}
-          <div className="flex lg:hidden gap-1 p-1 rounded-xl bg-muted border border-border mb-4">
-            {(['edit', 'preview'] as Tab[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
-                  tab === t ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {t}
-              </button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+            {TEMPLATES.map((t) => (
+              <div key={t.id} className="rounded-xl border border-border bg-card p-4">
+                <p className="text-sm font-semibold text-foreground mb-1">{t.name}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {TEMPLATE_DESCRIPTIONS[t.name]}
+                </p>
+              </div>
             ))}
           </div>
+        </Container>
 
-          {/* Desktop: two columns. Mobile: tabs */}
-          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 xl:grid-cols-[520px_1fr]">
-            {/* Editor column */}
-            <div className={tab === 'preview' ? 'hidden lg:block' : ''}>
-              {sectionContent}
-            </div>
+        <ResumeBuilderClient />
 
-            {/* Preview column */}
-            <div className={tab === 'edit' ? 'hidden lg:block' : ''}>
-              {previewPane}
-            </div>
+        <Container className="max-w-3xl py-12 md:py-16">
+          <h2 className="font-display text-xl text-foreground mb-5">Frequently asked questions</h2>
+          <div className="space-y-4">
+            {FAQS.map((f) => (
+              <details key={f.q} className="rounded-xl border border-border bg-card p-4 group">
+                <summary className="text-sm font-semibold text-foreground cursor-pointer list-none flex items-center justify-between gap-3">
+                  {f.q}
+                  <span className="text-accent group-open:rotate-45 transition-transform shrink-0">+</span>
+                </summary>
+                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
           </div>
         </Container>
       </main>

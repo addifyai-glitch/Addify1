@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { AdSlot } from "@/components/ui/ad-slot";
 import { MapPin, Briefcase, Clock, ChevronRight, ArrowUpRight, GraduationCap, CalendarDays } from "lucide-react";
 import type { Job } from "@/types/job";
+import { isStaleJob } from "@/lib/job-freshness";
 
 export const revalidate = 3600;
 
@@ -120,15 +121,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Addify",
       images: [{ url: "/og-default.png" }],
     },
+    // Stale (90+ days old) but not yet expired: still a real, applicable
+    // posting, so keep the page itself, just don't present it to search
+    // engines as fresh content.
+    ...(isStaleJob(job.posted_at) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+// Guards against a real parsing bug found in migrated data: "AED 12000"
+// got split into salary_min 1199 / salary_max 1200 — a tiny nonzero gap
+// that no genuine salary range or flat figure would ever produce (a real
+// range has a meaningful spread; a real flat figure has min === max
+// exactly). When the gap looks like a parsing artifact, omit baseSalary
+// entirely from JobPosting schema rather than emit a wrong number.
+function hasPlausibleSalary(job: Job): boolean {
+  const min = job.salary_min;
+  const max = job.salary_max ?? min;
+  if (min == null || max == null) return false;
+  const gap = max - min;
+  return gap === 0 || gap >= 50;
+}
+
 function fmtSalary(job: Job): string {
   const cur = job.currency ?? "AED";
   const fmt = (n: number) => n.toLocaleString("en-US");
   if (job.salary_min && job.salary_max) {
+    if (job.salary_min === job.salary_max) return `${cur} ${fmt(job.salary_min)} per month`;
     return `${cur} ${fmt(job.salary_min)} to ${fmt(job.salary_max)} per month`;
   }
   if (job.salary_min) return `${cur} ${fmt(job.salary_min)}+ per month`;
@@ -212,7 +232,7 @@ export default async function JobDetailPage({ params }: Props) {
     employmentType: (job.employment_type ?? "FULL_TIME")
       .toUpperCase()
       .replace(/\s+/g, "_"),
-    ...(job.salary_min
+    ...(job.salary_min && hasPlausibleSalary(job)
       ? {
           baseSalary: {
             "@type": "MonetaryAmount",
@@ -268,7 +288,7 @@ export default async function JobDetailPage({ params }: Props) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  {job.is_featured && (
+                  {job.is_featured && !isStaleJob(job.posted_at) && (
                     <Badge variant="accent" className="text-xs">Featured</Badge>
                   )}
                   {job.employment_type && (

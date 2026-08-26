@@ -124,6 +124,30 @@ export async function proxy(req: NextRequest) {
     );
   }
 
+  // 410 Gone for the rest of legacy WordPress /wp-content/* (themes, plugins,
+  // other uploads) — broader catch-all beyond the specific privacy-takedown
+  // block above. None of this exists in the current app; anything still
+  // indexed under this prefix is WordPress-era cruft.
+  if (pathname === "/wp-content" || pathname.startsWith("/wp-content/")) {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This page no longer exists. Visit <a href="https://addify.ae">Addify</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
+  // 410 Gone for the legacy WordPress passive-income article at /uae/ —
+  // off-topic content from the previous domain owner, same category as
+  // LEGACY_SPAM_PATTERNS above but a literal single path rather than a
+  // pattern, so kept as its own explicit check.
+  if (pathname === "/uae" || pathname === "/uae/") {
+    return new NextResponse(
+      `<!doctype html><html><head><meta name="robots" content="noindex"><title>410 Gone</title></head>` +
+      `<body><h1>410 Gone</h1><p>This page no longer exists. Visit <a href="https://addify.ae">Addify</a>.</p></body></html>`,
+      { status: 410, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // Admin route protection — validate session and auto-refresh token
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

@@ -7,6 +7,7 @@ import { AdSlot } from "@/components/ui/ad-slot";
 import { JOB_CATEGORIES } from "@/data/jobTitles";
 import { CITY_GROUPS } from "@/data/cities";
 import type { Job } from "@/types/job";
+import { isStaleJob } from "@/lib/job-freshness";
 import { MapPin, Clock, Briefcase, Search, X, ChevronRight, Wifi } from "lucide-react";
 
 const COUNTRIES = ["All", "UAE", "Saudi Arabia", "Qatar", "Kuwait", "Bahrain", "Oman", "Egypt"];
@@ -72,11 +73,11 @@ function JobCard({ job }: { job: Job }) {
       className="group relative bg-card border border-border rounded-xl p-5 shadow-soft hover:shadow-hover hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 flex flex-col gap-3"
     >
       <div className="flex items-center justify-between gap-2">
-        {(job.is_featured) && (
+        {(job.is_featured && !isStaleJob(job.posted_at)) && (
           <Badge variant="accent" className="text-xs">Featured</Badge>
         )}
         {job.employment_type && <WorkTypePill type={job.employment_type} />}
-        {!job.is_featured && !job.employment_type && <span />}
+        {(!job.is_featured || isStaleJob(job.posted_at)) && !job.employment_type && <span />}
       </div>
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">

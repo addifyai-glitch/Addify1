@@ -8,7 +8,7 @@ import { WhyAddifyVisual } from "./why-addify-visual";
 const values = [
   "Built for Gulf realities: housing allowance, visa status, and nationality nuances",
   "Your data stays private. Never shared with employers or recruiters",
-  "Real submissions, not scraped LinkedIn averages",
+  "Built from three published Gulf salary reports, not scraped LinkedIn averages",
   "One platform for every career stage, from first job to C-suite",
 ];
 

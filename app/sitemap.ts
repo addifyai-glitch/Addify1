@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROLE_SLUGS, CITY_SLUGS } from "@/lib/salary";
 import { getCategorySummaries } from "@/lib/blog-categories";
+import { isStaleJob } from "@/lib/job-freshness";
 
 const SITE = "https://addify.ae";
 
@@ -96,12 +97,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .or(`expires_at.is.null,expires_at.gt.${now}`);
 
     if (data && data.length > 0) {
-      jobRoutes = data.map((j) => ({
-        url: `${SITE}/jobs/${j.slug}`,
-        lastModified: new Date(j.modified_at ?? j.posted_at),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
+      jobRoutes = data
+        .filter((j) => !isStaleJob(j.posted_at))
+        .map((j) => ({
+          url: `${SITE}/jobs/${j.slug}`,
+          lastModified: new Date(j.modified_at ?? j.posted_at),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        }));
     }
   } catch {
     // fall through to JSON
@@ -109,12 +112,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (jobRoutes.length === 0) {
     const jobs = getMigrationSlugs();
-    jobRoutes = jobs.map((j) => ({
-      url: `${SITE}/jobs/${j.slug}`,
-      lastModified: new Date(j.modified_at ?? j.posted_at),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+    jobRoutes = jobs
+      .filter((j) => !isStaleJob(j.posted_at))
+      .map((j) => ({
+        url: `${SITE}/jobs/${j.slug}`,
+        lastModified: new Date(j.modified_at ?? j.posted_at),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
   }
 
   // Blog pages

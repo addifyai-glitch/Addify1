@@ -28,6 +28,13 @@ CHECKS=(
   "/fit|410|Fit Score feature, removed entirely"
   "/api/tools/fit-score|410|Fit Score API route, removed entirely"
 
+  # Legacy WordPress /wp-content/* catch-all (proxy.ts, direct 410)
+  "/wp-content/anything|410|Legacy WP wp-content path, deliberately removed"
+  "/wp-content/themes/old-theme/style.css|410|Legacy WP theme asset, deliberately removed"
+
+  # Legacy WordPress passive-income article at /uae/ (proxy.ts, direct 410)
+  "/uae|410|Legacy WP passive-income article, deliberately removed"
+
   # Former WordPress employer profile pages (proxy.ts LEGACY_EMPLOYER_PREFIX)
   "/employer/kingston-stanley/|410|Legacy employer page, deliberately removed"
   "/employer/deepscale-technologies-ltd/|410|Legacy employer page, deliberately removed"
