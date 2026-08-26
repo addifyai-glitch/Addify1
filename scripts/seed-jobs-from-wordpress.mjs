@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
+import { warnIfDiscriminatoryLanguage } from '../lib/discriminatory-language-guard.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -59,6 +60,17 @@ const rows = jobs.map((j) => ({
   modified_at: j.modified_at || null,
   expires_at: null,
 }));
+
+// Ingest-time check, not a post-hoc audit — every row gets checked before
+// it's ever written. Warns and logs context only; never strips or blocks.
+let flaggedCount = 0;
+for (const row of rows) {
+  const matches = warnIfDiscriminatoryLanguage(row, 'wordpress_migration');
+  if (matches.length > 0) flaggedCount++;
+}
+if (flaggedCount > 0) {
+  console.warn(`⚠️  ${flaggedCount} of ${rows.length} jobs flagged for review above. Import will continue.`);
+}
 
 console.log(`Inserting ${rows.length} jobs...`);
 

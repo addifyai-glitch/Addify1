@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
 
 export const runtime = "nodejs";
 
@@ -43,8 +44,7 @@ export async function POST(req: NextRequest) {
 
     const slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`;
 
-    const supabase = createAdminClient();
-    const { error } = await supabase.from("jobs").insert({
+    const jobRow = {
       slug,
       title,
       company: company || null,
@@ -61,7 +61,15 @@ export async function POST(req: NextRequest) {
       approved: true,
       source: "admin",
       expires_at: expiresAt,
-    });
+    };
+
+    // Ingest-time check, not a post-hoc audit. Warns and logs context only
+    // — admin jobs go live immediately (approved: true), so this is the
+    // only check this content gets before publishing.
+    warnIfDiscriminatoryLanguage(jobRow, "admin");
+
+    const supabase = createAdminClient();
+    const { error } = await supabase.from("jobs").insert(jobRow);
 
     if (error) {
       console.error("[admin/jobs] Insert error:", error);

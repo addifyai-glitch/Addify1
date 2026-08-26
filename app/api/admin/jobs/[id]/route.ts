@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
 
 export const runtime = "nodejs";
 
@@ -45,6 +46,10 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
+
+  // Ingest-time check, not a post-hoc audit — covers edits, not just
+  // initial creation. Warns and logs context only.
+  warnIfDiscriminatoryLanguage(body, "admin-edit");
 
   const supabase = createAdminClient();
   const { error } = await supabase

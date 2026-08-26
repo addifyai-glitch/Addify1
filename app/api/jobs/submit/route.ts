@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { verifyRecaptcha } from "@/lib/recaptcha";
+import { warnIfDiscriminatoryLanguage } from "@/lib/discriminatory-language-guard.mjs";
 
 const SUPABASE_OK =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
     const baseSlug = generateSlug(title);
     const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
-    const { error } = await supabase.from("jobs").insert({
+    const jobRow = {
       slug,
       title,
       company: company || null,
@@ -120,7 +121,15 @@ export async function POST(req: NextRequest) {
       is_featured: false,
       approved: false,
       source: "user_submission",
-    });
+    };
+
+    // Ingest-time check, not a post-hoc audit. Warns and logs context only
+    // — never blocks the submission or strips text. This job is already
+    // unapproved (approved: false) pending manual admin review, so a
+    // flagged submission gets a human look either way.
+    warnIfDiscriminatoryLanguage(jobRow, "user_submission");
+
+    const { error } = await supabase.from("jobs").insert(jobRow);
 
     if (error) throw error;
     return NextResponse.json({ success: true, source: "live" });
