@@ -11,6 +11,7 @@ import {
   type CoverLetterContext,
 } from "@/components/cover-letter/cover-letter-result";
 import type { CoverLetterOutput } from "@/lib/cover-letter/mock-generate";
+import { AnswerCapsule } from "@/components/AnswerCapsule";
 
 type ResumeTab = "upload" | "paste";
 type JDTab = "paste" | "url" | "upload";
@@ -25,7 +26,14 @@ const LOADING_PHRASES = [
   "Polishing tone...",
 ];
 
-export default function CoverLetterClient() {
+export default function CoverLetterClient({
+  answerCapsule,
+}: {
+  // Optional 40-60 word self-contained direct answer, same pattern as blog
+  // frontmatter's answerCapsule field. Writing the actual copy is owned by
+  // the content prompts, not this branch.
+  answerCapsule?: string;
+} = {}) {
   // Resume state
   const [resumeTab, setResumeTab] = useState<ResumeTab>("upload");
   const [resumeText, setResumeText] = useState("");
@@ -211,6 +219,7 @@ export default function CoverLetterClient() {
             <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4">
               A cover letter that sounds like you.
             </h1>
+            {answerCapsule && <AnswerCapsule>{answerCapsule}</AnswerCapsule>}
             <p className="text-lg text-foreground/75 max-w-xl mx-auto">
               Paste your resume and the job description. Get a tailored cover letter in Arabic
               or English in under 60 seconds. Free, no signup.

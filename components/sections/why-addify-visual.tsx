@@ -92,7 +92,7 @@ export function WhyAddifyVisual() {
         >
           <p className="text-xs uppercase tracking-wider text-accent font-semibold">Gratuity Estimate</p>
           <p className="mt-2 font-display text-2xl text-foreground">AED 42,300</p>
-          <p className="text-xs text-foreground/60">8 years, unlimited contract</p>
+          <p className="text-xs text-foreground/60">8 years of service</p>
           <p className="mt-3 text-xs text-success font-medium">Within the 2-year cap</p>
         </motion.div>
       </motion.div>

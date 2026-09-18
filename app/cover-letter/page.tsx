@@ -28,11 +28,16 @@ const breadcrumbLd = buildBreadcrumbLd([
   { name: "Cover Letter", url: "/cover-letter" },
 ]);
 
+// Optional 40-60 word self-contained direct answer, same pattern as blog
+// frontmatter's answerCapsule field. Left unset here — writing the actual
+// copy is owned by the content prompts, not this branch.
+const ANSWER_CAPSULE: string | undefined = undefined;
+
 export default function CoverLetterPage() {
   return (
     <>
       <JsonLd data={[softwareApplicationLd, breadcrumbLd]} />
-      <CoverLetterClient />
+      <CoverLetterClient answerCapsule={ANSWER_CAPSULE} />
     </>
   );
 }

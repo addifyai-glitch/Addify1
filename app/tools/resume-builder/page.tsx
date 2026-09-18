@@ -15,6 +15,12 @@ import { SkillsSection } from '@/components/resume/editor/SkillsSection';
 import { ProjectsSection } from '@/components/resume/editor/ProjectsSection';
 import { SimpleListSection } from '@/components/resume/editor/SimpleListSection';
 import { RenderTemplate, TEMPLATES } from '@/components/resume/templates';
+import { AnswerCapsule } from '@/components/AnswerCapsule';
+
+// Optional 40-60 word self-contained direct answer, same pattern as blog
+// frontmatter's answerCapsule field. Left unset here — writing the actual
+// copy is owned by the content prompts, not this branch.
+const ANSWER_CAPSULE: string | undefined = undefined;
 
 type Tab = 'edit' | 'preview';
 type Section = 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'projects' | 'languages' | 'certifications';
@@ -250,6 +256,7 @@ export default function ResumeBuilderPage() {
           <div className="mb-6">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
             <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
+            {ANSWER_CAPSULE && <AnswerCapsule>{ANSWER_CAPSULE}</AnswerCapsule>}
             <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
           </div>
 

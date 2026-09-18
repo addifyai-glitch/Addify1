@@ -23,7 +23,7 @@ const tools = [
     name: "Gratuity Calculator",
     href: "/tools/gratuity-calculator",
     description:
-      "Estimate your UAE end-of-service gratuity in seconds. Covers limited and unlimited contracts, resignation and termination rules, and the 2 year salary cap.",
+      "Estimate your UAE end-of-service gratuity in seconds. Covers resignation and termination rules, and the 2 year salary cap.",
     bullets: [
       "Built on UAE labor law rules",
       "Covers resignation & termination cases",
