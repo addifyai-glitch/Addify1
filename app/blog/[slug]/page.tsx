@@ -11,6 +11,9 @@ import { AdSlot } from "@/components/ui/ad-slot";
 import { ButtonLink } from "@/components/blog/button-link";
 import { getFilePostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 import { buildBlogMetadata } from "@/lib/blog-meta";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
+import { AnswerCapsule } from "@/components/AnswerCapsule";
 import { ArrowLeft } from "lucide-react";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -70,24 +73,33 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: typeof post.description === "string" ? post.description : undefined,
     datePublished: post.date,
+    // No revision-tracking on blog frontmatter today — post.date is the best
+    // available signal for dateModified too, not a fabricated separate date.
+    dateModified: post.date,
     image: post.image ? [post.image] : undefined,
     author: post.author?.trim()
       ? { "@type": "Organization", name: post.author }
       : undefined,
+    // No publisher.logo: no logo image asset actually exists yet (the
+    // largest available is a 32x32 favicon, well under Google's ~112x112
+    // minimum for Article rich results) — a broken/undersized reference
+    // would fail validation anyway. Add this back once a real logo ships.
     publisher: {
       "@type": "Organization",
       name: "Addify",
-      logo: { "@type": "ImageObject", url: "https://addify.ae/logo.png" },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
   };
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: post.title, url: `/blog/${slug}` },
+  ]);
+
   return (
     <div className="flex flex-col min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
-      />
+      <JsonLd data={[articleLd, breadcrumbLd]} />
       <Header />
       <main className="flex-1 py-12 md:py-16">
         <Container className="max-w-3xl">
@@ -105,6 +117,7 @@ export default async function BlogPostPage({ params }: Props) {
           <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-5">
             {post.title}
           </h1>
+          {post.answerCapsule && <AnswerCapsule>{post.answerCapsule}</AnswerCapsule>}
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-8">
             <span>{post.author}</span>
             <span>·</span>

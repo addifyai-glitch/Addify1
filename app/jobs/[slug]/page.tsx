@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { AdSlot } from "@/components/ui/ad-slot";
 import { MapPin, Briefcase, Clock, ChevronRight, ArrowUpRight, GraduationCap, CalendarDays } from "lucide-react";
 import type { Job } from "@/types/job";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 export const revalidate = 3600;
 
@@ -105,21 +107,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = (job.description ?? "")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 160);
+    .slice(0, 155);
+
+  // Real job titles (scraped/migrated listings) run far longer than a
+  // hand-written title ever would — some exceed 100 chars on their own.
+  // Root layout appends " | Addify" (9 chars) via the title template, so
+  // truncate to leave room under the ~60-char SERP limit.
+  const rawTitle = `${job.title} in ${job.city}`;
+  const title = rawTitle.length > 51 ? `${rawTitle.slice(0, 50)}…` : rawTitle;
+  const ogImage = `/api/og/default?title=${encodeURIComponent(title)}`;
 
   return {
-    title: `${job.title} in ${job.city}`,
+    title,
     description,
     alternates: {
       canonical: `https://addify.ae/jobs/${slug}`,
     },
     openGraph: {
-      title: `${job.title} in ${job.city}`,
+      title,
       description,
       url: `https://addify.ae/jobs/${slug}`,
       siteName: "Addify",
-      images: [{ url: "/og-default.png" }],
+      type: "website",
+      locale: "en_AE",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 
@@ -228,14 +241,21 @@ export default async function JobDetailPage({ params }: Props) {
       : {}),
   };
 
+  // Mirrors the visible breadcrumb nav below exactly, category crumb included.
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: "Jobs", url: "/jobs" },
+    ...(job.category
+      ? [{ name: job.category, url: `/jobs?category=${encodeURIComponent(job.category)}` }]
+      : []),
+    { name: job.title, url: `/jobs/${slug}` },
+  ]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingLd) }}
-      />
+      <JsonLd data={[jobPostingLd, breadcrumbLd]} />
 
       <main className="flex-1 py-10 md:py-16">
         <Container className="max-w-5xl">

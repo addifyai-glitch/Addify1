@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 // SoftwareApplication schema for the tool itself, matching the pattern
 // already used on /tools/gratuity-calculator. Organization identity is
-// already covered by the homepage's own JSON-LD — not duplicated here.
+// covered sitewide by app/layout.tsx — not duplicated here.
 // This page has no default role/city selected (SalaryForm is client-driven,
 // nothing rendered until a user picks a role), so there is no per-result
 // MonetaryAmountDistribution to emit here — that already exists, built from

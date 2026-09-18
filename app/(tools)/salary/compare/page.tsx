@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getComparisonPaths } from "@/lib/comparison";
 import { parseComparisonSlug } from "@/lib/comparison";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Salary Comparisons: Gulf Cities & Countries",
@@ -18,9 +20,14 @@ function formatSlug(slug: string): string {
 
 export default async function CompareIndexPage() {
   const paths = await getComparisonPaths();
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: "Salary", url: "/salary" },
+    { name: "Compare", url: "/salary/compare" },
+  ]);
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-14 md:py-20">
+      <JsonLd data={breadcrumbLd} />
       <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/salary" className="hover:text-foreground transition-colors">Salary</Link>
         <span>/</span>

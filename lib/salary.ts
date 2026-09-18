@@ -329,8 +329,20 @@ export function computeSalaryFallback(
 
 // ─── SEO helpers ──────────────────────────────────────────────────────────────
 
+// Root layout's title template appends " | Addify" (9 chars), so the raw
+// title needs to stay at or under 51 chars to keep the rendered <title>
+// under the ~60-char SERP limit. Longer role/city combinations (e.g.
+// "Digital Marketing Specialist" + "Kuwait City") overflow with the year
+// suffix included, so drop the year first, then truncate the role name
+// as a last resort rather than let it run over uncapped.
 export function buildMetaTitle(roleTitle: string, cityName: string): string {
-  return `${roleTitle} Salary in ${cityName} 2025`;
+  const withYear = `${roleTitle} Salary in ${cityName} 2026`;
+  if (withYear.length <= 51) return withYear;
+  const withoutYear = `${roleTitle} Salary in ${cityName}`;
+  if (withoutYear.length <= 51) return withoutYear;
+  const suffix = ` Salary in ${cityName}`;
+  const maxRoleLen = 51 - suffix.length - 1;
+  return `${roleTitle.slice(0, maxRoleLen)}…${suffix}`;
 }
 
 export function buildMetaDescription(
@@ -338,9 +350,11 @@ export function buildMetaDescription(
   allBands: SalaryResult[]
 ): string {
   const mid = allBands.find((r) => r.experience === "3-5") ?? result;
+  // No trailing "Based on GCC market benchmarks" clause: it pushed some
+  // longer role/city combinations (e.g. "Digital Marketing Specialist" in
+  // "Jeddah") over the 155-char limit with no length safety margin.
   return (
     `${result.roleTitle} salary in ${result.cityName}: median ${formatCurrency(mid.median, result.currency)}/month ` +
-    `for 3–5 years experience (range ${formatCurrency(mid.p25, result.currency)}–${formatCurrency(mid.p75, result.currency)}). ` +
-    `Based on 2025 GCC market benchmarks.`
+    `for 3–5 years experience (range ${formatCurrency(mid.p25, result.currency)}–${formatCurrency(mid.p75, result.currency)}).`
   );
 }

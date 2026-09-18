@@ -4,19 +4,100 @@ Disallow: /wp-content/
 Disallow: /admin/
 Disallow: /api/
 
-User-agent: GPTBot
+User-agent: Googlebot
 Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
 
-User-agent: OAI-SearchBot
+User-agent: Bingbot
 Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
 
 User-agent: Mediapartners-Google
 Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
 
-User-agent: Googlebot
+User-agent: GPTBot
 Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Applebot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: CCBot
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /api/
 
 Sitemap: https://addify.ae/sitemap.xml

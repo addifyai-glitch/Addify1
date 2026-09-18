@@ -6,12 +6,19 @@ import { Container } from "@/components/ui/container";
 import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { FinalCTA } from "@/components/sections/final-cta";
 import { Shield, MapPin, BadgeCheck, Heart } from "lucide-react";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "About",
   description: "We built Addify to give Gulf professionals real salary data, free career tools, and clear career advice. Learn who we are and why we built it.",
   alternates: { canonical: "/about" },
 };
+
+const breadcrumbLd = buildBreadcrumbLd([
+  { name: "Home", url: "/" },
+  { name: "About", url: "/about" },
+]);
 
 const differentiators = [
   {
@@ -47,23 +54,10 @@ const audiences = [
   },
 ];
 
-const organizationLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Addify",
-  url: "https://addify.ae",
-  logo: "https://addify.ae/logo.png",
-  description: "Gulf career platform with real salary data and free career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
-  areaServed: ["AE", "SA", "QA", "KW", "BH", "OM"],
-};
-
 export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-      />
+      <JsonLd data={breadcrumbLd} />
       <Header />
       <main className="flex-1">
         {/* Hero */}

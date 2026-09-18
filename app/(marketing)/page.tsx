@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
@@ -8,23 +9,17 @@ import { WhyAddify } from "@/components/sections/why-addify";
 import { Testimonials } from "@/components/sections/testimonials";
 import { FinalCTA } from "@/components/sections/final-cta";
 
-const organizationLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Addify",
-  url: "https://addify.ae",
-  logo: "https://addify.ae/logo.png",
-  description: "Gulf career platform with real salary data and free career tools for professionals in UAE, Saudi Arabia, and the wider GCC.",
-  areaServed: ["AE", "SA", "QA", "KW", "BH", "OM"],
+// Title/description/OG/Twitter are the root layout's own defaults — they
+// were written as the homepage's copy in the first place. Only the
+// canonical was missing.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
 };
 
+// Organization schema now lives sitewide in app/layout.tsx, not per-page.
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-      />
       <Header />
       <main className="flex-1">
         <Hero />

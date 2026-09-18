@@ -1,10 +1,34 @@
 import type { MetadataRoute } from "next";
 import { readdirSync, readFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { ROLE_SLUGS, CITY_SLUGS } from "@/lib/salary";
-import { getCategorySummaries } from "@/lib/blog-categories";
+import { getCategorySummaries, getPostsByCategorySlug } from "@/lib/blog-categories";
 
 const SITE = "https://addify.ae";
+
+// Real last-commit date for a source file, not build/request time — Perplexity
+// and other engines weight freshness signals, so a lastmod that's always
+// "now" is worse than no signal at all. Falls back to `fallback` (unchanged
+// prior behavior) if git history isn't available in the build environment.
+const gitDateCache = new Map<string, Date>();
+function gitLastModified(relPath: string, fallback: Date): Date {
+  if (gitDateCache.has(relPath)) return gitDateCache.get(relPath)!;
+  let result = fallback;
+  try {
+    const iso = execSync(`git log -1 --format=%cI -- "${relPath}"`, {
+      cwd: process.cwd(),
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .toString()
+      .trim();
+    if (iso) result = new Date(iso);
+  } catch {
+    // no .git in this build environment — keep fallback
+  }
+  gitDateCache.set(relPath, result);
+  return result;
+}
 
 function getMigrationSlugs(): { slug: string; posted_at: string; modified_at?: string | null }[] {
   try {
@@ -55,28 +79,32 @@ async function getBlogSlugs(): Promise<{ slug: string; date: string }[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
+  // Homepage and /jobs are genuinely daily-changing aggregators (live job
+  // counts, rotating content) — `now` is an honest signal there. Everything
+  // else below gets the real last-commit date of its source file.
+  const researchFile = "app/research/[slug]/page.tsx";
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE,                        lastModified: now, changeFrequency: "daily",   priority: 1.0 },
     { url: `${SITE}/jobs`,              lastModified: now, changeFrequency: "daily",   priority: 0.9 },
-    { url: `${SITE}/salary`,            lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
-    { url: `${SITE}/cover-letter`,      lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${SITE}/tools`,              lastModified: now, changeFrequency: "weekly",  priority: 0.7 },
-    { url: `${SITE}/tools/resume-builder`, lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${SITE}/tools/gratuity-calculator`, lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${SITE}/blog`,              lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${SITE}/about`,             lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE}/contact`,           lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE}/privacy`,           lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${SITE}/terms`,             lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${SITE}/submit-job`,        lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE}/methodology`,       lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
-    { url: `${SITE}/data-sources`,     lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
-    { url: `${SITE}/about-our-data`,   lastModified: now, changeFrequency: "yearly",  priority: 0.5 },
-    { url: `${SITE}/editorial-policy`, lastModified: now, changeFrequency: "yearly",  priority: 0.4 },
-    { url: `${SITE}/research`,                              lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE}/research/uae-salary-report-2026`,       lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE}/research/saudi-arabia-salary-report-2026`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE}/research/dubai-tech-salary-report-2026`,   lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/salary`,            lastModified: gitLastModified("app/(tools)/salary/page.tsx", now), changeFrequency: "weekly",  priority: 0.9 },
+    { url: `${SITE}/cover-letter`,      lastModified: gitLastModified("app/cover-letter/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${SITE}/tools`,              lastModified: gitLastModified("app/tools/page.tsx", now), changeFrequency: "weekly",  priority: 0.7 },
+    { url: `${SITE}/tools/resume-builder`, lastModified: gitLastModified("app/tools/resume-builder/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${SITE}/tools/gratuity-calculator`, lastModified: gitLastModified("app/tools/gratuity-calculator/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${SITE}/blog`,              lastModified: gitLastModified("app/blog/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${SITE}/about`,             lastModified: gitLastModified("app/about/page.tsx", now), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE}/contact`,           lastModified: gitLastModified("app/contact/page.tsx", now), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE}/privacy`,           lastModified: gitLastModified("app/privacy/page.tsx", now), changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${SITE}/terms`,             lastModified: gitLastModified("app/terms/page.tsx", now), changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${SITE}/submit-job`,        lastModified: gitLastModified("app/submit-job/page.tsx", now), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/methodology`,       lastModified: gitLastModified("app/methodology/page.tsx", now), changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/data-sources`,     lastModified: gitLastModified("app/data-sources/page.tsx", now), changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/about-our-data`,   lastModified: gitLastModified("app/about-our-data/page.tsx", now), changeFrequency: "yearly",  priority: 0.5 },
+    { url: `${SITE}/editorial-policy`, lastModified: gitLastModified("app/editorial-policy/page.tsx", now), changeFrequency: "yearly",  priority: 0.4 },
+    { url: `${SITE}/research`,                              lastModified: gitLastModified("app/research/page.tsx", now), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/research/uae-salary-report-2026`,       lastModified: gitLastModified(researchFile, now), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/research/saudi-arabia-salary-report-2026`, lastModified: gitLastModified(researchFile, now), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/research/dubai-tech-salary-report-2026`,   lastModified: gitLastModified(researchFile, now), changeFrequency: "monthly", priority: 0.7 },
   ];
 
   // Job pages — try Supabase first, fall back to migration JSON
@@ -125,34 +153,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // Blog category archives
-  const blogCategoryRoutes: MetadataRoute.Sitemap = (await getCategorySummaries()).map((c) => ({
-    url: `${SITE}/blog/category/${c.slug}`,
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: 0.5,
-  }));
+  // Blog category archives — real signal: the newest post actually in that
+  // category, not the moment the sitemap happened to regenerate.
+  const blogCategoryRoutes: MetadataRoute.Sitemap = await Promise.all(
+    (await getCategorySummaries()).map(async (c) => {
+      const group = await getPostsByCategorySlug(c.slug);
+      const newest = group?.posts.reduce<Date | null>((max, p) => {
+        const d = new Date(p.date);
+        return !max || d > max ? d : max;
+      }, null);
+      return {
+        url: `${SITE}/blog/category/${c.slug}`,
+        lastModified: newest ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      };
+    })
+  );
 
-  // Salary tool pages
+  // Salary tool pages — all 225 are generated from the same data/salaries.json
+  // snapshot, so its last-commit date is the real "as of" signal, shared
+  // across the whole set rather than a per-request `now`.
+  const salaryDataDate = gitLastModified("data/salaries.json", now);
   const salaryRoutes: MetadataRoute.Sitemap = ROLE_SLUGS.flatMap((jobSlug) =>
     CITY_SLUGS.map((citySlug) => ({
       url: `${SITE}/salary/${jobSlug}/${citySlug}`,
-      lastModified: now,
+      lastModified: salaryDataDate,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     }))
   );
 
-  // Salary comparison pages
+  // Salary comparison pages — same underlying salary data.
   let compareRoutes: MetadataRoute.Sitemap = [];
   try {
     const { getComparisonPaths } = await import("@/lib/comparison");
     const paths = await getComparisonPaths();
     compareRoutes = [
-      { url: `${SITE}/salary/compare`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 },
+      { url: `${SITE}/salary/compare`, lastModified: salaryDataDate, changeFrequency: "monthly" as const, priority: 0.6 },
       ...paths.map(({ comparison }) => ({
         url: `${SITE}/salary/compare/${comparison}`,
-        lastModified: now,
+        lastModified: salaryDataDate,
         changeFrequency: "monthly" as const,
         priority: 0.6,
       })),

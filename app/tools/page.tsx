@@ -4,13 +4,15 @@ import { Calculator, LayoutTemplate, FileText, ArrowRight } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 const PAGE_URL = "https://addify.ae/tools";
 
 export const metadata: Metadata = {
   title: "Free Career Tools",
   description:
-    "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter in minutes. No signup required.",
+    "Free tools for job-hunting in the UAE: calculate your gratuity, build an ATS-ready resume, and generate a cover letter in minutes. No signup.",
   alternates: { canonical: "/tools" },
   openGraph: {
     type: "website",
@@ -20,6 +22,14 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     siteName: "Addify.ae",
     locale: "en_AE",
+    images: [{ url: "/api/og/default?title=Free+Career+Tools", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Career Tools | Addify",
+    description:
+      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter.",
+    images: ["/api/og/default?title=Free+Career+Tools"],
   },
 };
 
@@ -47,9 +57,26 @@ const tools = [
   },
 ];
 
+const breadcrumbLd = buildBreadcrumbLd([
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/tools" },
+]);
+
+const itemListLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: tools.map((tool, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: tool.name,
+    url: `${PAGE_URL.replace("/tools", "")}${tool.href}`,
+  })),
+};
+
 export default function ToolsPage() {
   return (
     <div className="flex flex-col min-h-screen">
+      <JsonLd data={[breadcrumbLd, itemListLd]} />
       <Header />
       <main className="flex-1">
         <Container className="py-16 md:py-24">

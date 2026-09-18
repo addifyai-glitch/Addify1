@@ -25,15 +25,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { left, right } = await resolveSides(p);
   if (!left || !right) return {};
   const url = comparisonUrl(comparison);
-  const title = `${p.role.name} Salary: ${p.leftLabel} vs ${p.rightLabel} (2026)`;
+  // Root layout's title template appends " | Addify" (9 chars) — keep the
+  // raw title at or under 51 chars, same budget as the salary pages, by
+  // dropping the year first and truncating the role name as a last resort.
+  const buildTitle = () => {
+    const withYear = `${p.role.name} Salary: ${p.leftLabel} vs ${p.rightLabel} (2026)`;
+    if (withYear.length <= 51) return withYear;
+    const withoutYear = `${p.role.name} Salary: ${p.leftLabel} vs ${p.rightLabel}`;
+    if (withoutYear.length <= 51) return withoutYear;
+    const suffix = ` Salary: ${p.leftLabel} vs ${p.rightLabel}`;
+    const maxRoleLen = 51 - suffix.length - 1;
+    return `${p.role.name.slice(0, maxRoleLen)}…${suffix}`;
+  };
+  const title = buildTitle();
   const desc =
     `Compare ${p.role.name} salaries in ${p.leftLabel} and ${p.rightLabel}. ` +
     `Median ${left.currency} ${left.median.toLocaleString()} vs ${right.currency} ${right.median.toLocaleString()} per month.`;
+  const ogImage = `/api/og/default?title=${encodeURIComponent(`${p.role.name}: ${p.leftLabel} vs ${p.rightLabel}`)}`;
   return {
     title, description: desc,
     alternates: { canonical: url },
-    openGraph: { title, description: desc, url, type: "article" },
-    twitter: { card: "summary_large_image", title, description: desc },
+    openGraph: {
+      title, description: desc, url, type: "article",
+      siteName: "Addify.ae", locale: "en_AE",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image", title, description: desc, images: [ogImage] },
   };
 }
 

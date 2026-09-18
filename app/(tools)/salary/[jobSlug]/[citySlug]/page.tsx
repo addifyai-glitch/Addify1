@@ -46,6 +46,7 @@ export async function generateMetadata({
   const description = buildMetaDescription(representative, allBands);
   const canonical = `/salary/${jobSlug}/${citySlug}`;
 
+  const ogImage = `/api/og/default?title=${encodeURIComponent(title)}`;
   return {
     title,
     description,
@@ -55,7 +56,11 @@ export async function generateMetadata({
       description,
       url: canonical,
       type: "website",
+      siteName: "Addify.ae",
+      locale: "en_AE",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 

@@ -14,6 +14,9 @@ export type PostFrontmatter = {
   draft?: boolean;
   image?: string;
   imageAlt?: string;
+  // Optional 40-60 word self-contained direct answer, rendered via
+  // <AnswerCapsule> right after the H1. Omitted on posts that don't set it.
+  answerCapsule?: string;
 };
 
 export type Post = PostFrontmatter & {

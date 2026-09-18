@@ -1,0 +1,44 @@
+Addify - Gulf Career Platform (full reference)
+
+What Addify is:
+Addify is a career platform for people working in, or moving to, the Gulf. It publishes salary benchmarks and provides free career tools for the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. It does not operate a job board with paid placements; job listings, when present, are aggregated and clearly marked with their source.
+
+Tools:
+
+Salary Check
+URL: https://addify.ae/salary
+Free salary benchmarks for 138 job titles across 34 cities in the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. Results show a percentile range (25th, median, 75th), not a single average, plus a housing and total-package breakdown where applicable. No signup required.
+
+Gratuity Calculator
+URL: https://addify.ae/tools/gratuity-calculator
+Free calculator for UAE end-of-service gratuity. Takes basic salary (not total salary), years and months of service, and reason for leaving, and returns a line-item breakdown under current UAE labor law. No signup required.
+
+Resume Builder
+URL: https://addify.ae/tools/resume-builder
+Free resume builder with multiple ATS-ready templates, a live preview, an AI-assisted summary writer, and one-click PDF export. No account needed; nothing is stored server-side beyond what the user's browser keeps locally.
+
+Cover Letter Generator
+URL: https://addify.ae/cover-letter
+Free tool that generates a tailored cover letter in Arabic or English from a pasted resume and job description, in under 60 seconds. No signup required.
+
+Coverage:
+34 cities: major and secondary cities across the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. 138 job titles across 15 categories, from entry level to C-suite.
+
+Data methodology:
+Salary figures for the primary hub cities (Dubai, Abu Dhabi, Sharjah, Riyadh, Jeddah, Doha, Kuwait City, Manama, Muscat) are built directly from three independent published Gulf salary reports: Bayt Salary Report 2024, Robert Half GCC Salary Guide, and Cooper Fitch GCC Salary Survey. Each range is reported as a median and percentile spread rather than a single average, and confidence is highest where the three source reports agree. Secondary cities and Egypt are derived from the same base data using published cost-of-living and regional wage factors, not independently sourced reports for every city. Figures are reviewed annually; current figures reflect the 2024-2025 market. Full detail at https://addify.ae/methodology, sources listed at https://addify.ae/data-sources, and confidence-tier definitions at https://addify.ae/methodology.
+
+Other content:
+Blog - https://addify.ae/blog - Gulf careers articles: CVs, contracts, negotiation, cost of living, and country-specific guides.
+Research reports - https://addify.ae/research - Original salary reports built from Addify's own aggregated data, published quarterly.
+Jobs - https://addify.ae/jobs - Aggregated Gulf job listings.
+
+Key pages:
+Homepage - https://addify.ae
+About - https://addify.ae/about
+Methodology - https://addify.ae/methodology
+Data sources - https://addify.ae/data-sources
+Editorial policy - https://addify.ae/editorial-policy
+Privacy - https://addify.ae/privacy
+Terms - https://addify.ae/terms
+
+Sitemap: https://addify.ae/sitemap.xml

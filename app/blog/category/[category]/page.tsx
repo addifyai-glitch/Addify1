@@ -6,6 +6,8 @@ import { Container } from "@/components/ui/container";
 import { MeshGradient } from "@/components/ui/mesh-gradient";
 import { PostsGrid } from "@/components/blog/posts-grid";
 import { getCategorySummaries, getPostsByCategorySlug } from "@/lib/blog-categories";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 // Draft intro copy — one to two sentences per category. Wording is a first
 // pass for editing, not final copy.
@@ -13,7 +15,7 @@ const CATEGORY_INTROS: Record<string, string> = {
   "CV and Applications":
     "Practical, Gulf-specific advice for building a CV and application that gets past the recruiter's first scan and into an interview.",
   "UAE Essentials":
-    "The rules, allowances, and paperwork every professional working in the UAE should understand — from gratuity to visas to free zone versus mainland employment.",
+    "The rules, allowances, and paperwork every professional in the UAE should understand — from gratuity to visas to free zone versus mainland employment.",
   Kuwait:
     "Salary data and market context for professionals working in, or considering a move to, Kuwait.",
   "Living and Working":
@@ -43,10 +45,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: categorySlug } = await params;
   const result = await getPostsByCategorySlug(categorySlug);
   if (!result) return { title: "Category not found" };
+  const title = `${result.category} Articles`;
+  const description = introFor(result.category);
+  const url = `/blog/category/${categorySlug}`;
+  const ogImage = `/api/og/default?title=${encodeURIComponent(title)}`;
   return {
-    title: `${result.category} Articles`,
-    description: introFor(result.category),
-    alternates: { canonical: `/blog/category/${categorySlug}` },
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title, description, url, type: "website",
+      siteName: "Addify.ae", locale: "en_AE",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 
@@ -56,8 +68,15 @@ export default async function CategoryArchivePage({ params }: Props) {
   if (!result) notFound();
   const { category, posts } = result;
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: category, url: `/blog/category/${categorySlug}` },
+  ]);
+
   return (
     <div className="flex flex-col min-h-screen">
+      <JsonLd data={breadcrumbLd} />
       <Header />
       <main className="flex-1">
         <section className="relative overflow-hidden py-16 md:py-24">

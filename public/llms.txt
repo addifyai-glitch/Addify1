@@ -1,0 +1,28 @@
+Addify - Gulf Career Platform
+
+What Addify is:
+Addify is a career platform for people working in, or moving to, the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. It publishes salary benchmarks and provides free career tools.
+
+Tools:
+Salary Check - https://addify.ae/salary - Salary benchmarks for 138 job titles across 34 cities in the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt.
+Gratuity Calculator - https://addify.ae/tools/gratuity-calculator - Calculates UAE end-of-service gratuity from basic salary, years of service, and reason for leaving.
+Resume Builder - https://addify.ae/tools/resume-builder - Builds an ATS-ready resume with live preview and PDF export.
+Cover Letter Generator - https://addify.ae/cover-letter - Generates a tailored cover letter in Arabic or English from a resume and job description.
+
+Coverage:
+34 cities across the UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, and Egypt. 138 job titles from entry level to C-suite.
+
+Data methodology:
+Salary estimates are built from three independent published Gulf salary reports (Bayt Salary Report 2024, Robert Half GCC Salary Guide, Cooper Fitch GCC Salary Survey), reported as a median and percentile range per role, city, and experience band, and reviewed annually. Full methodology at https://addify.ae/methodology and sources at https://addify.ae/data-sources.
+
+Key pages:
+Homepage - https://addify.ae
+Salary Check - https://addify.ae/salary
+Jobs - https://addify.ae/jobs
+Blog - https://addify.ae/blog
+Research reports - https://addify.ae/research
+Methodology - https://addify.ae/methodology
+Data sources - https://addify.ae/data-sources
+About - https://addify.ae/about
+
+Sitemap: https://addify.ae/sitemap.xml

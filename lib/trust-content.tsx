@@ -2,6 +2,8 @@
 // Single source of truth for facts on trust/methodology pages.
 // All values reflect what is actually true for Addify — no aspirational numbers.
 
+export { JsonLd as Schema } from "@/components/JsonLd";
+
 export const TRUST = {
   cityCount: 9,
   countryCount: 6,
@@ -70,17 +72,3 @@ export function faqSchema(items: Array<{ q: string; a: string }>) {
   };
 }
 
-export function Schema({ data }: { data: object | object[] }) {
-  const blocks = Array.isArray(data) ? data : [data];
-  return (
-    <>
-      {blocks.map((b, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(b) }}
-        />
-      ))}
-    </>
-  );
-}

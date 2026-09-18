@@ -9,6 +9,7 @@ import { Schema, articleSchema } from "@/lib/trust-content";
 import { getPostBySlug } from "@/lib/blog";
 import { getSalaryFigure } from "@/lib/salary-source-of-truth";
 import { buildBlogMetadata, cleanTitle } from "@/lib/blog-meta";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
 import { ButtonLink } from "@/components/blog/button-link";
 
 // ─── Report registry ──────────────────────────────────────────────────────────
@@ -72,7 +73,7 @@ const REPORTS: Record<string, ReportDef> = {
     dbSlug:
       "dubai-tech-salary-report-2026-what-software-engineers-ai-experts-and-tech-leaders-are-really-earning",
     seoDescription:
-      "What software engineers, data analysts, designers, and tech leaders earn in Dubai in 2026 – monthly AED ranges benchmarked across three published GCC market reports.",
+      "What software engineers, data analysts, designers, and tech leaders earn in Dubai in 2026 – monthly AED ranges from three published GCC market reports.",
     published: "2026-06-01",
     tables: [
       {
@@ -191,10 +192,16 @@ export default async function ReportPage({ params }: Props) {
     lastReviewed: r.published,
   });
 
+  const breadcrumbLd = buildBreadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: "Research", url: "/research" },
+    { name: cleanTitle(r.title), url: `/research/${slug}` },
+  ]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <Schema data={schema} />
+      <Schema data={[schema, breadcrumbLd]} />
       <main className="flex-1 py-12 md:py-16">
         <Container className="max-w-3xl">
           {/* Breadcrumb */}

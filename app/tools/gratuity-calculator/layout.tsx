@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { buildBreadcrumbLd } from "@/lib/breadcrumb-schema";
+import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "UAE End-of-Service Gratuity Calculator 2026",
   description:
-    "Calculate your UAE end-of-service gratuity for 2026. Covers limited and unlimited contracts, resignation and termination rules, and the 2 year salary cap. Free and instant.",
+    "Calculate your UAE end-of-service gratuity. Covers limited and unlimited contracts, resignation, termination rules, and the 2 year cap. Free and instant.",
   alternates: { canonical: "/tools/gratuity-calculator" },
   openGraph: {
     type: "website",
@@ -13,11 +15,13 @@ export const metadata: Metadata = {
     url: "https://addify.ae/tools/gratuity-calculator",
     siteName: "Addify.ae",
     locale: "en_AE",
+    images: [{ url: "/api/og/default?title=UAE+Gratuity+Calculator", width: 1200, height: 630 }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "UAE End-of-Service Gratuity Calculator 2026 | Addify.ae",
     description: "Calculate your UAE end-of-service gratuity for 2026 in seconds, free on Addify.ae.",
+    images: ["/api/og/default?title=UAE+Gratuity+Calculator"],
   },
 };
 
@@ -81,14 +85,16 @@ const faqSchema = {
   ],
 };
 
+const breadcrumbLd = buildBreadcrumbLd([
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/tools" },
+  { name: "Gratuity Calculator", url: "/tools/gratuity-calculator" },
+]);
+
 export default function GratuityCalculatorLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
-      />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <JsonLd data={[softwareApplicationSchema, faqSchema, breadcrumbLd]} />
       {children}
     </>
   );
