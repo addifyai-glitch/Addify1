@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { Container } from '@/components/ui/container';
 import { AdSlot } from '@/components/ui/ad-slot';
 import { useResumeStorage } from '@/lib/hooks/useResumeStorage';
-import { SAMPLE_RESUME, TemplateId } from '@/types/resume';
+import { SAMPLE_RESUME, EMPTY_RESUME, TemplateId } from '@/types/resume';
 import { ContactSection } from '@/components/resume/editor/ContactSection';
 import { SummarySection } from '@/components/resume/editor/SummarySection';
 import { ExperienceSection } from '@/components/resume/editor/ExperienceSection';
@@ -50,6 +50,16 @@ export default function ResumeBuilderPage() {
   // Share state
   const [copied, setCopied] = useState(false);
 
+  // The sample is a made-up person. While it's loaded and untouched, the PDF
+  // export is blocked so nobody downloads (and sends) someone else's resume.
+  const isSample = JSON.stringify(resume) === JSON.stringify(SAMPLE_RESUME);
+
+  function handleLoadSample() {
+    const hasOwnData = JSON.stringify(resume) !== JSON.stringify(EMPTY_RESUME) && !isSample;
+    if (hasOwnData && !confirm('Replace what you\'ve entered with the sample resume? This overwrites your current draft.')) return;
+    setResume(SAMPLE_RESUME);
+  }
+
   function handleShare() {
     const url = 'https://addify.ae/tools/resume-builder';
     navigator.clipboard.writeText(url).then(() => {
@@ -59,6 +69,7 @@ export default function ResumeBuilderPage() {
   }
 
   async function handleDownloadPDF() {
+    if (isSample) return;
     setDownloading(true);
     try {
       const res = await fetch('/api/tools/resume-builder/pdf', {
@@ -149,7 +160,7 @@ export default function ResumeBuilderPage() {
     <div className="flex items-center gap-2">
       <button
         type="button"
-        onClick={() => setResume(SAMPLE_RESUME)}
+        onClick={handleLoadSample}
         className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
         Load sample
@@ -171,7 +182,8 @@ export default function ResumeBuilderPage() {
       <button
         type="button"
         onClick={handleDownloadPDF}
-        disabled={downloading}
+        disabled={downloading || isSample}
+        title={isSample ? 'Replace the sample with your own details to download' : undefined}
         className="px-4 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
       >
         {downloading ? 'Preparing PDF...' : 'Download PDF'}
@@ -262,6 +274,13 @@ export default function ResumeBuilderPage() {
 
           {/* Ad slot */}
           <AdSlot format="in-article" className="mb-6" />
+
+          {isSample && (
+            <div role="note" className="mb-4 rounded-xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-foreground">
+              <strong className="font-semibold">This is sample data for a made-up person.</strong>{' '}
+              Replace it with your own details, or press Clear, to download a PDF.
+            </div>
+          )}
 
           {/* Top bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">

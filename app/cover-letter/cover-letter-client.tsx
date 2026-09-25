@@ -4,13 +4,10 @@ import { useState, useRef } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
-import { Sparkles, Upload, FileText, X, Link as LinkIcon } from "lucide-react";
-import { generateCoverLetter } from "@/lib/cover-letter/mock-generate";
-import {
-  CoverLetterResult,
-  type CoverLetterContext,
-} from "@/components/cover-letter/cover-letter-result";
-import type { CoverLetterOutput } from "@/lib/cover-letter/mock-generate";
+import { Upload, FileText, X, Link as LinkIcon } from "lucide-react";
+import { ExampleLetter } from "@/components/cover-letter/example-letter";
+import { WaitlistForm } from "@/components/cover-letter/waitlist-form";
+import { JobAdPreview } from "@/components/cover-letter/job-ad-preview";
 import { AnswerCapsule } from "@/components/AnswerCapsule";
 
 type ResumeTab = "upload" | "paste";
@@ -18,13 +15,6 @@ type JDTab = "paste" | "url" | "upload";
 type Language = "english" | "arabic";
 type Tone = "professional" | "friendly" | "confident" | "concise";
 type Length = "short" | "medium" | "long";
-
-const LOADING_PHRASES = [
-  "Reading your resume...",
-  "Analyzing the job...",
-  "Writing your letter...",
-  "Polishing tone...",
-];
 
 export default function CoverLetterClient({
   answerCapsule,
@@ -56,34 +46,6 @@ export default function CoverLetterClient({
   const [length, setLength] = useState<Length>("medium");
   const [hiringManager, setHiringManager] = useState("");
 
-  // Generation state
-  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
-  const [regenerating, setRegenerating] = useState(false);
-  const [loadingPhrase, setLoadingPhrase] = useState(0);
-  const [output, setOutput] = useState<CoverLetterOutput | null>(null);
-  const [context, setContext] = useState<CoverLetterContext | null>(null);
-  const [variant, setVariant] = useState(0);
-
-  function getResumeLabel(): string {
-    if (resumeTab === "upload" && resumeFile) return resumeFile.name;
-    if (resumeTab === "paste" && resumeText.trim())
-      return `"${resumeText.trim().slice(0, 60)}${resumeText.length > 60 ? "..." : ""}"`;
-    return "No resume provided";
-  }
-
-  function getJDLabel(): string {
-    if (jdTab === "url" && jdFetchedDomain) return `${jdFetchedDomain} (fetched)`;
-    if (jdTab === "url" && jdUrl) return jdUrl;
-    if (jdTab === "upload" && jdFile) return jdFile.name;
-    if (jdTab === "paste" && jdText.trim())
-      return `"${jdText.trim().slice(0, 60)}${jdText.length > 60 ? "..." : ""}"`;
-    return "No job description provided";
-  }
-
-  const hasResume = !!(resumeFile || resumeText.trim());
-  const hasJD = !!(jdText.trim() || jdFetchedDomain || jdFile);
-  const canGenerate = hasResume && hasJD;
-
   async function fetchJD() {
     if (!jdUrl.trim()) return;
     setJdFetching(true);
@@ -109,66 +71,6 @@ export default function CoverLetterClient({
     }
   }
 
-  async function runGeneration(variantNum: number) {
-    setStatus("loading");
-    setOutput(null);
-
-    let phraseIdx = 0;
-    setLoadingPhrase(0);
-    const phraseTimer = setInterval(() => {
-      phraseIdx = (phraseIdx + 1) % LOADING_PHRASES.length;
-      setLoadingPhrase(phraseIdx);
-    }, 450);
-
-    await new Promise((r) => setTimeout(r, 1800));
-    clearInterval(phraseTimer);
-
-    const resumeContent =
-      resumeTab === "paste" ? resumeText : resumeFile ? `[File: ${resumeFile.name}]` : "";
-    const jdContent =
-      jdTab === "paste"
-        ? jdText
-        : jdFetchedDomain
-        ? jdText
-        : jdFile
-        ? `[File: ${jdFile.name}]`
-        : "";
-
-    const result = generateCoverLetter({
-      resumeText: resumeContent,
-      jdText: jdContent,
-      language,
-      tone,
-      length,
-      hiringManager,
-      variant: variantNum,
-    });
-
-    setOutput(result);
-    setContext({
-      resumeLabel: getResumeLabel(),
-      jdLabel: getJDLabel(),
-      language,
-      tone,
-      length,
-      hiringManager,
-    });
-    setStatus("done");
-  }
-
-  async function handleGenerate(e: React.FormEvent) {
-    e.preventDefault();
-    await runGeneration(variant);
-  }
-
-  async function handleRegenerate() {
-    const next = (variant + 1) % 3;
-    setVariant(next);
-    setRegenerating(true);
-    await runGeneration(next);
-    setRegenerating(false);
-  }
-
   const tabBtn = (active: boolean) =>
     `px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
       active
@@ -192,41 +94,30 @@ export default function CoverLetterClient({
       <main className="flex-1 py-16 md:py-24">
         <Container className="max-w-4xl">
           {/* Hero */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                Cover Letter
-              </p>
-              <span className="text-accent/40">·</span>
-              <div className="flex items-center gap-1 text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setLanguage("english")}
-                  className={`px-2 py-0.5 rounded transition-colors ${language === "english" ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  EN
-                </button>
-                <span className="text-border">|</span>
-                <button
-                  type="button"
-                  onClick={() => setLanguage("arabic")}
-                  className={`px-2 py-0.5 rounded transition-colors ${language === "arabic" ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  عربي
-                </button>
-              </div>
-            </div>
+          <div className="text-center mb-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80 mb-3">
+              Cover Letter · Coming soon
+            </p>
             <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4">
               A cover letter that sounds like you.
             </h1>
             {answerCapsule && <AnswerCapsule>{answerCapsule}</AnswerCapsule>}
-            <p className="text-lg text-foreground/75 max-w-xl mx-auto">
-              Paste your resume and the job description. Get a tailored cover letter in Arabic
-              or English in under 60 seconds. Free, no signup.
+            <p className="text-lg text-foreground/80 max-w-xl mx-auto">
+              We&apos;re building a cover letter writer for Gulf job applications, in English and
+              Arabic. It isn&apos;t live yet. Join the waitlist and we&apos;ll email you when it is.
             </p>
           </div>
 
-          <form onSubmit={handleGenerate} className="space-y-8">
+          <div
+            role="note"
+            className="mb-8 rounded-xl border border-accent/40 bg-accent/10 px-5 py-4 text-sm text-foreground"
+          >
+            <strong className="font-semibold">The writer isn&apos;t live yet.</strong> The three steps
+            below show how it will work, but nothing you enter here produces a letter today. Your
+            resume text and files stay in your browser.
+          </div>
+
+          <div className="space-y-8">
             {/* Step 1: Resume */}
             <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/75 mb-4">
@@ -353,6 +244,8 @@ export default function CoverLetterClient({
                 />
               )}
 
+              {jdTab === "paste" && jdText.trim() && <JobAdPreview text={jdText} />}
+
               {jdTab === "url" && (
                 <div className="space-y-3">
                   <div className="flex gap-2">
@@ -398,11 +291,7 @@ export default function CoverLetterClient({
                       </button>
                     </div>
                   )}
-                  {jdFetchedDomain && jdText && (
-                    <div className="border border-border rounded-xl p-3 bg-muted/30 text-xs text-muted-foreground max-h-28 overflow-auto">
-                      {jdText.slice(0, 300)}...
-                    </div>
-                  )}
+                  {jdFetchedDomain && jdText && <JobAdPreview text={jdText} />}
                 </div>
               )}
 
@@ -478,7 +367,7 @@ export default function CoverLetterClient({
                   </div>
                   {language === "arabic" && (
                     <p className="text-xs text-muted-foreground mt-2">
-                      Arabic letter generated as a structured demo. Live AI integration coming soon.
+                      Arabic and English are both planned for launch.
                     </p>
                   )}
                 </div>
@@ -540,47 +429,11 @@ export default function CoverLetterClient({
               </div>
             </div>
 
-            {/* Generate button */}
-            <div className="flex flex-col items-center gap-3">
-              <button
-                type="submit"
-                disabled={!canGenerate || status === "loading"}
-                className={`inline-flex items-center gap-2.5 px-10 py-4 rounded-full text-base font-semibold shadow-soft transition-all duration-200 ${
-                  canGenerate && status !== "loading"
-                    ? "bg-accent text-accent-foreground hover:shadow-glow-accent hover:-translate-y-0.5"
-                    : "bg-accent/50 text-accent-foreground/60 cursor-not-allowed"
-                }`}
-              >
-                {status === "loading" ? (
-                  <span className="animate-pulse">{LOADING_PHRASES[loadingPhrase]}</span>
-                ) : (
-                  <>
-                    <Sparkles size={18} />
-                    Generate Cover Letter
-                  </>
-                )}
-              </button>
-              {!canGenerate && status === "idle" && (
-                <p className="text-xs text-muted-foreground">
-                  Add your resume and a job description to continue.
-                </p>
-              )}
-              {canGenerate && status === "idle" && (
-                <p className="text-xs text-muted-foreground">
-                  Free. No signup. Your data is not stored.
-                </p>
-              )}
-            </div>
-          </form>
+            {/* Waitlist replaces the generate button until real generation ships */}
+            <WaitlistForm tool="cover-letter" />
+          </div>
 
-          {status === "done" && output && context && (
-            <CoverLetterResult
-              output={output}
-              context={context}
-              onRegenerate={handleRegenerate}
-              regenerating={regenerating}
-            />
-          )}
+          <ExampleLetter />
         </Container>
       </main>
       <Footer />

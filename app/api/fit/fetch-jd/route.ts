@@ -1,19 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-function htmlToText(html: string): string {
-  return html
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
+import { htmlToStructuredText } from "@/lib/cover-letter/parse-jd";
 
 export async function POST(req: NextRequest) {
   const { url } = await req.json().catch(() => ({ url: "" }));
@@ -55,7 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     const html = await response.text();
-    const text = htmlToText(html).slice(0, 10000);
+    const text = htmlToStructuredText(html).slice(0, 10000);
 
     if (text.length < 100) {
       return NextResponse.json(

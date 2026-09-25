@@ -87,7 +87,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE,                        lastModified: now, changeFrequency: "daily",   priority: 1.0 },
     { url: `${SITE}/jobs`,              lastModified: now, changeFrequency: "daily",   priority: 0.9 },
     { url: `${SITE}/salary`,            lastModified: gitLastModified("app/(tools)/salary/page.tsx", now), changeFrequency: "weekly",  priority: 0.9 },
-    { url: `${SITE}/cover-letter`,      lastModified: gitLastModified("app/cover-letter/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
+    // /cover-letter is deliberately absent: it is a noindex waitlist page until the
+    // generator actually ships. Re-add it (and drop the noindex) at launch.
     { url: `${SITE}/tools`,              lastModified: gitLastModified("app/tools/page.tsx", now), changeFrequency: "weekly",  priority: 0.7 },
     { url: `${SITE}/tools/resume-builder`, lastModified: gitLastModified("app/tools/resume-builder/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },
     { url: `${SITE}/tools/gratuity-calculator`, lastModified: gitLastModified("app/tools/gratuity-calculator/page.tsx", now), changeFrequency: "weekly",  priority: 0.8 },

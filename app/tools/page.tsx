@@ -12,13 +12,13 @@ const PAGE_URL = "https://addify.ae/tools";
 export const metadata: Metadata = {
   title: "Free Career Tools",
   description:
-    "Free tools for job-hunting in the UAE: calculate your gratuity, build an ATS-ready resume, and generate a cover letter in minutes. No signup.",
+    "Free tools for job-hunting in the UAE: calculate your gratuity and build an ATS-ready resume. A cover letter tool is coming soon. No signup.",
   alternates: { canonical: "/tools" },
   openGraph: {
     type: "website",
     title: "Free Career Tools | Addify",
     description:
-      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter.",
+      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, and build an ATS-ready resume. A cover letter writer is coming soon.",
     url: PAGE_URL,
     siteName: "Addify.ae",
     locale: "en_AE",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Free Career Tools | Addify",
     description:
-      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, build an ATS-ready resume, and generate a cover letter.",
+      "Free tools for anyone working or job-hunting in the UAE: calculate your end-of-service gratuity, and build an ATS-ready resume. A cover letter writer is coming soon.",
     images: ["/api/og/default?title=Free+Career+Tools"],
   },
 };
@@ -50,10 +50,10 @@ const tools = [
   },
   {
     Icon: FileText,
-    name: "Cover Letter",
+    name: "Cover Letter (Coming soon)",
     href: "/cover-letter",
     description:
-      "Generate a tailored cover letter for any Gulf role in Arabic or English, ready in under 60 seconds.",
+      "A cover letter writer for Gulf roles, in Arabic and English. It isn't live yet: join the waitlist and we'll email you at launch.",
   },
 ];
 

@@ -32,14 +32,13 @@ const tools = [
   },
   {
     Icon: FileText,
-    name: "Cover Letter",
+    name: "Cover Letter (Coming soon)",
     href: "/cover-letter",
     description:
-      "Generate a tailored cover letter for any Gulf role in Arabic or English. It reads like you wrote it, not a template.",
+      "A cover letter writer for Gulf roles, in Arabic and English. It isn't live yet: join the waitlist and we'll email you at launch.",
     bullets: [
-      "Arabic & English language support",
-      "Customized per job description",
-      "Ready in under 60 seconds",
+      "Arabic & English planned",
+      "Waitlist open now",
     ],
   },
   {

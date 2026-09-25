@@ -174,8 +174,7 @@ export function Hero() {
           transition={{ delay: prefersReduced ? 0 : 1.6, duration: 0.6 }}
         >
           The only career platform built for the Gulf. Check what you should earn
-          in 34 cities, build a Gulf-ready resume, and get a tailored cover letter
-          in under 60 seconds.
+          in 34 cities and build a Gulf-ready resume, free.
         </motion.p>
 
         {/* CTA group */}
@@ -198,7 +197,7 @@ export function Hero() {
             <Button size="lg" variant="secondary">Build Your Resume</Button>
           </Link>
           <Link href="/cover-letter">
-            <Button size="lg" variant="secondary">Write a Cover Letter</Button>
+            <Button size="lg" variant="secondary">Cover Letter (Coming Soon)</Button>
           </Link>
           <Link href="/tools/gratuity-calculator">
             <Button size="lg" variant="secondary">Calculate Your Gratuity</Button>
