@@ -12,9 +12,9 @@ export function ClassicTemplate({ data }: { data: ResumeData }) {
             className="w-20 h-24 object-cover float-left mr-4 border border-slate-300"
           />
         )}
-        <h1 className="text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+        <p className="text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
           {data.contact.fullName || 'Your Name'}
-        </h1>
+        </p>
         {data.contact.jobTitle && (
           <p className="text-base text-slate-600 italic mb-2">{data.contact.jobTitle}</p>
         )}

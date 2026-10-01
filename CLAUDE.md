@@ -24,6 +24,8 @@ professionals in UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman and Egypt.
 | Lint one file | `npx eslint <file>` |
 | Validate blog content | `node scripts/validate-content.mjs` |
 | Production build | `npm run build` |
+| E2E tests (after build) | `npm run test:e2e` |
+| Lighthouse budgets (after build) | `npm run test:lighthouse` |
 
 `npx eslint .` currently reports pre-existing errors. Do not mass-fix them as a side
 effect of another task; CI lints only the files a PR changes, so leave every file you
@@ -41,6 +43,9 @@ touch lint-clean.
 
 - `npm run typecheck` passes and every changed file is lint-clean.
 - `npm run build` passes (it runs content validation first).
+- `npm run test:e2e` passes. A new page template gets a row in
+  `tests/e2e/helpers.ts` (KEY_PAGES); a new tool or form gets a spec in
+  `tests/e2e/` that exercises it like a user would.
 - Any form or API route you add or change is proven end-to-end: the request is made
   and the row/email is confirmed, not assumed. (A form once discarded every
   submission for months because nobody checked.)

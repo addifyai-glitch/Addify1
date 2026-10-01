@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/ui/container";
@@ -263,15 +264,21 @@ export default function GratuityCalculatorPage() {
   const t = T[lang];
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("ar")) {
-      setLang("ar");
-    }
-    try {
-      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-      if (Array.isArray(stored)) setHistory(stored);
-    } catch {
-      // ignore corrupt history
-    }
+    // Browser-only state (language, saved history) is read after mount so the
+    // server HTML and first client render match; scheduled in a frame so the
+    // state updates don't run synchronously inside the effect.
+    const frame = requestAnimationFrame(() => {
+      if (typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("ar")) {
+        setLang("ar");
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        if (Array.isArray(stored)) setHistory(stored);
+      } catch {
+        // ignore corrupt history
+      }
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -407,7 +414,9 @@ export default function GratuityCalculatorPage() {
     return t.entitlementAdjustment.replace("{fraction}", row.fraction === 1 / 3 ? "1/3" : "2/3");
   }
 
-  function ResultCard({ r, heading }: { r: GratuityResult; heading?: string }) {
+  // Plain render helper (not a component declared during render, which
+  // React would remount on every render).
+  function renderResultCard(r: GratuityResult, heading?: string) {
     const style = statusStyles[r.entitlement];
     return (
       <div className={cn("rounded-2xl border-2 p-6 text-center", style.box)}>
@@ -452,8 +461,9 @@ export default function GratuityCalculatorPage() {
             <h2 className="font-display text-xl text-foreground mb-5">{t.formHeading}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className={labelClass}>{t.labelSalary}</label>
+                <label htmlFor="grat-salary" className={labelClass}>{t.labelSalary}</label>
                 <input
+                  id="grat-salary"
                   type="number"
                   min="1"
                   step="1"
@@ -466,8 +476,9 @@ export default function GratuityCalculatorPage() {
               </div>
 
               <div>
-                <label className={labelClass}>{t.labelContract}</label>
+                <label htmlFor="grat-contract" className={labelClass}>{t.labelContract}</label>
                 <select
+                  id="grat-contract"
                   className={inputClass}
                   value={contractType}
                   onChange={(e) => setContractType(e.target.value as ContractType)}
@@ -478,8 +489,9 @@ export default function GratuityCalculatorPage() {
               </div>
 
               <div>
-                <label className={labelClass}>{t.labelYears}</label>
+                <label htmlFor="grat-years" className={labelClass}>{t.labelYears}</label>
                 <input
+                  id="grat-years"
                   type="number"
                   min="0"
                   step="0.1"
@@ -492,8 +504,9 @@ export default function GratuityCalculatorPage() {
               </div>
 
               <div>
-                <label className={labelClass}>{t.labelDays}</label>
+                <label htmlFor="grat-days" className={labelClass}>{t.labelDays}</label>
                 <input
+                  id="grat-days"
                   type="number"
                   min="0"
                   max="364"
@@ -507,8 +520,9 @@ export default function GratuityCalculatorPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className={labelClass}>{t.labelReason}</label>
+                <label htmlFor="grat-reason" className={labelClass}>{t.labelReason}</label>
                 <select
+                  id="grat-reason"
                   className={inputClass}
                   value={terminationType}
                   onChange={(e) => setTerminationType(e.target.value as TerminationType)}
@@ -541,7 +555,7 @@ export default function GratuityCalculatorPage() {
           {result && (
             <section ref={resultRef} className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft mb-6">
               <h2 className="font-display text-xl text-foreground mb-5 print:hidden">{t.resultHeading}</h2>
-              <ResultCard r={result} />
+              {renderResultCard(result)}
 
               <div className="overflow-x-auto mt-5">
                 <table className="w-full text-sm border-collapse">
@@ -597,8 +611,8 @@ export default function GratuityCalculatorPage() {
               <h2 className="font-display text-xl text-foreground mb-1">{t.compareHeading}</h2>
               <p className="text-sm text-muted-foreground mb-5">{t.compareSubtitle}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ResultCard r={compareResults.resignation} heading={t.compareLabelResignation} />
-                <ResultCard r={compareResults.termination} heading={t.compareLabelTermination} />
+                {renderResultCard(compareResults.resignation, t.compareLabelResignation)}
+                {renderResultCard(compareResults.termination, t.compareLabelTermination)}
               </div>
             </section>
           )}
@@ -654,11 +668,11 @@ export default function GratuityCalculatorPage() {
           <section className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft print:hidden">
             <h2 className="font-display text-xl text-foreground mb-4">{t.relatedHeading}</h2>
             <div className="flex flex-wrap gap-3">
-              <a href="/salary" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkSalary} &rarr;</a>
-              <a href="/cover-letter" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkCoverLetter}</a>
-              <a href="/tools/resume-builder" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkResume}</a>
-              <a href="/jobs" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkJobs}</a>
-              <a href="/blog" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkBlog}</a>
+              <Link href="/salary" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkSalary} &rarr;</Link>
+              <Link href="/cover-letter" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkCoverLetter}</Link>
+              <Link href="/tools/resume-builder" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkResume}</Link>
+              <Link href="/jobs" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkJobs}</Link>
+              <Link href="/blog" className="text-sm bg-muted border border-border rounded-lg px-3 py-2 hover:border-accent hover:text-accent transition-colors">{t.linkBlog}</Link>
             </div>
           </section>
 

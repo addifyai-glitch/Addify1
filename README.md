@@ -20,13 +20,20 @@ npm run dev                  # http://localhost:3000
 | Lint a file | `npx eslint <file>` |
 | Blog content | `node scripts/validate-content.mjs` |
 | Production build | `npm run build` |
+| E2E tests (after a build) | `npm run test:e2e` |
+| E2E against a deployed URL | `BASE_URL=https://addify.ae npm run test:e2e` |
+| Lighthouse budgets (after a build) | `npm run test:lighthouse` |
+
+First E2E run on a new machine: `npx playwright install chromium`.
 
 ## How changes reach production
 
 1. Every change — code or blog post, including edits in the GitHub web editor —
    goes on a branch and through a pull request.
 2. The `Validate` workflow runs on the PR: `validate` (content + build),
-   `typecheck`, `lint-changed`, `secrets` and `audit` (report-only for now).
+   `typecheck`, `lint-changed`, `e2e` (Playwright), `lighthouse` (SEO and
+   accessibility budgets), `secrets` and `audit`. `Claude review` leaves
+   advisory comments.
 3. The founder merges. Merging to `main` triggers the Coolify deploy.
 
 ## Branch protection (one-time setup, repo admin)
@@ -40,7 +47,8 @@ Add rule** on older UIs):
    **0** — on a solo repo GitHub doesn't let you approve your own PR; the merge
    click is the human gate.
 4. Enable **Require status checks to pass**, tick **Require branches to be up to
-   date**, and add: `validate`, `typecheck`, `lint-changed`, `secrets`. (Checks
+   date**, and add: `validate`, `typecheck`, `lint-changed`, `e2e`,
+   `lighthouse`, `secrets`, `audit`. (Checks
    appear in the picker after the workflow has run once — open this PR first.)
 5. Leave the bypass list empty so the rule applies to admins too.
 
@@ -57,10 +65,21 @@ Add rule** on older UIs):
 
 Hooks are plain Node scripts, so they need only Node 22 — no `jq`.
 
+## Claude in GitHub
+
+- `@claude` in an issue or PR comment: Claude works on a branch and opens or
+  updates a PR (`.github/workflows/claude.yml`). It never merges.
+- Every non-draft PR gets an advisory Claude code review
+  (`.github/workflows/claude-review.yml`).
+- Both need the `CLAUDE_CODE_OAUTH_TOKEN` repo secret (create it locally with
+  `claude setup-token`; runs on the Claude subscription, no API billing).
+  Without the secret both workflows skip. Runs are capped with `--max-turns`.
+
 ## Health check and rollback
 
 - `GET /api/health` returns `{"status":"ok"}`. In Coolify → the app →
-  **Configuration → Health Checks**: path `/api/health`, port `3000` (the app's port). A deploy that
+  **Configuration → Health Checks**: path `/api/health`, port `80` (the port
+  the container listens on; check the deploy log line "Local: http://localhost:…"). A deploy that
   fails the check never replaces the running container.
 - To roll back: revert the merge commit on GitHub (**Revert** button on the PR),
   merge the revert PR, Coolify redeploys. Or in Coolify → **Deployments**, redeploy
