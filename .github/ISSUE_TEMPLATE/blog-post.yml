@@ -1,0 +1,28 @@
+name: Blog post
+description: Brief for a new article in content/blog. Publishing happens only when the PR is merged.
+labels: ["content"]
+body:
+  - type: input
+    id: keyword
+    attributes:
+      label: Primary keyword / search query
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country focus
+      placeholder: UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Egypt or GCC-wide
+    validations:
+      required: true
+  - type: textarea
+    id: angle
+    attributes:
+      label: Angle and the tool or page it should link to
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Required sources
+      description: Official sources (labour law, ministry pages) and Addify data the post must cite. Every figure in the post needs one.

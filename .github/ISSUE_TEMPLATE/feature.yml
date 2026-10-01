@@ -1,0 +1,28 @@
+name: Feature or tool
+description: A new feature, calculator or page. Claude can pick this up with @claude once the Action is installed.
+labels: ["feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Who is it for and what are they trying to do? Include the search query they would type, if known.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Demand evidence
+      description: Keyword data, competitor URLs, Search Console queries, user messages. Links only — no guessed numbers.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Bullet list of things that must be true when this ships. Each one becomes a test.
+      placeholder: "- Calculator returns AED amount for a 3-year limited contract\n- 'Email me my result' sends via Resend and is rate-limited"
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope

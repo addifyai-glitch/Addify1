@@ -1,0 +1,26 @@
+name: Bug
+description: Something on addify.ae is broken or wrong.
+labels: ["bug"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, console errors, logs

@@ -1,25 +1,82 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(npx -v)",
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=no --import-alias=\"@/*\" --no-git --yes)",
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=no --import-alias=\"@/*\" --no-git)",
-      "Read(//private/tmp/**)",
-      "Bash(npx create-next-app@latest gulffit --typescript --tailwind --eslint --app --src-dir=no --import-alias=\"@/*\" --no-git --yes)",
-      "Bash(npm run *)",
-      "Bash(npm install *)",
-      "Bash(node -e \"const d=require\\('./data/salaries.json'\\); console.log\\(Object.keys\\(d.roles\\).length\\)\")",
-      "Bash(echo \"Roles: $\\(node -e \"const d=require\\('./data/salaries.json'\\); console.log\\(Object.keys\\(d.roles\\).length\\)\"\\)\")",
-      "Bash(node -e \"const d=require\\('./data/salaries.json'\\); console.log\\(Object.keys\\(d.cityFactors\\).length\\)\")",
-      "Bash(echo \"Cities: $\\(node -e \"const d=require\\('./data/salaries.json'\\); console.log\\(Object.keys\\(d.cityFactors\\).length\\)\"\\)\")",
-      "Bash(node -e \"const d=require\\('./data/salaries.json'\\); console.log\\(Object.keys\\(d.roles\\).length * Object.keys\\(d.cityFactors\\).length\\)\")",
-      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.dependencies, null, 2\\)\\)\")",
-      "Bash(node -e ' *)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
-      "Bash(node --input-type=module)"
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npx eslint *)",
+      "Bash(npx tsc --noEmit*)",
+      "Bash(node scripts/validate-content.mjs)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch)",
+      "Bash(git checkout -b *)",
+      "Bash(git switch -c *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git fetch*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh issue view*)",
+      "Bash(gh issue list*)",
+      "Bash(curl -s -o /dev/null -w * http://localhost:3000*)"
     ],
-    "additionalDirectories": [
-      "/Users/imac/Documents/Addify-gulffit/app/(tools)/salary/[jobSlug]"
+    "ask": [
+      "Bash(git push *)",
+      "Bash(npm install *)",
+      "Bash(npm uninstall *)",
+      "Bash(gh pr create *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(!.env.example)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(!.env.example)",
+      "Read(**/*.pem)",
+      "Bash(git push origin main*)",
+      "Bash(git push origin master*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(gh pr merge *)",
+      "Bash(npm publish*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.mjs", "timeout": 15 }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.mjs", "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-check.mjs", "timeout": 90 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop-typecheck.mjs", "timeout": 180 }
+        ]
+      }
     ]
   }
 }

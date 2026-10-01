@@ -1,65 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Addify
 
-## Getting Started
+Source for [addify.ae](https://addify.ae) — GCC salary and career intelligence:
+salary pages, free calculators, jobs and a blog. Next.js 16 + Supabase, deployed
+with Coolify on Hetzner behind Cloudflare.
 
-First, run the development server:
+Project rules for humans and Claude live in [`CLAUDE.md`](CLAUDE.md).
+
+## Local development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local   # fill in values
+npm ci
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Check | Command |
+| --- | --- |
+| Type check | `npm run typecheck` |
+| Lint a file | `npx eslint <file>` |
+| Blog content | `node scripts/validate-content.mjs` |
+| Production build | `npm run build` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How changes reach production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Every change — code or blog post, including edits in the GitHub web editor —
+   goes on a branch and through a pull request.
+2. The `Validate` workflow runs on the PR: `validate` (content + build),
+   `typecheck`, `lint-changed`, `secrets` and `audit` (report-only for now).
+3. The founder merges. Merging to `main` triggers the Coolify deploy.
 
-## Learn More
+## Branch protection (one-time setup, repo admin)
 
-To learn more about Next.js, take a look at the following resources:
+GitHub → **Settings → Rules → Rulesets → New branch ruleset** (or **Branches →
+Add rule** on older UIs):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Target: the default branch (`main`). Enforcement: **Active**.
+2. Enable **Restrict deletions** and **Block force pushes**.
+3. Enable **Require a pull request before merging**. Set required approvals to
+   **0** — on a solo repo GitHub doesn't let you approve your own PR; the merge
+   click is the human gate.
+4. Enable **Require status checks to pass**, tick **Require branches to be up to
+   date**, and add: `validate`, `typecheck`, `lint-changed`, `secrets`. (Checks
+   appear in the picker after the workflow has run once — open this PR first.)
+5. Leave the bypass list empty so the rule applies to admins too.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Claude Code guardrails
 
-## Content Workflow
+`.claude/settings.json` registers hooks in `.claude/hooks/`:
 
-Blog posts and other content changes must go through a pull request, not a
-direct commit to `main` — including edits made via the GitHub web editor. A
-malformed content file committed directly to `main` bypasses CI entirely and
-can break every production deploy until someone notices and fixes it.
+| Hook | When | What it does |
+| --- | --- | --- |
+| `guard-bash.mjs` | Before any shell command | Blocks pushes/commits on `main`, force-push, `gh pr merge`, reading `.env`, dumping env vars, destructive git/SQL, Supabase resets, infra CLIs, and `rm -r` outside build folders |
+| `protect-files.mjs` | Before any file edit | Blocks `.env*`/keys always; blocks committed migrations, workflows, `.claude/*`, `CLAUDE.md` and the lockfile unless the session was started with `ADDIFY_ALLOW_PROTECTED=1` |
+| `post-edit-check.mjs` | After any file edit | ESLint on the edited file; blog MDX validation for `content/blog/*` |
+| `stop-typecheck.mjs` | When Claude tries to finish | Runs `tsc --noEmit` if TypeScript changed; Claude can't stop with type errors |
 
-The `Validate` workflow (`.github/workflows/validate.yml`) runs content
-validation and a full build on every pull request and on every push to
-`main`. It only catches a bad file automatically if the branch protection
-rule below is enabled — otherwise it just reports the failure after the fact.
+Hooks are plain Node scripts, so they need only Node 22 — no `jq`.
 
-**To enable it** (requires repo admin access):
+## Health check and rollback
 
-1. Go to the repository on GitHub → **Settings** → **Branches** (left
-   sidebar, under "Code and automation").
-2. Under "Branch protection rules", click **Add branch protection rule**
-   (or **Add rule**).
-3. Branch name pattern: `main`.
-4. Check **Require a pull request before merging**.
-5. Check **Require status checks to pass before merging**, then search for
-   and select the `validate` check (from the Validate workflow — it will
-   only appear in the list after the workflow has run at least once).
-6. Save changes.
-
-With this enabled, nothing — including a change made directly in the GitHub
-web UI — can reach `main` without passing content validation and a
-successful build first.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/health` returns `{"status":"ok"}`. In Coolify → the app →
+  **Configuration → Health Checks**: path `/api/health`, port `3000` (the app's port). A deploy that
+  fails the check never replaces the running container.
+- To roll back: revert the merge commit on GitHub (**Revert** button on the PR),
+  merge the revert PR, Coolify redeploys. Or in Coolify → **Deployments**, redeploy
+  the previous successful deployment.
