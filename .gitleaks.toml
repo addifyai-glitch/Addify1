@@ -1,0 +1,10 @@
+# Secret scanning config used by the Validate workflow.
+title = "Addify gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Gratuity calculator rule identifiers are labels, not secrets"
+regexTarget = "line"
+regexes = ['''ruleKey\s*=\s*"[a-z0-9-]+"''']

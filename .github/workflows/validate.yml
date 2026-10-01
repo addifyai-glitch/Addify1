@@ -1,14 +1,26 @@
 name: Validate
 
+# Every job here is a required status check on `main` (see README → Branch
+# protection). Nothing reaches production without all of them passing.
+
 on:
   pull_request:
   push:
     branches:
       - main
 
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   validate:
+    name: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -24,3 +36,96 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+  lint-changed:
+    # Lints only files the PR touches, so existing lint debt never blocks a PR
+    # but no PR can add new lint errors or touch a file without cleaning it.
+    name: lint-changed
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: ESLint on changed files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE_SHA"...HEAD \
+            -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' | grep -v '^\.claude/' || true)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No lintable files changed."
+            exit 0
+          fi
+          printf 'Linting:\n%s\n' "${files[@]}"
+          npx eslint --no-warn-ignored "${files[@]}"
+
+  secrets:
+    # Scans only the commits in this PR / push, so old history doesn't fail
+    # every run. Config and allowlist: .gitleaks.toml
+    name: secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz \
+            | tar xz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: Scan new commits
+        env:
+          RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('{0}..{1}', github.event.before, github.sha) }}
+        run: |
+          case "$RANGE" in
+            0000000000000000000000000000000000000000..*) RANGE="-1" ;;
+          esac
+          gitleaks git --config .gitleaks.toml --redact --no-banner -v --log-opts="$RANGE" .
+
+  audit:
+    # Report-only until the Next.js security upgrade is merged; then remove
+    # `continue-on-error` and add `audit` to the required checks.
+    name: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: npm audit (production deps, high and above)
+        run: npm audit --omit=dev --audit-level=high
