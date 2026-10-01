@@ -125,12 +125,26 @@ export default function ResumeBuilderPage() {
     }
   }
 
+  // Rendered in both the loading state and the editor, so the server HTML
+  // (what crawlers and AI engines read) always carries the h1 and intro.
+  const hero = (
+    <div className="mb-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
+      <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
+      {ANSWER_CAPSULE && <AnswerCapsule>{ANSWER_CAPSULE}</AnswerCapsule>}
+      <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
+    </div>
+  );
+
   if (!loaded) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-muted-foreground">Loading...</p>
+        <main className="flex-1 py-8 md:py-12">
+          <Container className="max-w-7xl">
+            {hero}
+            <p className="text-sm text-muted-foreground">Loading the editor…</p>
+          </Container>
         </main>
         <Footer />
       </div>
@@ -264,13 +278,7 @@ export default function ResumeBuilderPage() {
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <Container className="max-w-7xl">
-          {/* Hero */}
-          <div className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Resume Builder</p>
-            <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">Build your resume</h1>
-            {ANSWER_CAPSULE && <AnswerCapsule>{ANSWER_CAPSULE}</AnswerCapsule>}
-            <p className="text-sm text-muted-foreground">Free, anonymous, auto-saved. No account needed.</p>
-          </div>
+          {hero}
 
           {/* Ad slot */}
           <AdSlot format="in-article" className="mb-6" />

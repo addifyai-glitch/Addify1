@@ -12,7 +12,7 @@ export function ModernTemplate({ data }: { data: ResumeData }) {
             className="w-24 h-24 rounded-full object-cover float-right ml-4"
           />
         )}
-        <h1 className="text-3xl font-bold tracking-tight">{data.contact.fullName || 'Your Name'}</h1>
+        <p className="text-3xl font-bold tracking-tight">{data.contact.fullName || 'Your Name'}</p>
         {data.contact.jobTitle && <p className="text-lg text-slate-500 mt-1">{data.contact.jobTitle}</p>}
         <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500 mt-2">
           {data.contact.email && <span>{data.contact.email}</span>}

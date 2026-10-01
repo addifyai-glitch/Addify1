@@ -54,6 +54,69 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+  e2e:
+    # Builds the site and runs the Playwright suite (tests/e2e): key pages,
+    # on-page SEO, every sitemap URL, 410s for removed features, tool behaviour.
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  lighthouse:
+    # Budgets in lighthouserc.json: SEO and accessibility block the merge,
+    # performance and best practices only warn for now (ratchet up over time).
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lighthouse CI
+        run: npm run test:lighthouse
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7
+
   lint-changed:
     # Lints only files the PR touches, so existing lint debt never blocks a PR
     # but no PR can add new lint errors or touch a file without cleaning it.
@@ -113,12 +176,10 @@ jobs:
           gitleaks git --config .gitleaks.toml --redact --no-banner -v --log-opts="$RANGE" .
 
   audit:
-    # Report-only until the Next.js security upgrade is merged; then remove
-    # `continue-on-error` and add `audit` to the required checks.
+    # Fails on high/critical advisories in production dependencies.
     name: audit
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 

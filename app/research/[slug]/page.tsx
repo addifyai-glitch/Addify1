@@ -108,6 +108,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!r) return {};
   return buildBlogMetadata({
     slug: `research/${slug}`,
+    canonicalPath: `/research/${slug}`,
     title: r.title,
     body: "",
     seoDescription: r.seoDescription,

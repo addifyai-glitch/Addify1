@@ -46,3 +46,8 @@ next-env.d.ts
 
 # Claude Code worktrees (local only)
 .claude/worktrees/
+
+# test output
+/test-results/
+/playwright-report/
+/.lighthouseci/

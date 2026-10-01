@@ -66,11 +66,15 @@ function truncateTitle(title: string): string {
 }
 
 export function buildBlogMetadata(
-  post: BlogPostMetaInput & { slug: string; image?: string }
+  // canonicalPath: pages that reuse blog metadata but live outside /blog
+  // (e.g. /research/[slug]) must point canonical/og:url at their own URL.
+  post: BlogPostMetaInput & { slug: string; image?: string; canonicalPath?: string }
 ) {
   const title = truncateTitle(cleanTitle(post.title));
   const description = deriveMetaDescription(post);
-  const url = `https://addify.ae/blog/${post.slug}`;
+  const url = post.canonicalPath
+    ? `https://addify.ae${post.canonicalPath}`
+    : `https://addify.ae/blog/${post.slug}`;
   const ogImageUrl = post.image ?? `/api/og/default?title=${encodeURIComponent(title)}`;
   return {
     title,

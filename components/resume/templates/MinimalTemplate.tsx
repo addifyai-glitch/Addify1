@@ -8,7 +8,7 @@ export function MinimalTemplate({ data }: { data: ResumeData }) {
           (US/UK, remote-first roles) should use this template. */}
       <header className="flex justify-between items-start gap-6 mb-7 pb-5 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">{data.contact.fullName || 'Your Name'}</h1>
+          <p className="text-2xl font-bold tracking-tight text-slate-900">{data.contact.fullName || 'Your Name'}</p>
           {data.contact.jobTitle && <p className="text-sm text-slate-500 mt-0.5 font-light">{data.contact.jobTitle}</p>}
         </div>
         <div className="text-right text-xs text-slate-500 space-y-0.5 shrink-0 mt-0.5">
