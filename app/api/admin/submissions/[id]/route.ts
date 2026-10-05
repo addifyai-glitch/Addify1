@@ -1,33 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { verifyAdmin } from '@/lib/admin-auth';
 import { sendJobApprovedEmail } from '@/lib/email';
+import { revalidateJobPages } from '@/lib/revalidate-content';
 
 export const runtime = 'nodejs';
-
-async function verifyAdmin(req: NextRequest): Promise<boolean> {
-  const { createServerClient } = await import('@supabase/ssr');
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail) return false;
-
-  return user.email === adminEmail;
-}
 
 // PATCH /api/admin/submissions/[id] — Approve
 export async function PATCH(
@@ -61,6 +38,9 @@ export async function PATCH(
       console.error('[admin/approve] Supabase error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // An approved submission becomes public: refresh the job pages now.
+    revalidateJobPages(job?.slug);
 
     if (job?.submitter_email) {
       await sendJobApprovedEmail(job.submitter_email, job.title, job.slug);

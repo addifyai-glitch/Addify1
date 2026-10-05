@@ -6,6 +6,15 @@ import type { Job } from "@/types/job";
 
 export const dynamic = "force-dynamic";
 
+// Why a job in this list may not be on the public /jobs page.
+function publicStatus(job: Job): { label: string; live: boolean } {
+  if (job.is_filled) return { label: "Filled (hidden)", live: false };
+  if (job.expires_at && new Date(job.expires_at).getTime() < Date.now()) {
+    return { label: "Expired (hidden)", live: false };
+  }
+  return { label: "Live", live: true };
+}
+
 function formatDate(iso: string | null | undefined) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -60,6 +69,7 @@ export default async function AdminJobsPage() {
                 <th className="text-left px-4 py-3 font-semibold hidden lg:table-cell">City</th>
                 <th className="text-left px-4 py-3 font-semibold hidden md:table-cell">Posted</th>
                 <th className="text-left px-4 py-3 font-semibold hidden lg:table-cell">Expires</th>
+                <th className="text-left px-4 py-3 font-semibold">Status</th>
                 <th className="text-left px-4 py-3 font-semibold">Featured</th>
                 <th className="text-right px-5 py-3 font-semibold">Actions</th>
               </tr>
@@ -81,6 +91,15 @@ export default async function AdminJobsPage() {
                   </td>
                   <td className="px-4 py-3.5 text-muted-foreground hidden lg:table-cell">
                     {formatDate(job.expires_at)}
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
+                      publicStatus(job).live
+                        ? "bg-success/10 text-success"
+                        : "bg-muted text-muted-foreground"
+                    }`}>
+                      {publicStatus(job).label}
+                    </span>
                   </td>
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${

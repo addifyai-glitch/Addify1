@@ -52,8 +52,11 @@ async function getLiveJobs(): Promise<Job[]> {
       .order("is_featured", { ascending: false })
       .order("posted_at", { ascending: false });
     if (!error && data && data.length > 0) return data as Job[];
-  } catch {
-    // fall through
+    // Say so in the server log: otherwise the page quietly shows the old
+    // bundled jobs while the admin dashboard (different key) looks healthy.
+    console.error("[jobs] live query returned nothing, using bundled fallback:", error?.message ?? "0 rows");
+  } catch (e) {
+    console.error("[jobs] live query failed, using bundled fallback:", e);
   }
   // JSON + mock fallback — these have no approved/expires_at columns at all,
   // so (like the [slug] page's fallback) they're not subject to that gate.

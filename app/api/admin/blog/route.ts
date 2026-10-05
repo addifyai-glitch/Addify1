@@ -1,28 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { verifyAdmin } from '@/lib/admin-auth';
+import { revalidateBlogPages } from '@/lib/revalidate-content';
 
 export const runtime = 'nodejs';
-
-async function verifyAdmin(req: NextRequest): Promise<boolean> {
-  const { createServerClient } = await import('@supabase/ssr');
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-  return user.email === process.env.ADMIN_EMAIL;
-}
 
 // POST /api/admin/blog — create new post
 export async function POST(req: NextRequest) {
@@ -62,6 +43,8 @@ export async function POST(req: NextRequest) {
       console.error('[admin/blog] Create error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidateBlogPages(data.slug);
 
     return NextResponse.json({ success: true, id: data.id, slug: data.slug });
   } catch (e) {

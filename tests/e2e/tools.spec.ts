@@ -53,4 +53,13 @@ test.describe("public API input validation", () => {
     });
     expect(res.status()).toBe(400);
   });
+
+  // Admin writes also refresh the cached public pages, so they must stay
+  // behind the admin login. Rejected before any database call.
+  test("admin job and blog APIs reject requests without a login", async ({ request }) => {
+    const job = await request.post("/api/admin/jobs", { data: { title: "x", apply_url: "https://example.com" } });
+    expect(job.status()).toBe(401);
+    const post = await request.post("/api/admin/blog", { data: { slug: "x", title: "x" } });
+    expect(post.status()).toBe(401);
+  });
 });
