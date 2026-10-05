@@ -1,30 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { verifyAdmin } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 
 const BUCKET = 'blog-images';
-
-async function verifyAdmin(req: NextRequest): Promise<boolean> {
-  const { createServerClient } = await import('@supabase/ssr');
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-  return user.email === process.env.ADMIN_EMAIL;
-}
 
 export async function POST(req: NextRequest) {
   const isAdmin = await verifyAdmin(req);

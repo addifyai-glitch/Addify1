@@ -1,29 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { verifyAdmin } from '@/lib/admin-auth';
 import { revalidateBlogPages } from '@/lib/revalidate-content';
 
 export const runtime = 'nodejs';
-
-async function verifyAdmin(req: NextRequest): Promise<boolean> {
-  const { createServerClient } = await import('@supabase/ssr');
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-  return user.email === process.env.ADMIN_EMAIL;
-}
 
 // GET /api/admin/blog/[id] — fetch single post for editing
 export async function GET(
