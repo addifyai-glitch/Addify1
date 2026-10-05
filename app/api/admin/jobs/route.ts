@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { revalidateJobPages } from "@/lib/revalidate-content";
 
 export const runtime = "nodejs";
 
@@ -68,7 +69,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    // Show the new job on the public site now, not at the next hourly rebuild.
+    revalidateJobPages(slug);
+
+    return NextResponse.json({ success: true, slug });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Server error";
     console.error("[admin/jobs]", e);

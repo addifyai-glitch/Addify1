@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { revalidateBlogPages } from '@/lib/revalidate-content';
 
 export const runtime = 'nodejs';
 
@@ -70,14 +71,20 @@ export async function PATCH(
 
   try {
     const supabase = createAdminClient();
-    const { error } = await supabase
+    // Read the slug first: if the edit changes it, the old address must be refreshed too.
+    const { data: before } = await supabase.from('blog_posts').select('slug').eq('id', id).maybeSingle();
+    const { data: after, error } = await supabase
       .from('blog_posts')
       .update(body)
-      .eq('id', id);
+      .eq('id', id)
+      .select('slug')
+      .maybeSingle();
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidateBlogPages(before?.slug, after?.slug);
 
     return NextResponse.json({ success: true });
   } catch (e) {
@@ -100,14 +107,17 @@ export async function DELETE(
 
   try {
     const supabase = createAdminClient();
-    const { error } = await supabase
+    const { data: removed, error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select('slug');
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidateBlogPages(...(removed ?? []).map((r) => r.slug as string));
 
     return NextResponse.json({ success: true });
   } catch (e) {

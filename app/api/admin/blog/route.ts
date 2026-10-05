@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { revalidateBlogPages } from '@/lib/revalidate-content';
 
 export const runtime = 'nodejs';
 
@@ -62,6 +63,8 @@ export async function POST(req: NextRequest) {
       console.error('[admin/blog] Create error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidateBlogPages(data.slug);
 
     return NextResponse.json({ success: true, id: data.id, slug: data.slug });
   } catch (e) {
